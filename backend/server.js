@@ -3,6 +3,8 @@ const express = require('express')
 const cors = require('cors')
 const session = require('express-session')
 const path = require('path')
+const cron = require('node-cron')
+const { query } = require('./config/database')
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -40,16 +42,13 @@ app.use('/api/proposals', require('./routes/proposals'))
 app.use('/api/credits', require('./routes/credits'))
 app.use('/api/admin', require('./routes/admin'))
 
-// =======================================================
-// ✅ ROTA DE HEALTH CHECK NA RAIZ (MELHOR PARA CRONJOB)
-// =======================================================
+// Health check
 app.get('/health', (req, res) => {
-    // Rota simples e leve, sem consultar o banco de dados.
     res.status(200).json({ 
         status: 'ok', 
         service: 'autogiro-api',
         timestamp: new Date().toISOString()
-    });
+    })
 })
 
 // Rotas do admin
@@ -78,9 +77,8 @@ app.get('/perfil', (req, res) => {
     res.sendFile(path.join(__dirname, '../frontend/catalog/perfil.html'))
 })
 
-// Fallback para SPA - qualquer outra rota vai para o index
+// Fallback para SPA
 app.get('*', (req, res) => {
-    // Se não for uma rota da API, serve o index
     if (!req.path.startsWith('/api/')) {
         res.sendFile(path.join(__dirname, '../frontend/catalog/index.html'))
     } else {
@@ -100,14 +98,45 @@ app.use((err, req, res, next) => {
     })
 })
 
+// Cron Job - Desativar veículos sem propostas vencedoras após o batch_date
+cron.schedule('0 0 * * *', async () => {
+    try {
+        console.log(`[${new Date().toISOString()}] Executando desativação automática de veículos...`)
+
+        const result = await query(`
+            UPDATE vehicles
+            SET 
+                is_active = false,
+                deactivated_at = NOW()
+            WHERE 
+                is_active = true 
+                AND has_winning_proposal = false
+                AND batch_date < CURRENT_DATE
+            RETURNING id, external_id, title
+        `)
+
+        console.log(`${result.rows.length} veículos desativados automaticamente`)
+        
+        if (result.rows.length > 0) {
+            console.log('Veículos desativados:')
+            result.rows.forEach(v => {
+                console.log(`  - ${v.title} (ID: ${v.external_id})`)
+            })
+        }
+    } catch (error) {
+        console.error('Erro na desativação automática:', error.message)
+    }
+})
+
 // Iniciar servidor
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`)
-    console.log(`📊 API disponível em http://localhost:${PORT}/api`)
-    console.log(`🎨 Catálogo em http://localhost:${PORT}`)
-    console.log(`🔐 Login em http://localhost:${PORT}/login`)
-    console.log(`📜 Propostas em http://localhost:${PORT}/propostas`)
-    console.log(`💳 Recarga em http://localhost:${PORT}/recarga`)
-    console.log(`👤 Perfil em http://localhost:${PORT}/perfil`)
-    console.log(`⚙️  Admin em http://localhost:${PORT}/admin`)
+    console.log(`Servidor rodando em http://localhost:${PORT}`)
+    console.log(`API disponível em http://localhost:${PORT}/api`)
+    console.log(`Catálogo em http://localhost:${PORT}`)
+    console.log(`Login em http://localhost:${PORT}/login`)
+    console.log(`Propostas em http://localhost:${PORT}/propostas`)
+    console.log(`Recarga em http://localhost:${PORT}/recarga`)
+    console.log(`Perfil em http://localhost:${PORT}/perfil`)
+    console.log(`Admin em http://localhost:${PORT}/admin`)
+    console.log(`Cron job de desativação configurado (00:00 diariamente)`)
 })
