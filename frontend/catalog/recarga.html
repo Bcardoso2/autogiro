@@ -1165,6 +1165,12 @@ window.addEventListener('scroll', () => {
         ticking = true;
     }
 }, { passive: true });
+        
+    window.addEventListener('DOMContentLoaded', async () => {
+            console.log('📄 DOMContentLoaded disparado');
+            await checkAuth();
+            console.log('✅ checkAuth finalizado, currentUser:', currentUser);
+        });
     </script>
 </body>
 </html>
