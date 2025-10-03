@@ -903,24 +903,25 @@
         let paymentCheckInterval = null;
 
         async function checkAuth() {
-            try {
-                const response = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
-                const data = await response.json();
-                
-                if (!data.success || !data.user) {
-                    window.location.href = 'login';
-                    return false;
-                }
-                
-                currentUser = data.user;
-                updateUserUI();
-                return true;
-            } catch (error) {
-                console.error('Erro ao verificar auth:', error);
-                window.location.href = 'login';
-                return false;
-            }
+    try {
+        const response = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
+        const data = await response.json();
+        
+        if (!data.success || !data.user) {
+            window.location.href = 'login';
+            return false;
         }
+        
+        // IMPORTANTE: Atribui o usuário ANTES de atualizar UI
+        currentUser = data.user;
+        updateUserUI();
+        return true;
+    } catch (error) {
+        console.error('Erro ao verificar auth:', error);
+        window.location.href = 'login';
+        return false;
+    }
+}
 
         function updateUserUI() {
             const userInfo = document.getElementById('userInfo');
@@ -944,45 +945,51 @@
         }
 
         async function handleRecharge(event) {
-            event.preventDefault();
-            
-            if (!currentUser.cpf) {
-                showToast('Complete seu cadastro com CPF antes de fazer recargas', 'error');
-                setTimeout(() => {
-                    window.location.href = 'perfil';
-                }, 2000);
-                return;
-            }
-            
-            const amount = parseFloat(document.getElementById('rechargeAmount').value);
-            const btn = event.target.querySelector('.btn-submit');
-            
-            btn.disabled = true;
-            btn.textContent = 'Gerando PIX...';
-            
-            try {
-                const response = await fetch(`${API_BASE}/credits/request-recharge`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ amount })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showPixModal(data.purchase);
-                } else {
-                    showToast(data.error || 'Erro ao gerar PIX', 'error');
-                }
-            } catch (error) {
-                console.error('Erro ao gerar PIX:', error);
-                showToast('Erro ao conectar com o servidor', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Gerar PIX';
-            }
+    event.preventDefault();
+    
+    // Verifica se currentUser foi carregado
+    if (!currentUser) {
+        showToast('Erro ao carregar dados do usuário. Recarregue a página.', 'error');
+        return;
+    }
+    
+    if (!currentUser.cpf) {
+        showToast('Complete seu cadastro com CPF antes de fazer recargas', 'error');
+        setTimeout(() => {
+            window.location.href = 'perfil';
+        }, 2000);
+        return;
+    }
+    
+    const amount = parseFloat(document.getElementById('rechargeAmount').value);
+    const btn = event.target.querySelector('.btn-submit');
+    
+    btn.disabled = true;
+    btn.textContent = 'Gerando PIX...';
+    
+    try {
+        const response = await fetch(`${API_BASE}/credits/request-recharge`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ amount })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showPixModal(data.purchase);
+        } else {
+            showToast(data.error || 'Erro ao gerar PIX', 'error');
         }
+    } catch (error) {
+        console.error('Erro ao gerar PIX:', error);
+        showToast('Erro ao conectar com o servidor', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Gerar PIX';
+    }
+}
 
         function showPixModal(purchase) {
             const modal = document.createElement('div');
