@@ -1062,7 +1062,7 @@
             if (!APP_STATE.currentUser.cpf) {
                 showToast('Complete seu cadastro para fazer propostas', 'error')
                 setTimeout(() => {
-                    window.location.href = 'perfil.html'
+                    window.location.href = 'perfil'
                 }, 1500)
                 return
             }
@@ -1070,7 +1070,7 @@
             if (APP_STATE.currentUser.credits < 1) {
                 showToast('Créditos insuficientes', 'error')
                 setTimeout(() => {
-                    window.location.href = 'recarga.html'
+                    window.location.href = 'recarga'
                 }, 1500)
                 return
             }
