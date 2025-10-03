@@ -98,7 +98,7 @@ app.use((err, req, res, next) => {
     })
 })
 
-// Cron Job - Desativar veículos sem propostas vencedoras após o batch_date
+// Cron Job 1 - Desativar veículos sem propostas vencedoras (00:00 todo dia)
 cron.schedule('0 0 * * *', async () => {
     try {
         console.log(`[${new Date().toISOString()}] Executando desativação automática de veículos...`)
@@ -128,6 +128,36 @@ cron.schedule('0 0 * * *', async () => {
     }
 })
 
+// Cron Job 2 - Buscar veículos do DealersClub (20:00 todo dia)
+cron.schedule('0 20 * * *', async () => {
+    try {
+        console.log(`[${new Date().toISOString()}] Iniciando busca de veículos do DealersClub...`)
+        
+        const { spawn } = require('child_process')
+        
+        const scraperProcess = spawn('node', ['scripts/scraper-dealersclub.js'])
+        
+        scraperProcess.stdout.on('data', (data) => {
+            console.log(data.toString())
+        })
+        
+        scraperProcess.stderr.on('data', (data) => {
+            console.error(data.toString())
+        })
+        
+        scraperProcess.on('close', (code) => {
+            if (code === 0) {
+                console.log('Scraper executado com sucesso')
+            } else {
+                console.error(`Scraper finalizou com código ${code}`)
+            }
+        })
+        
+    } catch (error) {
+        console.error('Erro ao executar scraper:', error.message)
+    }
+})
+
 // Iniciar servidor
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`)
@@ -138,5 +168,6 @@ app.listen(PORT, () => {
     console.log(`Recarga em http://localhost:${PORT}/recarga`)
     console.log(`Perfil em http://localhost:${PORT}/perfil`)
     console.log(`Admin em http://localhost:${PORT}/admin`)
-    console.log(`Cron job de desativação configurado (00:00 diariamente)`)
+    console.log(`Cron job 1: Desativação às 00:00`)
+    console.log(`Cron job 2: Scraper às 20:00`)
 })
