@@ -11,11 +11,14 @@ const PORT = process.env.PORT || 3000
 
 // Middleware
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? 'https://autogiro.onrender.com' 
-        : 'http://localhost:3000',
-    credentials: true
-}))
+    origin: function(origin, callback) {
+        // Sempre permite
+        callback(null, origin || '*');
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+}));
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
