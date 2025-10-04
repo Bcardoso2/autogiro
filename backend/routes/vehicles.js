@@ -9,12 +9,12 @@ router.get('/', async (req, res) => {
       SELECT 
         id, external_id, title, brand, model, year, price,
         fipe_price, fipe_confidence, mileage, fuel_type, transmission,
-        color, description, location, dealer_name, dealer_phone,
+        color, description, category, event_date, location, dealer_name, dealer_phone,
         images, laudo_status, laudo_url, laudo_file_url,
         vehicle_data, ai_classification, created_at
       FROM vehicles
       WHERE is_active = true
-      ORDER BY created_at DESC
+      ORDER BY event_date DESC NULLS LAST, created_at DESC
     `)
     
     res.json({ 
