@@ -1154,7 +1154,7 @@
 
         const API_BASE = 'https://autogiro.onrender.com/api'
 
-        async function loadVehicles() {
+       async function loadVehicles() {
     try {
         console.log('Carregando veículos...')
         const response = await fetch(`${API_BASE}/vehicles`, { credentials: 'include' })
@@ -1162,7 +1162,13 @@
         
         if (data.success) {
             APP_STATE.vehicles = data.vehicles
-            populateEventFilter() // ADICIONE ISSO
+            
+            // DEBUG - ADICIONE ISSO
+            console.log('Primeiro veículo:', APP_STATE.vehicles[0])
+            console.log('Event date exemplo:', APP_STATE.vehicles[0]?.event_date)
+            console.log('Category exemplo:', APP_STATE.vehicles[0]?.category)
+            
+            populateEventFilter()
             renderVehicles()
             updateStats()
         } else {
