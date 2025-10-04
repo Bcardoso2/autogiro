@@ -1225,42 +1225,38 @@
             }
         }
 
-        function renderVehicles() {
+function renderVehicles() {
     const grid = document.getElementById('vehiclesGrid')
     grid.innerHTML = ''
     
     const categoryFilter = document.getElementById('categoryFilter').value
     const eventFilter = document.getElementById('eventFilter').value
     
-    // Filtrar veículos
     let filteredVehicles = APP_STATE.vehicles.filter(vehicle => {
         const matchCategory = categoryFilter === 'all' || vehicle.category === categoryFilter
-        const matchEvent = eventFilter === 'all' || vehicle.event_date === eventFilter
+        const vehicleEventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : null
+        const matchEvent = eventFilter === 'all' || vehicleEventDate === eventFilter
         return matchCategory && matchEvent
     })
     
-    // Agrupar por data de evento
     const groupedByEvent = {}
     filteredVehicles.forEach(vehicle => {
-        const eventDate = vehicle.event_date || 'sem-data'
+        const eventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : 'sem-data'
         if (!groupedByEvent[eventDate]) {
             groupedByEvent[eventDate] = []
         }
         groupedByEvent[eventDate].push(vehicle)
     })
     
-    // Ordenar datas (mais recentes primeiro)
     const sortedDates = Object.keys(groupedByEvent).sort((a, b) => {
         if (a === 'sem-data') return 1
         if (b === 'sem-data') return -1
         return new Date(b) - new Date(a)
     })
     
-    // Renderizar grupos
     sortedDates.forEach(eventDate => {
         const vehicles = groupedByEvent[eventDate]
         
-        // Header do grupo
         const eventGroup = document.createElement('div')
         eventGroup.className = 'event-group'
         
@@ -1268,18 +1264,12 @@
         if (eventDate === 'sem-data') {
             formattedDate = 'Sem data definida'
         } else {
-            try {
-                // Parsear a data corretamente
-                const [year, month, day] = eventDate.split('-')
-                const date = new Date(year, month - 1, day)
-                formattedDate = date.toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                })
-            } catch (e) {
-                formattedDate = eventDate
-            }
+            const date = new Date(eventDate + 'T12:00:00')
+            formattedDate = date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            })
         }
         
         eventGroup.innerHTML = `
@@ -1287,13 +1277,12 @@
                 <h2 class="event-title">Evento: ${formattedDate}</h2>
                 <span class="event-count">${vehicles.length} veículo${vehicles.length > 1 ? 's' : ''}</span>
             </div>
-            <div class="vehicles-grid" id="grid-${eventDate}"></div>
+            <div class="vehicles-grid" id="grid-${eventDate.replace(/[^a-zA-Z0-9]/g, '-')}"></div>
         `
         
         grid.appendChild(eventGroup)
         
-        // Adicionar veículos do grupo
-        const groupGrid = document.getElementById(`grid-${eventDate}`)
+        const groupGrid = eventGroup.querySelector('.vehicles-grid')
         vehicles.forEach((vehicle) => {
             const globalIndex = APP_STATE.vehicles.indexOf(vehicle)
             const card = createVehicleCard(vehicle, globalIndex)
@@ -1303,26 +1292,26 @@
     
     updateVisibleCount(filteredVehicles.length)
 }
+
 function populateEventFilter() {
     const eventFilter = document.getElementById('eventFilter')
-    const events = [...new Set(APP_STATE.vehicles.map(v => v.event_date).filter(Boolean))]
+    const events = [...new Set(
+        APP_STATE.vehicles
+            .map(v => v.event_date ? v.event_date.split('T')[0] : null)
+            .filter(Boolean)
+    )]
     events.sort((a, b) => new Date(b) - new Date(a))
     
     events.forEach(eventDate => {
         const option = document.createElement('option')
         option.value = eventDate
         
-        try {
-            const [year, month, day] = eventDate.split('-')
-            const date = new Date(year, month - 1, day)
-            option.textContent = date.toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            })
-        } catch (e) {
-            option.textContent = eventDate
-        }
+        const date = new Date(eventDate + 'T12:00:00')
+        option.textContent = date.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
         
         eventFilter.appendChild(option)
     })
