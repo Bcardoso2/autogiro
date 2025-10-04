@@ -135,7 +135,7 @@ cron.schedule('0 20 * * *', async () => {
         
         const { spawn } = require('child_process')
         
-        const scraperProcess = spawn('node', ['scripts/scraper-dealersclub.js'])
+        const scraperProcess = spawn('node', ['scripts/scraper-to-db.js.js'])
         
         scraperProcess.stdout.on('data', (data) => {
             console.log(data.toString())
