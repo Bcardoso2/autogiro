@@ -1236,7 +1236,7 @@
     // Agrupar por data de evento
     const groupedByEvent = {}
     filteredVehicles.forEach(vehicle => {
-        const eventDate = vehicle.event_date || 'Sem data definida'
+        const eventDate = vehicle.event_date || 'sem-data'
         if (!groupedByEvent[eventDate]) {
             groupedByEvent[eventDate] = []
         }
@@ -1245,8 +1245,8 @@
     
     // Ordenar datas (mais recentes primeiro)
     const sortedDates = Object.keys(groupedByEvent).sort((a, b) => {
-        if (a === 'Sem data definida') return 1
-        if (b === 'Sem data definida') return -1
+        if (a === 'sem-data') return 1
+        if (b === 'sem-data') return -1
         return new Date(b) - new Date(a)
     })
     
@@ -1258,9 +1258,23 @@
         const eventGroup = document.createElement('div')
         eventGroup.className = 'event-group'
         
-        const formattedDate = eventDate === 'Sem data definida' 
-            ? 'Sem data definida' 
-            : new Date(eventDate + 'T00:00:00').toLocaleDateString('pt-BR')
+        let formattedDate
+        if (eventDate === 'sem-data') {
+            formattedDate = 'Sem data definida'
+        } else {
+            try {
+                // Parsear a data corretamente
+                const [year, month, day] = eventDate.split('-')
+                const date = new Date(year, month - 1, day)
+                formattedDate = date.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                })
+            } catch (e) {
+                formattedDate = eventDate
+            }
+        }
         
         eventGroup.innerHTML = `
             <div class="event-header">
@@ -1274,7 +1288,7 @@
         
         // Adicionar veículos do grupo
         const groupGrid = document.getElementById(`grid-${eventDate}`)
-        vehicles.forEach((vehicle, idx) => {
+        vehicles.forEach((vehicle) => {
             const globalIndex = APP_STATE.vehicles.indexOf(vehicle)
             const card = createVehicleCard(vehicle, globalIndex)
             groupGrid.appendChild(card)
@@ -1283,7 +1297,6 @@
     
     updateVisibleCount(filteredVehicles.length)
 }
-
 function populateEventFilter() {
     const eventFilter = document.getElementById('eventFilter')
     const events = [...new Set(APP_STATE.vehicles.map(v => v.event_date).filter(Boolean))]
@@ -1292,11 +1305,22 @@ function populateEventFilter() {
     events.forEach(eventDate => {
         const option = document.createElement('option')
         option.value = eventDate
-        option.textContent = new Date(eventDate + 'T00:00:00').toLocaleDateString('pt-BR')
+        
+        try {
+            const [year, month, day] = eventDate.split('-')
+            const date = new Date(year, month - 1, day)
+            option.textContent = date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            })
+        } catch (e) {
+            option.textContent = eventDate
+        }
+        
         eventFilter.appendChild(option)
     })
 }
-
 function updateVisibleCount(count) {
     document.getElementById('visibleCount').textContent = count
 }
