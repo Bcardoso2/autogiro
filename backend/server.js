@@ -101,8 +101,8 @@ app.use((err, req, res, next) => {
     })
 })
 
-// Cron Job 1 - Desativar veículos sem propostas vencedoras (00:00 todo dia)
-cron.schedule('0 0 * * *', async () => {
+// Cron Job 1 - Desativar veículos sem propostas vencedoras (17:00 todo dia)
+cron.schedule('0 17 * * *', async () => {
     try {
         console.log(`[${new Date().toISOString()}] Executando desativação automática de veículos...`)
 
@@ -138,7 +138,7 @@ cron.schedule('0 20 * * *', async () => {
         
         const { spawn } = require('child_process')
         
-        const scraperProcess = spawn('node', ['scripts/scraper-to-db.js'])
+        const scraperProcess = spawn('node', [path.join(__dirname, 'scripts/scraper-to-db.js')])
         
         scraperProcess.stdout.on('data', (data) => {
             console.log(data.toString())
