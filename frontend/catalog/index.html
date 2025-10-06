@@ -11,29 +11,29 @@
     
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --secondary: #8b5cf6;
+            --primary: #001C49;
+            --primary-light: #002d6b;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --bg-elevated: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #64748b;
-            --radius: 16px;
-            --shadow: 0 10px 40px rgba(0,0,0,0.3);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0, 28, 73, 0.1);
+            --shadow-lg: 0 4px 12px rgba(0, 28, 73, 0.15);
+            --transition: all 0.3s ease;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
             font-family: 'Inter', -apple-system, system-ui, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
+            background: var(--bg-light);
+            color: var(--text-dark);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             min-height: 100vh;
@@ -42,28 +42,18 @@
 
         .hidden { display: none !important; }
         
-        /* Header - Mobile First */
+        /* Header */
         .header {
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
             padding: 1rem 0;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 100;
-            transition: transform 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
-            transform: translateY(0);
-        }
-
-        .header.hidden {
-            transform: translateY(-100%);
-        }
-
-        .header.scrolled {
-            padding: 0.75rem 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            transition: var(--transition);
+            box-shadow: var(--shadow);
         }
         
         .header-content {
@@ -86,7 +76,7 @@
         .logo-icon {
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -94,15 +84,12 @@
             color: white;
             font-weight: 800;
             font-size: 1.25rem;
-            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
         }
         
         .logo-text {
             font-size: 1.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
             letter-spacing: -0.02em;
         }
 
@@ -129,7 +116,7 @@
         }
 
         .nav-link:hover, .nav-link.active {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(0, 28, 73, 0.08);
             color: var(--primary);
         }
         
@@ -141,17 +128,11 @@
         }
         
         .stat-item {
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            background: var(--bg-light);
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding: 0.5rem 1rem;
             text-align: center;
-            transition: var(--transition);
-        }
-        
-        .stat-item:hover {
-            background: rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
         }
         
         .stat-number {
@@ -180,8 +161,8 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            background: var(--bg-light);
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding: 0.5rem 1rem;
             font-size: 0.875rem;
@@ -222,8 +203,7 @@
         }
 
         .btn-login:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
+            background: var(--primary-light);
         }
 
         /* Container */
@@ -242,7 +222,7 @@
         .loading-spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid rgba(59, 130, 246, 0.2);
+            border: 3px solid var(--border);
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -255,88 +235,88 @@
         
         /* Filters */
         .filters-section {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            background: var(--bg-white);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             box-shadow: var(--shadow);
         }
         
         .search-bar {
             position: relative;
         }
-        /* Category Filter */
-.filters-row {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-}
 
-.filter-group {
-    flex: 1;
-    min-width: 200px;
-}
+        .filters-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
 
-.filter-select {
-    width: 100%;
-    padding: 0.875rem;
-    background: rgba(15, 23, 42, 0.5);
-    border: 2px solid rgba(148, 163, 184, 0.1);
-    border-radius: 10px;
-    color: var(--text-primary);
-    font-size: 0.95rem;
-    font-family: inherit;
-    transition: var(--transition);
-    cursor: pointer;
-}
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
 
-.filter-select:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: rgba(15, 23, 42, 0.8);
-}
+        .filter-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-dark);
+            font-size: 0.875rem;
+            font-family: inherit;
+            transition: var(--transition);
+            cursor: pointer;
+        }
 
-/* Event Group Headers */
-.event-group {
-    margin-bottom: 3rem;
-}
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            border-width: 2px;
+        }
 
-.event-header {
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-radius: 12px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        /* Event Group Headers */
+        .event-group {
+            margin-bottom: 2rem;
+        }
 
-.event-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--primary);
-}
+        .event-header {
+            background: rgba(0, 28, 73, 0.05);
+            border: 1px solid rgba(0, 28, 73, 0.1);
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.event-count {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    background: rgba(59, 130, 246, 0.1);
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
-}
+        .event-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .event-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(0, 28, 73, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+        }
         
         .search-input {
             width: 100%;
-            padding: 0.875rem 0.875rem 0.875rem 3rem;
-            background: rgba(15, 23, 42, 0.5);
-            border: 2px solid rgba(148, 163, 184, 0.1);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 0.95rem;
+            padding: 0.75rem 0.75rem 0.75rem 3rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-dark);
+            font-size: 0.875rem;
             font-family: inherit;
             transition: var(--transition);
         }
@@ -344,8 +324,7 @@
         .search-input:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(15, 23, 42, 0.8);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            border-width: 2px;
         }
         
         .search-input::placeholder {
@@ -357,51 +336,45 @@
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
+            color: var(--text-secondary);
             pointer-events: none;
         }
 
         /* Results Summary */
         .results-summary {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
-            border-radius: 10px;
-            padding: 0.875rem 1rem;
-            margin-bottom: 1.5rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
             text-align: center;
-            font-size: 0.95rem;
-            font-weight: 500;
+            font-size: 0.75rem;
             color: var(--text-secondary);
         }
         
         .results-summary strong {
-            color: var(--primary);
-            font-weight: 700;
+            color: var(--text-dark);
+            font-weight: 600;
         }
 
-        /* Vehicles Grid - Mobile First */
+        /* Vehicles Grid */
         .vehicles-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem;
+            gap: 1rem;
             margin-bottom: 2rem;
         }
         
         .vehicle-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            background: var(--bg-white);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
             overflow: hidden;
             transition: var(--transition);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow);
         }
         
         .vehicle-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(59, 130, 246, 0.3);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            box-shadow: var(--shadow-lg);
         }
 
         /* Gallery */
@@ -409,7 +382,7 @@
             position: relative;
             height: 250px;
             overflow: hidden;
-            background: var(--bg-elevated);
+            background: var(--bg-light);
         }
         
         .main-image-container {
@@ -427,7 +400,7 @@
         }
         
         .vehicle-card:hover .main-image-container img {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
         
         .image-overlay {
@@ -457,7 +430,7 @@
             height: 60px;
             gap: 4px;
             padding: 4px;
-            background: rgba(15, 23, 42, 0.5);
+            background: var(--bg-light);
         }
         
         .thumbnail-strip img {
@@ -472,14 +445,13 @@
         
         .thumbnail-strip img:hover {
             border-color: var(--primary);
-            transform: scale(1.05);
         }
         
         .more-photos {
             flex: 1;
             height: 52px;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            background: rgba(0, 28, 73, 0.05);
+            border: 1px solid rgba(0, 28, 73, 0.1);
             border-radius: 6px;
             display: flex;
             align-items: center;
@@ -498,7 +470,7 @@
 
         .no-image {
             height: 250px;
-            background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+            background: var(--bg-light);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -513,7 +485,7 @@
 
         /* Vehicle Info */
         .vehicle-info {
-            padding: 1.25rem;
+            padding: 1rem;
         }
         
         .vehicle-header {
@@ -529,20 +501,20 @@
         }
         
         .vehicle-title {
-            font-size: 1.125rem;
+            font-size: 1rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--text-dark);
             line-height: 1.3;
             margin-bottom: 0.5rem;
         }
         
         .vehicle-year {
             display: inline-block;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--primary);
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
+            background: rgba(0, 28, 73, 0.08);
+            border: 1px solid rgba(0, 28, 73, 0.15);
             padding: 0.2rem 0.6rem;
             border-radius: 999px;
         }
@@ -555,15 +527,14 @@
         }
         
         .category-badge {
-            padding: 0.3rem 0.6rem;
+            padding: 0.25rem 0.6rem;
             border-radius: 999px;
             font-size: 0.7rem;
             font-weight: 600;
             text-align: center;
             white-space: nowrap;
-            backdrop-filter: blur(10px);
             background: rgba(139, 92, 246, 0.1);
-            color: var(--secondary);
+            color: #8b5cf6;
             border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
@@ -590,11 +561,11 @@
         }
         
         .spec-mini {
-            background: rgba(100, 116, 139, 0.1);
-            border: 1px solid rgba(100, 116, 139, 0.2);
-            padding: 0.3rem 0.6rem;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            padding: 0.25rem 0.6rem;
             border-radius: 999px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
@@ -602,14 +573,14 @@
         .vehicle-location {
             margin-bottom: 1rem;
             color: var(--text-muted);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
 
         /* Actions */
         .vehicle-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.625rem;
+            gap: 0.5rem;
         }
         
         .vehicle-actions .btn-proposal {
@@ -617,13 +588,13 @@
         }
         
         .btn-primary, .btn-secondary, .btn-proposal, .btn-laudo {
-            padding: 0.75rem 0.875rem;
+            padding: 0.625rem 0.75rem;
             border: none;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             text-align: center;
             font-family: inherit;
         }
@@ -634,21 +605,17 @@
         }
         
         .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            background: var(--primary-light);
         }
         
         .btn-secondary {
-            background: rgba(100, 116, 139, 0.1);
+            background: var(--bg-light);
             color: var(--text-secondary);
-            border: 1px solid rgba(100, 116, 139, 0.2);
+            border: 1px solid var(--border);
         }
         
         .btn-secondary:hover {
-            background: rgba(100, 116, 139, 0.2);
-            border-color: rgba(100, 116, 139, 0.3);
-            transform: translateY(-2px);
+            background: var(--border);
         }
         
         .btn-proposal {
@@ -658,8 +625,6 @@
         
         .btn-proposal:hover {
             background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
         }
         
         .btn-laudo {
@@ -669,15 +634,13 @@
         
         .btn-laudo:hover {
             background: #d97706;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
         }
 
         /* Modal Styles */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(4px);
             z-index: 1000;
             display: flex;
@@ -695,8 +658,8 @@
         }
         
         .modal-content {
-            background: var(--bg-card);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            background: var(--bg-white);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
             max-width: 600px;
             width: 100%;
@@ -704,7 +667,7 @@
             overflow-y: auto;
             transform: scale(0.9);
             transition: transform 0.3s ease;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            box-shadow: var(--shadow-lg);
         }
         
         .modal-overlay.active .modal-content {
@@ -713,7 +676,7 @@
         
         .modal-header {
             padding: 1.25rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -722,12 +685,12 @@
         .modal-title {
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--text-dark);
             margin: 0;
         }
         
         .modal-close {
-            background: rgba(100, 116, 139, 0.1);
+            background: var(--bg-light);
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
@@ -743,7 +706,7 @@
         }
         
         .modal-close:hover {
-            background: rgba(100, 116, 139, 0.2);
+            background: var(--border);
         }
         
         .modal-body {
@@ -758,7 +721,7 @@
         .form-label {
             display: block;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-dark);
             margin-bottom: 0.5rem;
             font-size: 0.875rem;
         }
@@ -766,11 +729,11 @@
         .form-input {
             width: 100%;
             padding: 0.75rem;
-            background: rgba(30, 41, 59, 0.5);
-            border: 2px solid rgba(148, 163, 184, 0.1);
+            background: var(--bg-white);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 0.95rem;
+            color: var(--text-dark);
+            font-size: 0.875rem;
             font-family: inherit;
             transition: var(--transition);
         }
@@ -778,8 +741,7 @@
         .form-input:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(30, 41, 59, 0.8);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            border-width: 2px;
         }
 
         .btn-submit {
@@ -789,23 +751,20 @@
             border: none;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
             cursor: pointer;
             transition: var(--transition);
             width: 100%;
         }
         
         .btn-submit:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            background: var(--primary-light);
         }
         
         .btn-submit:disabled {
-            background: rgba(100, 116, 139, 0.2);
+            background: var(--border);
             color: var(--text-muted);
             cursor: not-allowed;
-            transform: none;
         }
 
         .info-box {
@@ -827,17 +786,16 @@
         }
         
         .toast {
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: var(--bg-white);
+            border: 1px solid var(--border);
             border-radius: 10px;
             padding: 0.875rem 1.25rem;
             margin-bottom: 0.625rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-lg);
             animation: slideIn 0.3s ease;
             min-width: 250px;
             max-width: 90vw;
-            color: var(--text-primary);
+            color: var(--text-dark);
             font-size: 0.875rem;
         }
         
@@ -929,142 +887,33 @@
             }
 
             .container {
-                padding: 2.5rem 1.5rem;
+                padding: 2rem 1.5rem;
             }
 
             .filters-section {
-                padding: 2rem;
-                margin-bottom: 2rem;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
             }
 
             .search-input {
-                padding: 1rem 1rem 1rem 3.5rem;
-                font-size: 1rem;
-            }
-
-            .search-icon {
-                left: 1.25rem;
-            }
-
-            .results-summary {
-                padding: 1rem 1.5rem;
-                font-size: 1rem;
-                margin-bottom: 2rem;
-            }
-
-            .vehicles-grid {
-                margin-bottom: 3rem;
-            }
-
-            .vehicle-gallery {
-                height: 280px;
-            }
-
-            .main-image-container {
-                height: 220px;
+                padding: 0.875rem 0.875rem 0.875rem 3rem;
+                font-size: 0.95rem;
             }
 
             .vehicle-info {
-                padding: 1.5rem;
+                padding: 1.25rem;
             }
 
             .vehicle-title {
-                font-size: 1.25rem;
-            }
-
-            .vehicle-year {
-                font-size: 0.9rem;
-            }
-
-            .vehicle-pricing {
-                padding: 1.25rem;
-                margin-bottom: 1.25rem;
-            }
-
-            .main-price {
-                font-size: 1.75rem;
-            }
-
-            .vehicle-specs-mini {
-                margin-bottom: 1.25rem;
-            }
-
-            .spec-mini {
-                font-size: 0.8rem;
-            }
-
-            .vehicle-location {
-                margin-bottom: 1.25rem;
-                font-size: 0.9rem;
-            }
-
-            .vehicle-actions {
-                gap: 0.75rem;
-            }
-
-            .btn-primary, .btn-secondary, .btn-proposal, .btn-laudo {
-                padding: 0.75rem 1rem;
-                font-size: 0.875rem;
-            }
-
-            .modal-header {
-                padding: 1.5rem;
-            }
-
-            .modal-title {
-                font-size: 1.5rem;
-            }
-
-            .modal-close {
-                width: 40px;
-                height: 40px;
-            }
-
-            .modal-body {
-                padding: 1.5rem;
-            }
-
-            .form-group {
-                margin-bottom: 1.25rem;
-            }
-
-            .form-label {
-                font-size: 0.9rem;
-            }
-
-            .form-input {
-                padding: 0.75rem 1rem;
-                font-size: 1rem;
-            }
-
-            .btn-submit {
-                padding: 1rem 1.5rem;
-                font-size: 1rem;
-            }
-
-            .info-box {
-                padding: 1rem;
-                font-size: 0.875rem;
-                margin: 1.25rem 0;
-            }
-
-            #toastContainer {
-                top: 1.25rem;
-                right: 1.25rem;
-            }
-
-            .toast {
-                padding: 1rem 1.5rem;
-                margin-bottom: 0.75rem;
-                min-width: 300px;
-                font-size: 0.95rem;
+                font-size: 1.125rem;
             }
         }
 
         /* Large Desktop */
         @media (min-width: 1024px) {
             .vehicles-grid {
-                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));}
+                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            }
         }
     </style>
 </head>
@@ -1111,34 +960,34 @@
 
         <div id="catalogContent" class="hidden">
             <div class="filters-section">
-    <div class="search-bar">
-        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-        </svg>
-        <input type="text" class="search-input" id="searchInput" placeholder="Buscar por marca, modelo, cor...">
-    </div>
-    
-    <div class="filters-row">
-        <div class="filter-group">
-            <select class="filter-select" id="categoryFilter">
-                <option value="all">Todas as Categorias</option>
-                <option value="Carro">Carros</option>
-                <option value="Caminhão">Caminhões</option>
-                <option value="Moto">Motos</option>
-            </select>
-        </div>
-        
-        <div class="filter-group">
-            <select class="filter-select" id="eventFilter">
-                <option value="all">Todos os Eventos</option>
-            </select>
-        </div>
-    </div>
-</div>
+                <div class="search-bar">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar por marca, modelo...">
+                </div>
+                
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <select class="filter-select" id="categoryFilter">
+                            <option value="all">Todas as Categorias</option>
+                            <option value="Carro">Carros</option>
+                            <option value="Caminhão">Caminhões</option>
+                            <option value="Moto">Motos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <select class="filter-select" id="eventFilter">
+                            <option value="all">Todos os Eventos</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
             <div class="results-summary">
-                Mostrando <strong id="visibleCount">0</strong> veículos
+                Mostrando <strong id="visibleCount">0</strong> de <strong id="totalCount">0</strong> veículos
             </div>
 
             <div class="vehicles-grid" id="vehiclesGrid"></div>
@@ -1154,34 +1003,30 @@
 
         const API_BASE = 'https://autogiro.onrender.com/api'
 
-       async function loadVehicles() {
-    try {
-        console.log('Carregando veículos...')
-        const response = await fetch(`${API_BASE}/vehicles`, { credentials: 'include' })
-        const data = await response.json()
-        
-        if (data.success) {
-            APP_STATE.vehicles = data.vehicles
-            
-            // DEBUG - ADICIONE ISSO
-            console.log('Primeiro veículo:', APP_STATE.vehicles[0])
-            console.log('Event date exemplo:', APP_STATE.vehicles[0]?.event_date)
-            console.log('Category exemplo:', APP_STATE.vehicles[0]?.category)
-            
-            populateEventFilter()
-            renderVehicles()
-            updateStats()
-        } else {
-            showToast('Erro ao carregar veículos', 'error')
+        async function loadVehicles() {
+            try {
+                console.log('Carregando veículos...')
+                const response = await fetch(`${API_BASE}/vehicles`, { credentials: 'include' })
+                const data = await response.json()
+                
+                if (data.success) {
+                    APP_STATE.vehicles = data.vehicles
+                    console.log('Veículos carregados:', APP_STATE.vehicles.length)
+                    populateEventFilter()
+                    renderVehicles()
+                    updateStats()
+                } else {
+                    showToast('Erro ao carregar veículos', 'error')
+                }
+            } catch (error) {
+                console.error('Erro ao carregar veículos:', error)
+                showToast('Erro ao conectar com o servidor', 'error')
+            } finally {
+                document.getElementById('loading').classList.add('hidden')
+                document.getElementById('catalogContent').classList.remove('hidden')
+            }
         }
-    } catch (error) {
-        console.error('Erro ao carregar veículos:', error)
-        showToast('Erro ao conectar com o servidor', 'error')
-    } finally {
-        document.getElementById('loading').classList.add('hidden')
-        document.getElementById('catalogContent').classList.remove('hidden')
-    }
-}
+
         async function checkAuth() {
             try {
                 console.log('Verificando autenticação...')
@@ -1225,100 +1070,103 @@
             }
         }
 
-function renderVehicles() {
-    const grid = document.getElementById('vehiclesGrid')
-    grid.innerHTML = ''
-    
-    const categoryFilter = document.getElementById('categoryFilter').value
-    const eventFilter = document.getElementById('eventFilter').value
-    
-    let filteredVehicles = APP_STATE.vehicles.filter(vehicle => {
-        const matchCategory = categoryFilter === 'all' || vehicle.category === categoryFilter
-        const vehicleEventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : null
-        const matchEvent = eventFilter === 'all' || vehicleEventDate === eventFilter
-        return matchCategory && matchEvent
-    })
-    
-    const groupedByEvent = {}
-    filteredVehicles.forEach(vehicle => {
-        const eventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : 'sem-data'
-        if (!groupedByEvent[eventDate]) {
-            groupedByEvent[eventDate] = []
+        function renderVehicles() {
+            const grid = document.getElementById('vehiclesGrid')
+            grid.innerHTML = ''
+            
+            const categoryFilter = document.getElementById('categoryFilter').value
+            const eventFilter = document.getElementById('eventFilter').value
+            
+            let filteredVehicles = APP_STATE.vehicles.filter(vehicle => {
+                const matchCategory = categoryFilter === 'all' || vehicle.category === categoryFilter
+                const vehicleEventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : null
+                const matchEvent = eventFilter === 'all' || vehicleEventDate === eventFilter
+                return matchCategory && matchEvent
+            })
+            
+            const groupedByEvent = {}
+            filteredVehicles.forEach(vehicle => {
+                const eventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : 'sem-data'
+                if (!groupedByEvent[eventDate]) {
+                    groupedByEvent[eventDate] = []
+                }
+                groupedByEvent[eventDate].push(vehicle)
+            })
+            
+            const sortedDates = Object.keys(groupedByEvent).sort((a, b) => {
+                if (a === 'sem-data') return 1
+                if (b === 'sem-data') return -1
+                return new Date(b) - new Date(a)
+            })
+            
+            sortedDates.forEach(eventDate => {
+                const vehicles = groupedByEvent[eventDate]
+                
+                const eventGroup = document.createElement('div')
+                eventGroup.className = 'event-group'
+                
+                let formattedDate
+                if (eventDate === 'sem-data') {
+                    formattedDate = 'Sem data definida'
+                } else {
+                    const date = new Date(eventDate + 'T12:00:00')
+                    formattedDate = date.toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    })
+                }
+                
+                eventGroup.innerHTML = `
+                    <div class="event-header">
+                        <h2 class="event-title">Evento: ${formattedDate}</h2>
+                        <span class="event-count">${vehicles.length}</span>
+                    </div>
+                    <div class="vehicles-grid" id="grid-${eventDate.replace(/[^a-zA-Z0-9]/g, '-')}"></div>
+                `
+                
+                grid.appendChild(eventGroup)
+                
+                const groupGrid = eventGroup.querySelector('.vehicles-grid')
+                vehicles.forEach((vehicle) => {
+                    const globalIndex = APP_STATE.vehicles.indexOf(vehicle)
+                    const card = createVehicleCard(vehicle, globalIndex)
+                    groupGrid.appendChild(card)
+                })
+            })
+            
+            updateVisibleCount(filteredVehicles.length)
         }
-        groupedByEvent[eventDate].push(vehicle)
-    })
-    
-    const sortedDates = Object.keys(groupedByEvent).sort((a, b) => {
-        if (a === 'sem-data') return 1
-        if (b === 'sem-data') return -1
-        return new Date(b) - new Date(a)
-    })
-    
-    sortedDates.forEach(eventDate => {
-        const vehicles = groupedByEvent[eventDate]
-        
-        const eventGroup = document.createElement('div')
-        eventGroup.className = 'event-group'
-        
-        let formattedDate
-        if (eventDate === 'sem-data') {
-            formattedDate = 'Sem data definida'
-        } else {
-            const date = new Date(eventDate + 'T12:00:00')
-            formattedDate = date.toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
+
+        function populateEventFilter() {
+            const eventFilter = document.getElementById('eventFilter')
+            const events = [...new Set(
+                APP_STATE.vehicles
+                    .map(v => v.event_date ? v.event_date.split('T')[0] : null)
+                    .filter(Boolean)
+            )]
+            events.sort((a, b) => new Date(b) - new Date(a))
+            
+            events.forEach(eventDate => {
+                const option = document.createElement('option')
+                option.value = eventDate
+                
+                const date = new Date(eventDate + 'T12:00:00')
+                option.textContent = date.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                })
+                
+                eventFilter.appendChild(option)
             })
         }
-        
-        eventGroup.innerHTML = `
-            <div class="event-header">
-                <h2 class="event-title">Evento: ${formattedDate}</h2>
-                <span class="event-count">${vehicles.length} veículo${vehicles.length > 1 ? 's' : ''}</span>
-            </div>
-            <div class="vehicles-grid" id="grid-${eventDate.replace(/[^a-zA-Z0-9]/g, '-')}"></div>
-        `
-        
-        grid.appendChild(eventGroup)
-        
-        const groupGrid = eventGroup.querySelector('.vehicles-grid')
-        vehicles.forEach((vehicle) => {
-            const globalIndex = APP_STATE.vehicles.indexOf(vehicle)
-            const card = createVehicleCard(vehicle, globalIndex)
-            groupGrid.appendChild(card)
-        })
-    })
-    
-    updateVisibleCount(filteredVehicles.length)
-}
 
-function populateEventFilter() {
-    const eventFilter = document.getElementById('eventFilter')
-    const events = [...new Set(
-        APP_STATE.vehicles
-            .map(v => v.event_date ? v.event_date.split('T')[0] : null)
-            .filter(Boolean)
-    )]
-    events.sort((a, b) => new Date(b) - new Date(a))
-    
-    events.forEach(eventDate => {
-        const option = document.createElement('option')
-        option.value = eventDate
-        
-        const date = new Date(eventDate + 'T12:00:00')
-        option.textContent = date.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        })
-        
-        eventFilter.appendChild(option)
-    })
-}
-function updateVisibleCount(count) {
-    document.getElementById('visibleCount').textContent = count
-}
+        function updateVisibleCount(count) {
+            document.getElementById('visibleCount').textContent = count
+            document.getElementById('totalCount').textContent = APP_STATE.vehicles.length
+        }
+
         function createVehicleCard(vehicle, index) {
             const div = document.createElement('div')
             div.className = 'vehicle-card'
@@ -1347,7 +1195,7 @@ function updateVisibleCount(count) {
                                          onclick="openGallery(${index}, ${idx + 1})">
                                 `).join('')}
                                 ${images.length > 4 ? `
-                                    <div class="more-photos" onclick="openGallery(${index})">+${images.length - 4} fotos</div>
+                                    <div class="more-photos" onclick="openGallery(${index})">+${images.length - 4}</div>
                                 ` : ''}
                             </div>
                         ` : ''}
@@ -1370,7 +1218,7 @@ function updateVisibleCount(count) {
                             <div class="vehicle-year">${vehicle.year}</div>
                         </div>
                         <div class="vehicle-badges">
-                            <span class="category-badge">${vehicle.laudo_status || 'N/A'}</span>
+                            <span class="category-badge">${vehicle.category || 'N/A'}</span>
                         </div>
                     </div>
 
@@ -1412,45 +1260,45 @@ function updateVisibleCount(count) {
 
         function updateStats() {
             document.getElementById('totalVehicles').textContent = APP_STATE.vehicles.length
-            document.getElementById('visibleCount').textContent = APP_STATE.vehicles.length
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput')
-    const categoryFilter = document.getElementById('categoryFilter')
-    const eventFilter = document.getElementById('eventFilter')
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase()
-            const allCards = document.querySelectorAll('.vehicle-card')
-            let count = 0
+            const searchInput = document.getElementById('searchInput')
+            const categoryFilter = document.getElementById('categoryFilter')
+            const eventFilter = document.getElementById('eventFilter')
             
-            allCards.forEach((card) => {
-                const index = parseInt(card.getAttribute('data-index'))
-                const vehicle = APP_STATE.vehicles[index]
-                const text = `${vehicle.brand} ${vehicle.model} ${vehicle.description || ''} ${vehicle.color || ''}`.toLowerCase()
-                
-                if (text.includes(query)) {
-                    card.style.display = ''
-                    count++
-                } else {
-                    card.style.display = 'none'
-                }
-            })
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase()
+                    const allCards = document.querySelectorAll('.vehicle-card')
+                    let count = 0
+                    
+                    allCards.forEach((card) => {
+                        const index = parseInt(card.getAttribute('data-index'))
+                        const vehicle = APP_STATE.vehicles[index]
+                        const text = `${vehicle.brand} ${vehicle.model} ${vehicle.description || ''} ${vehicle.color || ''}`.toLowerCase()
+                        
+                        if (text.includes(query)) {
+                            card.style.display = ''
+                            count++
+                        } else {
+                            card.style.display = 'none'
+                        }
+                    })
+                    
+                    document.getElementById('visibleCount').textContent = count
+                })
+            }
             
-            updateVisibleCount(count)
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', renderVehicles)
+            }
+            
+            if (eventFilter) {
+                eventFilter.addEventListener('change', renderVehicles)
+            }
         })
-    }
-    
-    if (categoryFilter) {
-        categoryFilter.addEventListener('change', renderVehicles)
-    }
-    
-    if (eventFilter) {
-        eventFilter.addEventListener('change', renderVehicles)
-    }
-})
+
         async function handleProposal(index) {
             const vehicle = APP_STATE.vehicles[index]
             
@@ -1572,7 +1420,7 @@ function updateVisibleCount(count) {
             const vehicle = APP_STATE.vehicles[index]
             
             createModal(`${vehicle.brand} ${vehicle.model}`, `
-                <div style="background: rgba(15, 23, 42, 0.5); padding: 1.5rem; border-radius: 10px;">
+                <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 10px;">
                     <h4 style="margin-bottom: 1rem; color: var(--primary);">Informações do Veículo</h4>
                     
                     <p><strong>Marca/Modelo:</strong> ${vehicle.brand} ${vehicle.model}</p>
@@ -1585,7 +1433,7 @@ function updateVisibleCount(count) {
                     <p><strong>Localização:</strong> ${vehicle.location || 'N/A'}</p>
                     
                     ${vehicle.description ? `
-                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(148, 163, 184, 0.1);">
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                             <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Descrição</h4>
                             <p style="color: var(--text-secondary);">${vehicle.description}</p>
                         </div>
@@ -1700,29 +1548,6 @@ function updateVisibleCount(count) {
                 setTimeout(() => toast.remove(), 300)
             }, 3000)
         }
-
-        // Controle de scroll do header
-        let lastScrollTop = 0;
-        const header = document.querySelector('.header');
-        const scrollThreshold = 100;
-
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            if (scrollTop > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-            
-            if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-                header.classList.add('hidden');
-            } else {
-                header.classList.remove('hidden');
-            }
-            
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        }, false);
 
         window.addEventListener('DOMContentLoaded', () => {
             console.log('Iniciando aplicação...')
