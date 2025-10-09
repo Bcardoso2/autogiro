@@ -1223,7 +1223,15 @@
                     </div>
 
                     <div class="vehicle-pricing">
+                        <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                            Proposta Inicial
+                        </div>
                         <div class="main-price">R$ ${formatPrice(vehicle.price)}</div>
+                        ${vehicle.fipe_price ? `
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+                                Tabela FIPE: R$ ${formatPrice(vehicle.fipe_price)}
+                            </div>
+                        ` : ''}
                     </div>
 
                     <div class="vehicle-specs-mini">
