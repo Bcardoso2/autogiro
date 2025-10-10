@@ -633,6 +633,12 @@
                             <span class="info-label">Valor Proposto</span>
                             <span class="info-value price">R$ ${formatPrice(proposal.proposal_amount)}</span>
                         </div>
+                        ${proposal.final_amount ? `
+                            <div class="info-item">
+                                <span class="info-label">🏆 Valor Arrematado</span>
+                                <span class="info-value price" style="color: var(--success); font-size: 1.75rem;">R$ ${formatPrice(proposal.final_amount)}</span>
+                            </div>
+                        ` : ''}
                         <div class="info-item">
                             <span class="info-label">Data da Proposta</span>
                             <span class="info-value">${createdDate}</span>
