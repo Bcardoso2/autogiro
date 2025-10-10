@@ -17,6 +17,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #06b6d4;
             --bg-dark: #0f172a;
             --bg-card: #1e293b;
             --bg-elevated: #334155;
@@ -345,6 +346,7 @@
         .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
         .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
         .badge-primary { background: rgba(59, 130, 246, 0.2); color: var(--primary); }
+        .badge-info { background: rgba(6, 182, 212, 0.2); color: var(--info); }
 
         /* Buttons */
         .btn {
@@ -373,6 +375,11 @@
 
         .btn-danger {
             background: var(--danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
             color: white;
         }
 
@@ -569,6 +576,7 @@
                             <button class="filter-btn" onclick="filterProposals('pending')">Pendentes</button>
                             <button class="filter-btn" onclick="filterProposals('accepted')">Aceitas</button>
                             <button class="filter-btn" onclick="filterProposals('rejected')">Rejeitadas</button>
+                            <button class="filter-btn" onclick="filterProposals('outbid')">Superadas</button>
                         </div>
                     </div>
                     <table>
@@ -731,7 +739,7 @@
             }
         }
 
-      // Navegação
+        // Navegação
         function showPage(page) {
             document.querySelectorAll('.main-content > div').forEach(div => div.classList.add('hidden'))
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'))
@@ -829,6 +837,9 @@
                         ${p.status === 'pending' ? `
                             <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'accepted')">Aceitar</button>
                             <button class="btn btn-danger btn-sm" onclick="updateProposalStatus('${p.id}', 'rejected')">Rejeitar</button>
+                        ` : p.status === 'accepted' ? `
+                            <button class="btn btn-warning btn-sm" onclick="updateProposalStatus('${p.id}', 'outbid')">Marcar como Superada</button>
+                            <button class="btn btn-primary btn-sm" onclick="viewProposalDetails('${p.id}')">Detalhes</button>
                         ` : `
                             <button class="btn btn-primary btn-sm" onclick="viewProposalDetails('${p.id}')">Detalhes</button>
                         `}
@@ -848,7 +859,8 @@
             const colors = {
                 pending: 'warning',
                 accepted: 'success',
-                rejected: 'danger'
+                rejected: 'danger',
+                outbid: 'info'
             }
             return colors[status] || 'primary'
         }
@@ -857,31 +869,46 @@
             const texts = {
                 pending: 'Pendente',
                 accepted: 'Aceita',
-                rejected: 'Rejeitada'
+                rejected: 'Rejeitada',
+                outbid: 'Superada'
             }
             return texts[status] || status
         }
 
         async function updateProposalStatus(proposalId, status) {
-            const notes = prompt(status === 'accepted' ? 'Observações (opcional):' : 'Motivo da rejeição:')
+            let confirmMsg = ''
             
-            if (status === 'rejected' && !notes) {
-                showToast('Informe o motivo da rejeição', 'error')
-                return
+            if (status === 'accepted') {
+                confirmMsg = 'Tem certeza que deseja aceitar esta proposta?'
+            } else if (status === 'rejected') {
+                confirmMsg = 'Tem certeza que deseja rejeitar esta proposta? O crédito será reembolsado.'
+            } else if (status === 'outbid') {
+                confirmMsg = 'Tem certeza que esta proposta foi superada? O crédito será reembolsado.'
             }
             
+            if (!confirm(confirmMsg)) return
+            
             try {
-                const response = await fetch(`${API_BASE}/admin/proposals/${proposalId}/status`, {
-                    method: 'PUT',
+                const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
+                    method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ status, notes })
+                    body: JSON.stringify({ status })
                 })
                 
                 const data = await response.json()
                 
                 if (data.success) {
-                    showToast(`Proposta ${status === 'accepted' ? 'aceita' : 'rejeitada'} com sucesso!`, 'success')
+                    let message = ''
+                    if (status === 'accepted') {
+                        message = 'Proposta aceita com sucesso!'
+                    } else if (data.refunded) {
+                        message = `Proposta ${status === 'rejected' ? 'rejeitada' : 'marcada como superada'}. ${data.refund_amount} crédito(s) reembolsado(s).`
+                    } else {
+                        message = 'Status atualizado com sucesso!'
+                    }
+                    
+                    showToast(message, 'success')
                     loadProposals(currentFilter === 'all' ? null : currentFilter)
                 } else {
                     showToast(data.error || 'Erro ao atualizar proposta', 'error')
@@ -1032,7 +1059,7 @@
                 purchase: 'success',
                 proposal_debit: 'warning',
                 admin_adjustment: 'primary',
-                refund: 'danger'
+                refund: 'info'
             }
             return colors[type] || 'primary'
         }
