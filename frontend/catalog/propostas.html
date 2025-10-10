@@ -662,6 +662,17 @@
                     </div>
 
                     ${timeline}
+
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(148, 163, 184, 0.1);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <button class="btn btn-primary" style="padding: 0.75rem 1rem; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onclick="viewVehicleDetails('${proposal.vehicle_external_id}')">
+                                Ver Detalhes do Veículo
+                            </button>
+                            <button class="btn btn-secondary" style="padding: 0.75rem 1rem; background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onclick="viewVehiclePhotos('${proposal.vehicle_external_id}')">
+                                Ver Fotos
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -784,6 +795,155 @@
             toast.style.transform = 'translateX(400px)';
             setTimeout(() => toast.remove(), 300);
         }, 3000);
+    }
+
+    // Funções para ver detalhes e fotos do veículo
+    async function viewVehicleDetails(vehicleExternalId) {
+        try {
+            const response = await fetch(`${API_BASE}/vehicles`, { credentials: 'include' });
+            const data = await response.json();
+            
+            if (data.success) {
+                const vehicle = data.vehicles.find(v => v.external_id === vehicleExternalId);
+                
+                if (!vehicle) {
+                    showToast('Veículo não encontrado', 'error');
+                    return;
+                }
+                
+                openVehicleDetailsModal(vehicle);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar veículo:', error);
+            showToast('Erro ao carregar detalhes do veículo', 'error');
+        }
+    }
+
+    async function viewVehiclePhotos(vehicleExternalId) {
+        try {
+            const response = await fetch(`${API_BASE}/vehicles`, { credentials: 'include' });
+            const data = await response.json();
+            
+            if (data.success) {
+                const vehicle = data.vehicles.find(v => v.external_id === vehicleExternalId);
+                
+                if (!vehicle) {
+                    showToast('Veículo não encontrado', 'error');
+                    return;
+                }
+                
+                openVehicleGallery(vehicle);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar veículo:', error);
+            showToast('Erro ao carregar fotos do veículo', 'error');
+        }
+    }
+
+    function openVehicleDetailsModal(vehicle) {
+        createModal(`${vehicle.brand} ${vehicle.model}`, `
+            <div style="background: rgba(15, 23, 42, 0.05); padding: 1.5rem; border-radius: 12px;">
+                <h4 style="margin-bottom: 1rem; color: var(--primary); font-weight: 700;">Informações do Veículo</h4>
+                
+                <p style="margin-bottom: 0.75rem;"><strong>Marca/Modelo:</strong> ${vehicle.brand} ${vehicle.model}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Ano:</strong> ${vehicle.year}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Quilometragem:</strong> ${parseInt(vehicle.mileage || 0).toLocaleString('pt-BR')} km</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Combustível:</strong> ${vehicle.fuel_type || 'N/A'}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Transmissão:</strong> ${vehicle.transmission || 'Manual'}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Cor:</strong> ${vehicle.color || 'N/A'}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Preço:</strong> R$ ${parseFloat(vehicle.price || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                <p style="margin-bottom: 0.75rem;"><strong>Localização:</strong> ${vehicle.location || 'N/A'}</p>
+                
+                ${vehicle.description ? `
+                    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid rgba(148, 163, 184, 0.1);">
+                        <h4 style="margin-bottom: 0.75rem; color: var(--primary); font-weight: 700;">Descrição</h4>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">${vehicle.description}</p>
+                    </div>
+                ` : ''}
+
+                ${vehicle.laudo_file_url ? `
+                    <div style="margin-top: 1.5rem;">
+                        <button onclick="window.open('${vehicle.laudo_file_url}', '_blank')" 
+                                style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.95rem;">
+                            📄 Ver Laudo Completo
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        `);
+    }
+
+    function openVehicleGallery(vehicle) {
+        const images = vehicle.images || [];
+        
+        if (images.length === 0) {
+            showToast('Nenhuma imagem disponível', 'error');
+            return;
+        }
+        
+        let currentImage = 0;
+        
+        createModal(`${vehicle.brand} ${vehicle.model} - Galeria`, `
+            <div id="galleryContent" style="text-align: center;">
+                <img id="galleryImage" src="${images[currentImage].url}" 
+                      style="max-width: 100%; max-height: 60vh; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <p style="margin-top: 1rem; color: var(--text-secondary); font-weight: 600;">
+                    Foto ${currentImage + 1} de ${images.length}
+                </p>
+                ${images.length > 1 ? `
+                    <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1rem;">
+                        <button onclick="changeGalleryImage(-1)" 
+                                style="padding: 0.75rem 1.5rem; background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 10px; font-weight: 600; cursor: pointer;">
+                            ← Anterior
+                        </button>
+                        <button onclick="changeGalleryImage(1)" 
+                                style="padding: 0.75rem 1.5rem; background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 10px; font-weight: 600; cursor: pointer;">
+                            Próxima →
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        `);
+        
+        window.changeGalleryImage = (direction) => {
+            currentImage += direction;
+            if (currentImage < 0) currentImage = images.length - 1;
+            if (currentImage >= images.length) currentImage = 0;
+            
+            document.getElementById('galleryImage').src = images[currentImage].url;
+            document.querySelector('#galleryContent p').textContent = `Foto ${currentImage + 1} de ${images.length}`;
+        };
+    }
+
+    function createModal(title, content) {
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">${title}</h2>
+                    <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                </div>
+                <div class="modal-body">
+                    ${content}
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(overlay);
+        setTimeout(() => overlay.classList.add('active'), 10);
+        
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeModal(overlay.querySelector('.modal-close'));
+        });
+        
+        return overlay;
+    }
+
+    function closeModal(closeBtn) {
+        const overlay = closeBtn.closest('.modal-overlay');
+        overlay.classList.remove('active');
+        setTimeout(() => overlay.remove(), 300);
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
