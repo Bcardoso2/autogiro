@@ -926,7 +926,7 @@
                 accepted: 'Tem certeza que deseja aceitar esta proposta?',
                 rejected: 'Tem certeza que deseja rejeitar esta proposta? O crédito será reembolsado.',
                 outbid: 'Tem certeza que esta proposta foi superada? O crédito será reembolsado.',
-                won: 'Confirmar que esta proposta foi ARREMATADA?',
+                won: null, // Será tratado especialmente
                 awaiting_bank: 'Enviar para análise do banco?',
                 bank_approved: 'Confirmar que o banco APROVOU?',
                 bank_rejected: 'Confirmar que o banco RECUSOU? O crédito será reembolsado.',
@@ -934,16 +934,38 @@
                 completed: 'Confirmar que o veículo foi RETIRADO e o processo está CONCLUÍDO?'
             }
             
-            const confirmMsg = confirmMessages[status] || 'Tem certeza que deseja alterar o status?'
+            let final_amount = null
             
-            if (!confirm(confirmMsg)) return
+            // Se está marcando como arrematado, pedir o valor final
+            if (status === 'won') {
+                final_amount = prompt('Qual foi o valor FINAL de arrematação? (apenas números, ex: 50000)')
+                
+                if (!final_amount || isNaN(final_amount) || parseFloat(final_amount) <= 0) {
+                    showToast('Valor inválido. Operação cancelada.', 'error')
+                    return
+                }
+                
+                final_amount = parseFloat(final_amount)
+                
+                if (!confirm(`Confirmar arrematação por R$ ${final_amount.toLocaleString('pt-BR', {minimumFractionDigits: 2})}?`)) {
+                    return
+                }
+            } else {
+                const confirmMsg = confirmMessages[status] || 'Tem certeza que deseja alterar o status?'
+                if (!confirm(confirmMsg)) return
+            }
             
             try {
+                const body = { status }
+                if (final_amount) {
+                    body.final_amount = final_amount
+                }
+                
                 const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
-                    body: JSON.stringify({ status })
+                    body: JSON.stringify(body)
                 })
                 
                 const data = await response.json()
