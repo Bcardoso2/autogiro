@@ -835,19 +835,51 @@
                     <td><strong>R$ ${parseFloat(p.proposal_amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
                     <td><span class="badge badge-${getStatusColor(p.status)}">${getStatusText(p.status)}</span></td>
                     <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
-                    <td>
-                        ${p.status === 'pending' ? `
-                            <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'accepted')">Aceitar</button>
-                            <button class="btn btn-danger btn-sm" onclick="updateProposalStatus('${p.id}', 'rejected')">Rejeitar</button>
-                        ` : p.status === 'accepted' ? `
-                            <button class="btn btn-warning btn-sm" onclick="updateProposalStatus('${p.id}', 'outbid')">Marcar como Superada</button>
-                            <button class="btn btn-primary btn-sm" onclick="viewProposalDetails('${p.id}')">Detalhes</button>
-                        ` : `
-                            <button class="btn btn-primary btn-sm" onclick="viewProposalDetails('${p.id}')">Detalhes</button>
-                        `}
+                    <td style="white-space: nowrap;">
+                        ${getActionButtons(p)}
                     </td>
                 </tr>
             `).join('')
+        }
+
+        function getActionButtons(p) {
+            const buttons = {
+                pending: `
+                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'accepted')">Aceitar</button>
+                    <button class="btn btn-danger btn-sm" onclick="updateProposalStatus('${p.id}', 'rejected')">Rejeitar</button>
+                `,
+                accepted: `
+                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'won')">Arrematado</button>
+                    <button class="btn btn-warning btn-sm" onclick="updateProposalStatus('${p.id}', 'outbid')">Superada</button>
+                `,
+                won: `
+                    <button class="btn btn-primary btn-sm" onclick="updateProposalStatus('${p.id}', 'awaiting_bank')">Enviar p/ Banco</button>
+                `,
+                awaiting_bank: `
+                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'bank_approved')">Banco Aprovou</button>
+                    <button class="btn btn-danger btn-sm" onclick="updateProposalStatus('${p.id}', 'bank_rejected')">Banco Recusou</button>
+                `,
+                bank_approved: `
+                    <button class="btn btn-primary btn-sm" onclick="updateProposalStatus('${p.id}', 'in_withdrawal')">Em Retirada</button>
+                `,
+                in_withdrawal: `
+                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'completed')">Concluído</button>
+                `,
+                completed: `
+                    <span class="badge badge-success">✓ Finalizado</span>
+                `,
+                rejected: `
+                    <span class="badge badge-danger">✗ Rejeitada</span>
+                `,
+                outbid: `
+                    <span class="badge badge-info">Superada</span>
+                `,
+                bank_rejected: `
+                    <span class="badge badge-danger">✗ Banco Recusou</span>
+                `
+            }
+            
+            return buttons[p.status] || `<span class="badge badge-primary">${p.status}</span>`
         }
 
         function filterProposals(status) {
@@ -862,7 +894,13 @@
                 pending: 'warning',
                 accepted: 'success',
                 rejected: 'danger',
-                outbid: 'info'
+                outbid: 'info',
+                won: 'success',
+                awaiting_bank: 'warning',
+                bank_approved: 'success',
+                bank_rejected: 'danger',
+                in_withdrawal: 'primary',
+                completed: 'success'
             }
             return colors[status] || 'primary'
         }
@@ -872,21 +910,31 @@
                 pending: 'Pendente',
                 accepted: 'Aceita',
                 rejected: 'Rejeitada',
-                outbid: 'Superada'
+                outbid: 'Superada',
+                won: 'Arrematada',
+                awaiting_bank: 'Aguard. Banco',
+                bank_approved: 'Banco Aprovou',
+                bank_rejected: 'Banco Recusou',
+                in_withdrawal: 'Em Retirada',
+                completed: 'Concluída'
             }
             return texts[status] || status
         }
 
         async function updateProposalStatus(proposalId, status) {
-            let confirmMsg = ''
-            
-            if (status === 'accepted') {
-                confirmMsg = 'Tem certeza que deseja aceitar esta proposta?'
-            } else if (status === 'rejected') {
-                confirmMsg = 'Tem certeza que deseja rejeitar esta proposta? O crédito será reembolsado.'
-            } else if (status === 'outbid') {
-                confirmMsg = 'Tem certeza que esta proposta foi superada? O crédito será reembolsado.'
+            const confirmMessages = {
+                accepted: 'Tem certeza que deseja aceitar esta proposta?',
+                rejected: 'Tem certeza que deseja rejeitar esta proposta? O crédito será reembolsado.',
+                outbid: 'Tem certeza que esta proposta foi superada? O crédito será reembolsado.',
+                won: 'Confirmar que esta proposta foi ARREMATADA?',
+                awaiting_bank: 'Enviar para análise do banco?',
+                bank_approved: 'Confirmar que o banco APROVOU?',
+                bank_rejected: 'Confirmar que o banco RECUSOU? O crédito será reembolsado.',
+                in_withdrawal: 'Marcar como em processo de RETIRADA?',
+                completed: 'Confirmar que o veículo foi RETIRADO e o processo está CONCLUÍDO?'
             }
+            
+            const confirmMsg = confirmMessages[status] || 'Tem certeza que deseja alterar o status?'
             
             if (!confirm(confirmMsg)) return
             
@@ -901,13 +949,10 @@
                 const data = await response.json()
                 
                 if (data.success) {
-                    let message = ''
-                    if (status === 'accepted') {
-                        message = 'Proposta aceita com sucesso!'
-                    } else if (data.refunded) {
-                        message = `Proposta ${status === 'rejected' ? 'rejeitada' : 'marcada como superada'}. ${data.refund_amount} crédito(s) reembolsado(s).`
-                    } else {
-                        message = 'Status atualizado com sucesso!'
+                    let message = 'Status atualizado com sucesso!'
+                    
+                    if (data.refunded) {
+                        message = `Status atualizado! ${data.refund_amount} crédito(s) reembolsado(s).`
                     }
                     
                     showToast(message, 'success')
