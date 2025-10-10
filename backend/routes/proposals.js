@@ -119,7 +119,7 @@ router.get('/my', requireAuth, async (req, res) => {
     const result = await client.query(`
       SELECT 
         p.id, p.vehicle_external_id, p.proposal_amount, p.status,
-        p.created_at,
+        p.created_at, p.updated_at,
         v.brand, v.model, v.year, 
         p.vehicle_info 
       FROM proposals p
@@ -161,8 +161,20 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     const { id } = req.params
     const { status } = req.body
     
-    // Status permitidos
-    const allowedStatuses = ['pending', 'accepted', 'rejected', 'outbid']
+    // Status permitidos e suas transições
+    const allowedStatuses = [
+      'pending',          // Proposta enviada
+      'accepted',         // Proposta aceita
+      'rejected',         // Proposta rejeitada
+      'outbid',          // Proposta superada
+      'won',             // Arrematado (ganhou o leilão)
+      'awaiting_bank',   // Aguardando aprovação do banco
+      'bank_approved',   // Banco aprovou
+      'bank_rejected',   // Banco recusou
+      'in_withdrawal',   // Em processo de retirada
+      'completed'        // Concluído (veículo retirado)
+    ]
+    
     if (!allowedStatuses.includes(status)) {
       return res.status(400).json({ 
         success: false, 
@@ -174,7 +186,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     
     // Buscar proposta atual
     const proposalResult = await client.query(
-      'SELECT id, user_id, status, credits_used FROM proposals WHERE id = $1',
+      'SELECT id, user_id, status, credits_used, vehicle_id FROM proposals WHERE id = $1',
       [id]
     )
     
@@ -201,9 +213,15 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
       return res.status(403).json({ success: false, error: 'Sem permissão' })
     }
     
-    // Reembolsa se mudou para rejected (não foi aceita) ou outbid (foi superada)
-    const shouldRefund = (status === 'rejected' || status === 'outbid') && 
-                        (oldStatus === 'pending' || oldStatus === 'accepted')
+    // Regras de reembolso
+    // Reembolsa se: rejected, outbid, ou bank_rejected
+    const shouldRefund = (
+      (status === 'rejected' || status === 'outbid') && 
+      (oldStatus === 'pending' || oldStatus === 'accepted')
+    ) || (
+      status === 'bank_rejected' && 
+      (oldStatus === 'won' || oldStatus === 'awaiting_bank')
+    )
     
     if (shouldRefund) {
       // Buscar saldo atual
@@ -222,6 +240,11 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
       )
       
       // Registrar transação de reembolso
+      let refundReason = ''
+      if (status === 'rejected') refundReason = 'rejeitada'
+      else if (status === 'outbid') refundReason = 'superada'
+      else if (status === 'bank_rejected') refundReason = 'banco recusou'
+      
       await client.query(`
         INSERT INTO credit_transactions (
           user_id, type, amount, balance_before, balance_after,
@@ -233,8 +256,16 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
         currentCredits,
         currentCredits + refundAmount,
         id,
-        `Reembolso - Proposta ${status === 'rejected' ? 'rejeitada' : 'superada'}`
+        `Reembolso - Proposta ${refundReason}`
       ])
+    }
+    
+    // Se mudou para 'won' (arrematado), marcar veículo como vendido
+    if (status === 'won' && oldStatus !== 'won') {
+      await client.query(
+        'UPDATE vehicles SET has_winning_proposal = true, is_active = false WHERE id = $1',
+        [proposal.vehicle_id]
+      )
     }
     
     // Atualizar status da proposta
@@ -248,7 +279,9 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     res.json({ 
       success: true,
       refunded: shouldRefund,
-      refund_amount: shouldRefund ? parseFloat(proposal.credits_used) : 0
+      refund_amount: shouldRefund ? parseFloat(proposal.credits_used) : 0,
+      old_status: oldStatus,
+      new_status: status
     })
     
   } catch (error) {
