@@ -1,4 +1,3 @@
-<artifact identifier="propostas-page" type="text/html" title="Minhas Propostas - Autogiro">
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -17,6 +16,7 @@
         --success: #10b981;
         --danger: #ef4444;
         --warning: #f59e0b;
+        --info: #06b6d4;
         --bg-dark: #0f172a;
         --bg-card: #1e293b;
         --bg-elevated: #334155;
@@ -278,23 +278,16 @@
         white-space: nowrap;
     }
 
-    .status-pending {
-        background: rgba(245, 158, 11, 0.1);
-        color: var(--warning);
-        border: 1px solid rgba(245, 158, 11, 0.2);
-    }
-
-    .status-accepted {
-        background: rgba(16, 185, 129, 0.1);
-        color: var(--success);
-        border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .status-rejected {
-        background: rgba(239, 68, 68, 0.1);
-        color: var(--danger);
-        border: 1px solid rgba(239, 68, 68, 0.2);
-    }
+    .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .status-accepted { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-rejected { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .status-outbid { background: rgba(6, 182, 212, 0.1); color: var(--info); border: 1px solid rgba(6, 182, 212, 0.2); }
+    .status-won { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-awaiting_bank { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .status-bank_approved { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-bank_rejected { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .status-in_withdrawal { background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .status-completed { background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
 
     .proposal-body {
         padding: 1.5rem;
@@ -304,6 +297,7 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1.5rem;
+        margin-bottom: 1.5rem;
     }
 
     .info-item {
@@ -329,6 +323,100 @@
     .info-value.price {
         font-size: 1.5rem;
         color: var(--success);
+    }
+
+    /* Progress Timeline */
+    .progress-timeline {
+        background: rgba(15, 23, 42, 0.5);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .timeline-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .timeline-steps {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .timeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        min-width: 100px;
+        position: relative;
+    }
+
+    .step-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        border: 2px solid;
+        transition: var(--transition);
+    }
+
+    .step-icon.completed {
+        background: var(--success);
+        border-color: var(--success);
+        color: white;
+    }
+
+    .step-icon.current {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    }
+
+    .step-icon.pending {
+        background: transparent;
+        border-color: var(--text-muted);
+        color: var(--text-muted);
+    }
+
+    .step-icon.failed {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: white;
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+        text-align: center;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .step-label.active {
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .step-connector {
+        flex: 1;
+        height: 2px;
+        background: var(--text-muted);
+        min-width: 20px;
+    }
+
+    .step-connector.completed {
+        background: var(--success);
     }
 
     #toastContainer {
@@ -372,6 +460,14 @@
         .page-title {
             font-size: 2rem;
         }
+
+        .timeline-steps {
+            justify-content: flex-start;
+        }
+
+        .timeline-step {
+            min-width: 80px;
+        }
     }
 </style>
 </head>
@@ -388,8 +484,9 @@
             <a href="index" class="nav-link">Catálogo</a>
             <a href="propostas" class="nav-link active">Propostas</a>
             <a href="recarga" class="nav-link">Recarregar</a>
-<a href="perfil" class="nav-link">Perfil</a>
-</nav>
+            <a href="perfil" class="nav-link">Perfil</a>
+        </nav>
+        
         <div class="user-info hidden" id="userInfo">
             <span id="userName"></span>
             <span class="user-credits" id="userCredits">0 créditos</span>
@@ -401,7 +498,7 @@
 <div class="container">
     <div class="page-header">
         <h1 class="page-title">📜 Minhas Propostas</h1>
-        <p class="page-subtitle">Acompanhe o status das suas propostas de compra</p>
+        <p class="page-subtitle">Acompanhe o status completo das suas propostas</p>
     </div>
 
     <div class="loading" id="loading">
@@ -429,7 +526,7 @@
             const data = await response.json();
             
             if (!data.success || !data.user) {
-                window.location.href = 'login.html';
+                window.location.href = 'login';
                 return false;
             }
             
@@ -438,7 +535,7 @@
             return true;
         } catch (error) {
             console.error('Erro ao verificar auth:', error);
-            window.location.href = 'login.html';
+            window.location.href = 'login';
             return false;
         }
     }
@@ -504,19 +601,22 @@
         const year = proposal.year || vehicleInfo.year || 'N/A';
         const vehicleName = `${brand} ${model}`;
         
-        const date = new Date(proposal.created_at).toLocaleDateString('pt-BR', {
+        const createdDate = new Date(proposal.created_at).toLocaleDateString('pt-BR', {
             day: '2-digit',
             month: 'long',
             year: 'numeric'
         });
+
+        const updatedDate = proposal.updated_at ? new Date(proposal.updated_at).toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }) : null;
         
-        const statusMap = {
-            'PENDING': { text: 'Pendente', class: 'status-pending' },
-            'ACCEPTED': { text: 'Aceita', class: 'status-accepted' },
-            'REJECTED': { text: 'Recusada', class: 'status-rejected' }
-        };
-        
-        const status = statusMap[proposal.status.toUpperCase()] || statusMap['PENDING'];
+        const statusInfo = getStatusInfo(proposal.status);
+        const timeline = getTimeline(proposal.status);
         
         return `
             <div class="proposal-card">
@@ -525,7 +625,7 @@
                         <h3 class="vehicle-name">${vehicleName}</h3>
                         <p class="vehicle-details">Ano: ${year}</p>
                     </div>
-                    <span class="status-badge ${status.class}">${status.text}</span>
+                    <span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>
                 </div>
                 <div class="proposal-body">
                     <div class="proposal-info">
@@ -535,8 +635,14 @@
                         </div>
                         <div class="info-item">
                             <span class="info-label">Data da Proposta</span>
-                            <span class="info-value">${date}</span>
+                            <span class="info-value">${createdDate}</span>
                         </div>
+                        ${updatedDate ? `
+                            <div class="info-item">
+                                <span class="info-label">Última Atualização</span>
+                                <span class="info-value">${updatedDate}</span>
+                            </div>
+                        ` : ''}
                         <div class="info-item">
                             <span class="info-label">Contato</span>
                             <span class="info-value">${proposal.customer_phone}</span>
@@ -548,9 +654,99 @@
                             </div>
                         ` : ''}
                     </div>
+
+                    ${timeline}
                 </div>
             </div>
         `;
+    }
+
+    function getStatusInfo(status) {
+        const statusMap = {
+            'pending': { text: '⏳ Pendente', class: 'status-pending' },
+            'accepted': { text: '✓ Aceita', class: 'status-accepted' },
+            'rejected': { text: '✗ Rejeitada', class: 'status-rejected' },
+            'outbid': { text: '↗ Superada', class: 'status-outbid' },
+            'won': { text: '🎉 Arrematada!', class: 'status-won' },
+            'awaiting_bank': { text: '🏦 Aguard. Banco', class: 'status-awaiting_bank' },
+            'bank_approved': { text: '✓ Banco Aprovou', class: 'status-bank_approved' },
+            'bank_rejected': { text: '✗ Banco Recusou', class: 'status-bank_rejected' },
+            'in_withdrawal': { text: '🚗 Em Retirada', class: 'status-in_withdrawal' },
+            'completed': { text: '🎊 Concluído', class: 'status-completed' }
+        };
+        
+        return statusMap[status] || { text: status, class: 'status-pending' };
+    }
+
+    function getTimeline(currentStatus) {
+        const steps = [
+            { id: 'pending', icon: '📝', label: 'Enviada' },
+            { id: 'accepted', icon: '✓', label: 'Aceita' },
+            { id: 'won', icon: '🏆', label: 'Arrematada' },
+            { id: 'bank', icon: '🏦', label: 'Banco' },
+            { id: 'withdrawal', icon: '🚗', label: 'Retirada' },
+            { id: 'completed', icon: '✓', label: 'Concluído' }
+        ];
+
+        const statusOrder = {
+            'pending': 0,
+            'accepted': 1,
+            'rejected': -1,
+            'outbid': -1,
+            'won': 2,
+            'awaiting_bank': 3,
+            'bank_approved': 3,
+            'bank_rejected': -1,
+            'in_withdrawal': 4,
+            'completed': 5
+        };
+
+        const currentStep = statusOrder[currentStatus];
+        const isFailed = currentStep === -1;
+
+        let html = `
+            <div class="progress-timeline">
+                <div class="timeline-title">Progresso da Proposta</div>
+                <div class="timeline-steps">
+        `;
+
+        steps.forEach((step, index) => {
+            let stepClass = 'pending';
+            let labelClass = '';
+            
+            if (isFailed) {
+                if (index === 0) {
+                    stepClass = 'failed';
+                    labelClass = 'active';
+                }
+            } else {
+                if (index < currentStep) {
+                    stepClass = 'completed';
+                } else if (index === currentStep) {
+                    stepClass = 'current';
+                    labelClass = 'active';
+                }
+            }
+
+            html += `
+                <div class="timeline-step">
+                    <div class="step-icon ${stepClass}">${step.icon}</div>
+                    <div class="step-label ${labelClass}">${step.label}</div>
+                </div>
+            `;
+
+            if (index < steps.length - 1) {
+                const connectorClass = (!isFailed && index < currentStep) ? 'completed' : '';
+                html += `<div class="step-connector ${connectorClass}"></div>`;
+            }
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        return html;
     }
 
     function formatPrice(price) {
@@ -564,7 +760,7 @@
                 credentials: 'include'
             });
             
-            window.location.href = 'login.html';
+            window.location.href = 'login';
         } catch (error) {
             console.error('Erro no logout:', error);
         }
@@ -593,4 +789,3 @@
 </script>
 </body>
 </html>
-</artifact>
