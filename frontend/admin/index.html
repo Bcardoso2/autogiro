@@ -571,12 +571,14 @@
                 <div class="table-container">
                     <div class="table-header">
                         <h3 class="table-title">Todas as Propostas</h3>
-                        <div class="table-filters">
+                        <div class="table-filters" style="flex-wrap: wrap; gap: 0.5rem;">
                             <button class="filter-btn active" onclick="filterProposals('all')">Todas</button>
                             <button class="filter-btn" onclick="filterProposals('pending')">Pendentes</button>
                             <button class="filter-btn" onclick="filterProposals('accepted')">Aceitas</button>
-                            <button class="filter-btn" onclick="filterProposals('rejected')">Rejeitadas</button>
-                            <button class="filter-btn" onclick="filterProposals('outbid')">Superadas</button>
+                            <button class="filter-btn" onclick="filterProposals('won')">Arrematadas</button>
+                            <button class="filter-btn" onclick="filterProposals('awaiting_bank')">Aguard. Banco</button>
+                            <button class="filter-btn" onclick="filterProposals('in_withdrawal')">Em Retirada</button>
+                            <button class="filter-btn" onclick="filterProposals('completed')">Concluídas</button>
                         </div>
                     </div>
                     <table>
