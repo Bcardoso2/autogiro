@@ -118,7 +118,7 @@ router.get('/my', requireAuth, async (req, res) => {
   try {
     const result = await client.query(`
       SELECT 
-        p.id, p.vehicle_external_id, p.proposal_amount, p.status,
+        p.id, p.vehicle_external_id, p.proposal_amount, p.final_amount, p.status,
         p.created_at, p.updated_at,
         v.brand, v.model, v.year, 
         p.vehicle_info 
@@ -159,7 +159,7 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
   
   try {
     const { id } = req.params
-    const { status } = req.body
+    const { status, final_amount } = req.body
     
     // Status permitidos e suas transições
     const allowedStatuses = [
@@ -268,11 +268,20 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
       )
     }
     
-    // Atualizar status da proposta
-    await client.query(
-      'UPDATE proposals SET status = $1, updated_at = NOW() WHERE id = $2',
-      [status, id]
-    )
+    // Atualizar status da proposta (e valor final se fornecido)
+    let updateQuery = 'UPDATE proposals SET status = $1, updated_at = NOW()'
+    let updateParams = [status]
+    
+    if (final_amount && status === 'won') {
+      updateQuery += ', final_amount = $3'
+      updateParams.push(id, final_amount)
+    } else {
+      updateParams.push(id)
+    }
+    
+    updateQuery += ' WHERE id = $2'
+    
+    await client.query(updateQuery, updateParams)
     
     await client.query('COMMIT')
     
