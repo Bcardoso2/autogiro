@@ -881,7 +881,23 @@
     }
 
     // Funções para ver detalhes e fotos do veículo
-    function viewVehicleDetails(vehicleExternalId) {
+    async function viewVehicleDetails(vehicleExternalId) {
+        // Primeiro tenta buscar da API por external_id
+        try {
+            const response = await fetch(`${API_BASE}/vehicles/by-external-id/${vehicleExternalId}`, { 
+                credentials: 'include' 
+            });
+            const data = await response.json();
+            
+            if (data.success && data.vehicle) {
+                openVehicleDetailsModal({ vehicle_info: data.vehicle });
+                return;
+            }
+        } catch (error) {
+            console.log('Veículo não encontrado na API, usando dados da proposta');
+        }
+        
+        // Fallback: usa dados da proposta armazenada
         const proposal = allProposals.find(p => p.vehicle_external_id === vehicleExternalId);
         
         if (proposal) {
@@ -891,7 +907,23 @@
         }
     }
 
-    function viewVehiclePhotos(vehicleExternalId) {
+    async function viewVehiclePhotos(vehicleExternalId) {
+        // Primeiro tenta buscar da API por external_id
+        try {
+            const response = await fetch(`${API_BASE}/vehicles/by-external-id/${vehicleExternalId}`, { 
+                credentials: 'include' 
+            });
+            const data = await response.json();
+            
+            if (data.success && data.vehicle) {
+                openVehicleGallery({ vehicle_info: data.vehicle });
+                return;
+            }
+        } catch (error) {
+            console.log('Veículo não encontrado na API, usando dados da proposta');
+        }
+        
+        // Fallback: usa dados da proposta armazenada
         const proposal = allProposals.find(p => p.vehicle_external_id === vehicleExternalId);
         
         if (proposal) {
