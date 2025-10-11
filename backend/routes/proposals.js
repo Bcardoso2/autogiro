@@ -1,6 +1,7 @@
 const express = require('express')
 const { query } = require('../config/database')
 const { requireAuth, checkCredits } = require('../middleware/auth')
+const { sendPushNotification } = require('../services/notificationService')
 const router = express.Router()
 
 // POST /api/proposals - Criar proposta (requer autenticação e créditos)
@@ -153,6 +154,89 @@ router.get('/my', requireAuth, async (req, res) => {
   }
 })
 
+// 🔥 FUNÇÃO AUXILIAR: Enviar notificação sobre mudança de status
+async function notifyProposalStatusChange(userId, proposalId, oldStatus, newStatus, vehicleInfo) {
+  try {
+    // Buscar token do usuário
+    const tokenResult = await query(
+      'SELECT fcm_token FROM device_tokens WHERE user_id = $1 LIMIT 1',
+      [userId]
+    )
+    
+    if (tokenResult.rows.length === 0) {
+      console.log(`⚠️ Nenhum token FCM encontrado para usuário ${userId}`)
+      return
+    }
+    
+    // Mensagens personalizadas por status
+    const statusMessages = {
+      'accepted': {
+        title: '✅ Proposta Aceita!',
+        body: `Sua proposta para ${vehicleInfo.title} foi aceita!`
+      },
+      'rejected': {
+        title: '❌ Proposta Recusada',
+        body: `Sua proposta para ${vehicleInfo.title} foi recusada. Crédito reembolsado.`
+      },
+      'outbid': {
+        title: '📉 Proposta Superada',
+        body: `Sua proposta para ${vehicleInfo.title} foi superada. Crédito reembolsado.`
+      },
+      'won': {
+        title: '🎉 Parabéns! Você Arrematou!',
+        body: `Você arrematou o ${vehicleInfo.title}! Aguarde próximos passos.`
+      },
+      'awaiting_bank': {
+        title: '🏦 Aguardando Banco',
+        body: `Análise bancária iniciada para ${vehicleInfo.title}`
+      },
+      'bank_approved': {
+        title: '✅ Banco Aprovou!',
+        body: `Financiamento aprovado para ${vehicleInfo.title}!`
+      },
+      'bank_rejected': {
+        title: '❌ Banco Recusou',
+        body: `Financiamento recusado para ${vehicleInfo.title}. Crédito reembolsado.`
+      },
+      'in_withdrawal': {
+        title: '🚗 Em Retirada',
+        body: `Processo de retirada iniciado para ${vehicleInfo.title}`
+      },
+      'completed': {
+        title: '✅ Concluído!',
+        body: `Processo finalizado para ${vehicleInfo.title}. Obrigado!`
+      }
+    }
+    
+    const notification = statusMessages[newStatus]
+    
+    if (!notification) {
+      console.log(`⚠️ Status ${newStatus} não tem mensagem configurada`)
+      return
+    }
+    
+    // Enviar notificação
+    await sendPushNotification(
+      tokenResult.rows[0].fcm_token,
+      notification.title,
+      notification.body,
+      {
+        tipo: 'proposta_status',
+        proposta_id: proposalId.toString(),
+        old_status: oldStatus,
+        new_status: newStatus,
+        vehicle_external_id: vehicleInfo.external_id || ''
+      }
+    )
+    
+    console.log(`📱 Notificação enviada para usuário ${userId}: ${notification.title}`)
+    
+  } catch (error) {
+    console.error('❌ Erro ao enviar notificação de proposta:', error)
+    // Não faz throw para não quebrar o fluxo principal
+  }
+}
+
 // PATCH /api/proposals/:id/status - Atualizar status da proposta
 router.patch('/:id/status', requireAuth, async (req, res) => {
   const client = await require('../config/database').pool.connect()
@@ -184,11 +268,14 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     
     await client.query('BEGIN')
     
-    // Buscar proposta atual
-    const proposalResult = await client.query(
-      'SELECT id, user_id, status, credits_used, vehicle_id FROM proposals WHERE id = $1',
-      [id]
-    )
+    // Buscar proposta atual COM informações do veículo
+    const proposalResult = await client.query(`
+      SELECT 
+        p.id, p.user_id, p.status, p.credits_used, p.vehicle_id, 
+        p.vehicle_external_id, p.vehicle_info
+      FROM proposals p
+      WHERE p.id = $1
+    `, [id])
     
     if (proposalResult.rows.length === 0) {
       await client.query('ROLLBACK')
@@ -197,6 +284,17 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     
     const proposal = proposalResult.rows[0]
     const oldStatus = proposal.status
+    
+    // Parse vehicle_info se for string
+    let vehicleInfo = proposal.vehicle_info
+    if (typeof vehicleInfo === 'string') {
+      try {
+        vehicleInfo = JSON.parse(vehicleInfo)
+      } catch (e) {
+        vehicleInfo = { title: 'Veículo' }
+      }
+    }
+    vehicleInfo.external_id = proposal.vehicle_external_id
     
     // Buscar informações do usuário logado para verificar permissão
     const currentUserResult = await client.query(
@@ -285,12 +383,28 @@ router.patch('/:id/status', requireAuth, async (req, res) => {
     
     await client.query('COMMIT')
     
+    // 🔥 ENVIAR NOTIFICAÇÃO PUSH (após commit bem-sucedido)
+    // Só notifica se o status realmente mudou
+    if (oldStatus !== status) {
+      // Executa em background para não atrasar a resposta
+      notifyProposalStatusChange(
+        proposal.user_id,
+        id,
+        oldStatus,
+        status,
+        vehicleInfo
+      ).catch(err => {
+        console.error('Erro ao enviar notificação (background):', err)
+      })
+    }
+    
     res.json({ 
       success: true,
       refunded: shouldRefund,
       refund_amount: shouldRefund ? parseFloat(proposal.credits_used) : 0,
       old_status: oldStatus,
-      new_status: status
+      new_status: status,
+      notification_sent: oldStatus !== status // Indica se notificação foi enviada
     })
     
   } catch (error) {
