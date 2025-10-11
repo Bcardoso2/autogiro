@@ -124,4 +124,42 @@ router.post('/test', requireAuth, async (req, res) => {
     }
 })
 
+// 👇 ADICIONE ESSA ROTA AQUI:
+// Rota de teste DIRETO (sem autenticação, sem banco)
+router.post('/test-direct', async (req, res) => {
+    try {
+        const { sendPushNotification } = require('../services/notificationService')
+        const { fcm_token } = req.body
+        
+        if (!fcm_token) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'fcm_token obrigatório no body' 
+            })
+        }
+        
+        console.log('📤 Enviando notificação de teste direto...')
+        
+        const notification = await sendPushNotification(
+            fcm_token,
+            '🎉 Funcionou!',
+            'Push notification está funcionando perfeitamente!',
+            { tipo: 'teste_direto' }
+        )
+        
+        res.json({ 
+            success: true, 
+            message: 'Notificação enviada!',
+            notification 
+        })
+        
+    } catch (error) {
+        console.error('❌ Erro ao enviar notificação:', error)
+        res.status(500).json({ 
+            success: false, 
+            error: error.message 
+        })
+    }
+})
+
 module.exports = router
