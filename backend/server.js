@@ -44,6 +44,7 @@ app.use('/api/vehicles', require('./routes/vehicles'))
 app.use('/api/proposals', require('./routes/proposals'))
 app.use('/api/credits', require('./routes/credits'))
 app.use('/api/admin', require('./routes/admin'))
+app.use('/api/notifications', require('./routes/notifications')) 
 
 // Health check
 app.get('/health', (req, res) => {
