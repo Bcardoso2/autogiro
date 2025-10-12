@@ -673,21 +673,23 @@
             btn.textContent = 'Verificando...'
             
             try {
-                const response = await fetch(`${API_BASE}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ phone, password })
-                })
-                
-                const data = await response.json()
-                
-                if (data.success && data.user.role === 'admin') {
-                    isAdmin = true
-                    document.getElementById('loginScreen').classList.add('hidden')
-                    document.getElementById('adminPanel').classList.remove('hidden')
-                    loadDashboard()
-                    showToast('Login admin realizado com sucesso!', 'success')
+    const response = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, password })
+    })
+    
+    const data = await response.json()
+    
+    if (data.success && data.user.role === 'admin') {
+        // 🔥 SALVAR O TOKEN
+        localStorage.setItem('token', data.token)
+        
+        isAdmin = true
+        document.getElementById('loginScreen').classList.add('hidden')
+        document.getElementById('adminPanel').classList.remove('hidden')
+        loadDashboard()
+        showToast('Login admin realizado com sucesso!', 'success')
                 } else if (data.success && data.user.role !== 'admin') {
                     showToast('Acesso negado. Você não é administrador.', 'error')
                     btn.disabled = false
@@ -707,39 +709,44 @@
 
         // Logout Admin
         async function adminLogout() {
-            try {
-                await fetch(`${API_BASE}/auth/logout`, {
-                    method: 'POST',
-                    credentials: 'include'
-                })
-                
-                isAdmin = false
-                document.getElementById('loginScreen').classList.remove('hidden')
-                document.getElementById('adminPanel').classList.add('hidden')
-                document.getElementById('adminPhone').value = ''
-                document.getElementById('adminPassword').value = ''
-                showToast('Logout realizado com sucesso', 'success')
-            } catch (error) {
-                console.error('Erro no logout:', error)
-            }
-        }
+    localStorage.removeItem('token'); // 🔥 REMOVER TOKEN
+    
+    isAdmin = false
+    document.getElementById('loginScreen').classList.remove('hidden')
+    document.getElementById('adminPanel').classList.add('hidden')
+    document.getElementById('adminPhone').value = ''
+    document.getElementById('adminPassword').value = ''
+    showToast('Logout realizado com sucesso', 'success')
+}
 
         // Verificar auth ao carregar
         async function checkAdminAuth() {
-            try {
-                const response = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' })
-                const data = await response.json()
-                
-                if (data.success && data.user.role === 'admin') {
-                    isAdmin = true
-                    document.getElementById('loginScreen').classList.add('hidden')
-                    document.getElementById('adminPanel').classList.remove('hidden')
-                    loadDashboard()
-                }
-            } catch (error) {
-                console.log('Não autenticado')
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        if (!token) return;
+        
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
             }
+        })
+        
+        const data = await response.json()
+        
+        if (data.success && data.user.role === 'admin') {
+            isAdmin = true
+            document.getElementById('loginScreen').classList.add('hidden')
+            document.getElementById('adminPanel').classList.remove('hidden')
+            loadDashboard()
+        } else {
+            localStorage.removeItem('token'); // 🔥 REMOVER TOKEN INVÁLIDO
         }
+    } catch (error) {
+        console.log('Não autenticado')
+        localStorage.removeItem('token');
+    }
+}
 
         // Navegação
         function showPage(page) {
@@ -757,8 +764,14 @@
 
         // Dashboard
         async function loadDashboard() {
-            try {
-                const response = await fetch(`${API_BASE}/admin/dashboard`, { credentials: 'include' })
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        const response = await fetch(`${API_BASE}/admin/dashboard`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            }
+        })
                 const data = await response.json()
                 
                 if (data.success) {
@@ -798,11 +811,17 @@
 
         // Propostas
         async function loadProposals(status = null) {
-            try {
-                let url = `${API_BASE}/admin/proposals`
-                if (status) url += `?status=${status}`
-                
-                const response = await fetch(url, { credentials: 'include' })
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        let url = `${API_BASE}/admin/proposals`
+        if (status) url += `?status=${status}`
+        
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            }
+        })
                 const data = await response.json()
                 
                 if (data.success) {
@@ -961,12 +980,16 @@
                     body.final_amount = final_amount
                 }
                 
-                const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify(body)
-                })
+                const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+
+const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
+    method: 'PATCH',
+    headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+    },
+    body: JSON.stringify(body)
+})
                 
                 const data = await response.json()
                 
@@ -994,8 +1017,14 @@
 
         // Usuários
         async function loadUsers() {
-            try {
-                const response = await fetch(`${API_BASE}/admin/users`, { credentials: 'include' })
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        const response = await fetch(`${API_BASE}/admin/users`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            }
+        })
                 const data = await response.json()
                 
                 if (data.success) {
@@ -1063,12 +1092,16 @@
             const description = document.getElementById('creditsDescription').value
             
             try {
-                const response = await fetch(`${API_BASE}/admin/users/${userId}/credits`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ amount, description })
-                })
+                const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+
+const response = await fetch(`${API_BASE}/admin/users/${userId}/credits`, {
+    method: 'POST',
+    headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+    },
+    body: JSON.stringify({ amount, description })
+})
                 
                 const data = await response.json()
                 
@@ -1087,8 +1120,14 @@
 
         // Transações
         async function loadTransactions() {
-            try {
-                const response = await fetch(`${API_BASE}/admin/transactions`, { credentials: 'include' })
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        const response = await fetch(`${API_BASE}/admin/transactions`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            }
+        })
                 const data = await response.json()
                 
                 if (data.success) {
