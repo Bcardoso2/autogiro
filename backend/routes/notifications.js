@@ -1,20 +1,15 @@
 const express = require('express')
 const router = express.Router()
 const { query } = require('../config/database')
+const { requireJWT } = require('../middleware/jwtAuth') // 🔥 MUDOU
 
-// Middleware de autenticação (adapte conforme seu sistema)
-function requireAuth(req, res, next) {
-    if (!req.session.user) {
-        return res.status(401).json({ success: false, error: 'Não autenticado' })
-    }
-    next()
-}
+// 🔥 REMOVIDO: Middleware de sessão antigo
 
 // Salvar/atualizar token do dispositivo
-router.post('/save-token', requireAuth, async (req, res) => {
+router.post('/save-token', requireJWT, async (req, res) => { // 🔥 MUDOU
     try {
         const { fcm_token, platform } = req.body
-        const user_id = req.session.user.id
+        const user_id = req.userId // 🔥 MUDOU (era req.session.user.id)
         
         if (!fcm_token) {
             return res.status(400).json({ 
@@ -51,7 +46,7 @@ router.post('/save-token', requireAuth, async (req, res) => {
 })
 
 // Remover token (logout ou desinstalação)
-router.delete('/remove-token', requireAuth, async (req, res) => {
+router.delete('/remove-token', requireJWT, async (req, res) => { // 🔥 MUDOU
     try {
         const { fcm_token } = req.body
         
@@ -84,10 +79,10 @@ router.delete('/remove-token', requireAuth, async (req, res) => {
 })
 
 // [OPCIONAL] Rota de teste para enviar notificação manual
-router.post('/test', requireAuth, async (req, res) => {
+router.post('/test', requireJWT, async (req, res) => { // 🔥 MUDOU
     try {
         const { sendPushNotification } = require('../services/notificationService')
-        const user_id = req.session.user.id
+        const user_id = req.userId // 🔥 MUDOU (era req.session.user.id)
         
         // Buscar token do usuário logado
         const result = await query(
@@ -124,7 +119,6 @@ router.post('/test', requireAuth, async (req, res) => {
     }
 })
 
-// 👇 ADICIONE ESSA ROTA AQUI:
 // Rota de teste DIRETO (sem autenticação, sem banco)
 router.post('/test-direct', async (req, res) => {
     try {
