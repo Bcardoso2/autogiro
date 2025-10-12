@@ -1,7 +1,7 @@
 const express = require('express')
 const { query } = require('../config/database')
 const { requireJWT, checkCredits } = require('../middleware/jwtAuth')
-const { sendPushNotification } = require('../services/notificationService') // 🔥 NOVO
+const { sendPushNotification } = require('../services/notificationService')
 const router = express.Router()
 
 // POST /api/proposals - Criar proposta (requer autenticação e créditos)
@@ -185,7 +185,7 @@ router.patch('/:id/status', requireJWT, async (req, res) => {
     
     await client.query('BEGIN')
     
-    // 🔥 MUDOU: Buscar proposta E informações do veículo
+    // Buscar proposta E informações do veículo
     const proposalResult = await client.query(`
       SELECT 
         p.id, p.user_id, p.status, p.credits_used, p.vehicle_id,
@@ -290,20 +290,16 @@ router.patch('/:id/status', requireJWT, async (req, res) => {
     
     await client.query('COMMIT')
     
-    // 🔥 NOVO: ENVIAR NOTIFICAÇÃO PUSH
+    // 🔥 NOTIFICAÇÃO PUSH - ENVIAR PARA TODOS OS DISPOSITIVOS
     try {
-      // Buscar token FCM do usuário
+      // ✅ Buscar TODOS os tokens FCM do usuário (sem LIMIT 1)
       const tokenResult = await client.query(
-        'SELECT fcm_token FROM device_tokens WHERE user_id = $1 LIMIT 1',
+        'SELECT fcm_token, platform FROM device_tokens WHERE user_id = $1',
         [proposal.user_id]
       )
       
       if (tokenResult.rows.length > 0) {
-        const fcmToken = tokenResult.rows[0].fcm_token
-        
-        // Montar mensagem baseada no status
-        let title = '📢 Atualização de Proposta'
-        let body = ''
+        console.log(`📤 Enviando notificação para ${tokenResult.rows.length} dispositivo(s)`)
         
         // Parse vehicle_info se for string
         let vehicleInfo = proposal.vehicle_info
@@ -317,6 +313,10 @@ router.patch('/:id/status', requireJWT, async (req, res) => {
         
         const vehicleName = vehicleInfo?.title || 
                           `${proposal.brand || ''} ${proposal.model || ''} ${proposal.year || ''}`.trim()
+        
+        // Montar mensagem baseada no status
+        let title = '📢 Atualização de Proposta'
+        let body = ''
         
         switch (status) {
           case 'accepted':
@@ -359,27 +359,51 @@ router.patch('/:id/status', requireJWT, async (req, res) => {
             body = `Status da sua proposta para o ${vehicleName} foi atualizado para: ${status}`
         }
         
-        // Enviar notificação
-        await sendPushNotification(
-          fcmToken,
-          title,
-          body,
-          {
-            type: 'proposal_status_changed',
-            proposal_id: id,
-            old_status: oldStatus,
-            new_status: status,
-            vehicle_name: vehicleName
-          }
-        )
+        const notificationData = {
+          type: 'proposal_status_changed',
+          proposal_id: id,
+          old_status: oldStatus,
+          new_status: status,
+          vehicle_name: vehicleName
+        }
         
-        console.log(`📤 Notificação enviada para usuário ${proposal.user_id}: ${title}`)
+        // ✅ Enviar para CADA dispositivo
+        let successCount = 0
+        let failCount = 0
+        
+        for (const device of tokenResult.rows) {
+          try {
+            await sendPushNotification(
+              device.fcm_token,
+              title,
+              body,
+              notificationData
+            )
+            successCount++
+            console.log(`✅ Notificação enviada para ${device.platform}: ${device.fcm_token.substring(0, 20)}...`)
+          } catch (notifError) {
+            failCount++
+            console.error(`❌ Erro ao enviar para ${device.platform}:`, notifError.message)
+            
+            // Se token inválido, remover do banco
+            if (notifError.code === 'messaging/invalid-registration-token' || 
+                notifError.code === 'messaging/registration-token-not-registered') {
+              await client.query(
+                'DELETE FROM device_tokens WHERE fcm_token = $1',
+                [device.fcm_token]
+              )
+              console.log(`🗑️ Token inválido removido: ${device.fcm_token.substring(0, 20)}...`)
+            }
+          }
+        }
+        
+        console.log(`📊 Resultado: ${successCount} enviadas, ${failCount} falharam`)
       } else {
-        console.log(`⚠️ Usuário ${proposal.user_id} não tem token FCM registrado`)
+        console.log(`⚠️ Usuário ${proposal.user_id} não tem tokens FCM registrados`)
       }
     } catch (notifError) {
       // Não quebra a requisição se a notificação falhar
-      console.error('❌ Erro ao enviar notificação:', notifError)
+      console.error('❌ Erro geral ao enviar notificações:', notifError)
     }
     
     res.json({ 
