@@ -24,8 +24,9 @@ async function requireJWT(req, res, next) {
     }
     
     // Buscar usuário no banco
+    // ✅ ADICIONAR CPF AQUI:
     const result = await query(
-      'SELECT id, phone, name, email, role, credits FROM users WHERE id = $1',
+      'SELECT id, phone, name, email, cpf, role, credits, terms_accepted, terms_accepted_at FROM users WHERE id = $1',
       [decoded.id]
     )
     
