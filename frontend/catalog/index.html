@@ -1004,29 +1004,45 @@
             }
         }
 
-        async function checkAuth() {
-            try {
-                console.log('Verificando autenticação...')
-                const response = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' })
-                const data = await response.json()
-                
-                if (data.success && data.user) {
-                    APP_STATE.currentUser = data.user
-                    APP_STATE.isLoggedIn = true
-                } else {
-                    APP_STATE.isLoggedIn = false
-                    APP_STATE.currentUser = null
-                }
-                
-                updateUserUI()
-            } catch (error) {
-                console.error('Erro ao verificar auth:', error)
-                APP_STATE.isLoggedIn = false
-                APP_STATE.currentUser = null
-                updateUserUI()
-            }
+      async function checkAuth() {
+    try {
+        console.log('Verificando autenticação...')
+        const token = localStorage.getItem('token') // 🔥 PEGAR TOKEN
+        
+        if (!token) {
+            APP_STATE.isLoggedIn = false
+            APP_STATE.currentUser = null
+            updateUserUI()
+            return
         }
-
+        
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            }
+        })
+        
+        const data = await response.json()
+        
+        if (data.success && data.user) {
+            APP_STATE.currentUser = data.user
+            APP_STATE.isLoggedIn = true
+        } else {
+            // Token inválido/expirado
+            localStorage.removeItem('token') // 🔥 REMOVER TOKEN
+            APP_STATE.isLoggedIn = false
+            APP_STATE.currentUser = null
+        }
+        
+        updateUserUI()
+    } catch (error) {
+        console.error('Erro ao verificar auth:', error)
+        localStorage.removeItem('token')
+        APP_STATE.isLoggedIn = false
+        APP_STATE.currentUser = null
+        updateUserUI()
+    }
+} 
         function updateUserUI() {
             const userInfo = document.getElementById('userInfo')
             const btnLogin = document.getElementById('btnLogin')
@@ -1410,12 +1426,16 @@
             }
             
             try {
-                const response = await fetch(`${API_BASE}/proposals`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify(proposalData)
-                })
+                const token = localStorage.getItem('token') // 🔥 PEGAR TOKEN
+
+const response = await fetch(`${API_BASE}/proposals`, {
+    method: 'POST',
+    headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+    },
+    body: JSON.stringify(proposalData)
+})
                 
                 const data = await response.json()
                 
@@ -1541,21 +1561,14 @@
         }
 
         async function logout() {
-            try {
-                await fetch(`${API_BASE}/auth/logout`, {
-                    method: 'POST',
-                    credentials: 'include'
-                })
-                
-                APP_STATE.currentUser = null
-                APP_STATE.isLoggedIn = false
-                updateUserUI()
-                showToast('Logout realizado com sucesso', 'success')
-            } catch (error) {
-                console.error('Erro no logout:', error)
-            }
-        }
-
+    localStorage.removeItem('token') // 🔥 REMOVER TOKEN
+    
+    APP_STATE.currentUser = null
+    APP_STATE.isLoggedIn = false
+    updateUserUI()
+    showToast('Logout realizado com sucesso', 'success')
+}
+       
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer')
             const toast = document.createElement('div')
