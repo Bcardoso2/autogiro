@@ -1,12 +1,12 @@
 const express = require('express')
 const { query } = require('../config/database')
-const { requireAuth } = require('../middleware/auth')
+const { requireJWT } = require('../middleware/jwtAuth') // 🔥 MUDOU
 const router = express.Router()
 
 // Middleware para verificar se é admin
 const requireAdmin = async (req, res, next) => {
   try {
-    const result = await query('SELECT role FROM users WHERE id = $1', [req.session.userId])
+    const result = await query('SELECT role FROM users WHERE id = $1', [req.userId]) // 🔥 MUDOU
     
     if (result.rows.length === 0 || result.rows[0].role !== 'admin') {
       return res.status(403).json({ success: false, error: 'Acesso negado' })
@@ -19,7 +19,7 @@ const requireAdmin = async (req, res, next) => {
 }
 
 // GET /api/admin/dashboard - Estatísticas gerais
-router.get('/dashboard', requireAuth, requireAdmin, async (req, res) => {
+router.get('/dashboard', requireJWT, requireAdmin, async (req, res) => { // 🔥 MUDOU
   try {
     const stats = await query(`
       SELECT 
@@ -39,7 +39,7 @@ router.get('/dashboard', requireAuth, requireAdmin, async (req, res) => {
 })
 
 // GET /api/admin/users - Listar usuários
-router.get('/users', requireAuth, requireAdmin, async (req, res) => {
+router.get('/users', requireJWT, requireAdmin, async (req, res) => { // 🔥 MUDOU
   try {
     const users = await query(`
       SELECT 
@@ -57,7 +57,7 @@ router.get('/users', requireAuth, requireAdmin, async (req, res) => {
 })
 
 // POST /api/admin/users/:userId/credits - Adicionar créditos manualmente
-router.post('/users/:userId/credits', requireAuth, requireAdmin, async (req, res) => {
+router.post('/users/:userId/credits', requireJWT, requireAdmin, async (req, res) => { // 🔥 MUDOU
   try {
     const { userId } = req.params
     const { amount, description } = req.body
@@ -97,7 +97,7 @@ router.post('/users/:userId/credits', requireAuth, requireAdmin, async (req, res
 })
 
 // GET /api/admin/proposals - Listar propostas
-router.get('/proposals', requireAuth, requireAdmin, async (req, res) => {
+router.get('/proposals', requireJWT, requireAdmin, async (req, res) => { // 🔥 MUDOU
   try {
     const { status } = req.query
     
@@ -133,7 +133,7 @@ router.get('/proposals', requireAuth, requireAdmin, async (req, res) => {
 })
 
 // PUT /api/admin/proposals/:proposalId/status - Atualizar status da proposta
-router.put('/proposals/:proposalId/status', requireAuth, requireAdmin, async (req, res) => {
+router.put('/proposals/:proposalId/status', requireJWT, requireAdmin, async (req, res) => { // 🔥 MUDOU
   try {
     const { proposalId } = req.params
     const { status, notes } = req.body
@@ -148,7 +148,7 @@ router.put('/proposals/:proposalId/status', requireAuth, requireAdmin, async (re
       UPDATE proposals 
       SET status = $1, notes = $2, approved_at = NOW(), approved_by = $3
       WHERE id = $4
-    `, [status, notes, req.session.userId, proposalId])
+    `, [status, notes, req.userId, proposalId]) // 🔥 MUDOU
     
     // Se aceitar, marcar como proposta vencedora
     if (status === 'accepted') {
@@ -178,7 +178,7 @@ router.put('/proposals/:proposalId/status', requireAuth, requireAdmin, async (re
 })
 
 // GET /api/admin/transactions - Listar transações
-router.get('/transactions', requireAuth, requireAdmin, async (req, res) => {
+router.get('/transactions', requireJWT, requireAdmin, async (req, res) => { // 🔥 MUDOU
   try {
     const transactions = await query(`
       SELECT 
