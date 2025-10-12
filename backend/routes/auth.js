@@ -1,6 +1,8 @@
 const express = require('express')
 const bcrypt = require('bcrypt')
 const { query } = require('../config/database')
+const { generateToken } = require('../utils/jwt')
+const { requireJWT } = require('../middleware/jwtAuth')
 const router = express.Router()
 
 // POST /api/auth/login
@@ -43,12 +45,12 @@ router.post('/login', async (req, res) => {
     
     await query('UPDATE users SET last_login = NOW() WHERE id = $1', [user.id])
     
-    req.session.userId = user.id
-    req.session.userPhone = user.phone
-    req.session.userName = user.name
+    // 🔥 GERAR JWT TOKEN
+    const token = generateToken(user)
     
     res.json({ 
       success: true,
+      token: token,  // 👈 RETORNAR TOKEN
       user: {
         id: user.id,
         phone: user.phone,
@@ -103,12 +105,12 @@ router.post('/register', async (req, res) => {
     
     const user = result.rows[0]
     
-    req.session.userId = user.id
-    req.session.userPhone = user.phone
-    req.session.userName = user.name
+    // 🔥 GERAR JWT TOKEN
+    const token = generateToken(user)
     
     res.json({ 
       success: true,
+      token: token,  // 👈 RETORNAR TOKEN
       user: {
         id: user.id,
         phone: user.phone,
@@ -128,48 +130,29 @@ router.post('/register', async (req, res) => {
   }
 })
 
-// POST /api/auth/logout
+// POST /api/auth/logout (não precisa fazer nada com JWT - token expira sozinho)
 router.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ success: false, error: 'Erro ao fazer logout' })
-    }
-    res.json({ success: true })
-  })
+  // Com JWT não precisa fazer nada no servidor
+  // O app só precisa deletar o token localmente
+  res.json({ success: true })
 })
 
-// GET /api/auth/me
-router.get('/me', async (req, res) => {
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({ success: false, error: 'Não autenticado' })
-  }
-  
+// GET /api/auth/me - AGORA USA JWT
+router.get('/me', requireJWT, async (req, res) => {
   try {
-    const result = await query(
-      `SELECT id, phone, name, email, client_id, credits, role, cpf, terms_accepted, terms_accepted_at
-       FROM users
-       WHERE id = $1 AND is_active = true`,
-      [req.session.userId]
-    )
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'Usuário não encontrado' })
-    }
-    
-    const user = result.rows[0]
-    
+    // req.user já vem do middleware requireJWT
     res.json({ 
       success: true,
       user: {
-        id: user.id,
-        phone: user.phone,
-        name: user.name,
-        email: user.email,
-        cpf: user.cpf,
-        credits: parseFloat(user.credits),
-        role: user.role,
-        terms_accepted: user.terms_accepted || false,
-        terms_accepted_at: user.terms_accepted_at || null
+        id: req.user.id,
+        phone: req.user.phone,
+        name: req.user.name,
+        email: req.user.email,
+        cpf: req.user.cpf,
+        credits: parseFloat(req.user.credits),
+        role: req.user.role,
+        terms_accepted: req.user.terms_accepted || false,
+        terms_accepted_at: req.user.terms_accepted_at || null
       }
     })
   } catch (error) {
@@ -178,12 +161,8 @@ router.get('/me', async (req, res) => {
   }
 })
 
-// POST /api/auth/accept-terms
-router.post('/accept-terms', async (req, res) => {
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({ success: false, error: 'Não autenticado' })
-  }
-  
+// POST /api/auth/accept-terms - AGORA USA JWT
+router.post('/accept-terms', requireJWT, async (req, res) => {
   try {
     const result = await query(
       `UPDATE users 
@@ -192,7 +171,7 @@ router.post('/accept-terms', async (req, res) => {
            updated_at = NOW()
        WHERE id = $1
        RETURNING id, phone, name, email, cpf, credits, role, terms_accepted, terms_accepted_at`,
-      [req.session.userId]
+      [req.userId]
     )
 
     if (result.rows.length === 0) {
@@ -224,12 +203,8 @@ router.post('/accept-terms', async (req, res) => {
   }
 })
 
-// PATCH /api/auth/update-profile
-router.patch('/update-profile', async (req, res) => {
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({ success: false, error: 'Não autenticado' })
-  }
-  
+// PATCH /api/auth/update-profile - AGORA USA JWT
+router.patch('/update-profile', requireJWT, async (req, res) => {
   try {
     const { name, email, cpf } = req.body
     
@@ -262,7 +237,7 @@ router.patch('/update-profile', async (req, res) => {
       })
     }
     
-    params.push(req.session.userId)
+    params.push(req.userId)
     
     await query(
       `UPDATE users SET ${updates.join(', ')}, updated_at = NOW() WHERE id = $${paramCount}`,
@@ -277,12 +252,8 @@ router.patch('/update-profile', async (req, res) => {
   }
 })
 
-// PATCH /api/auth/change-password
-router.patch('/change-password', async (req, res) => {
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({ success: false, error: 'Não autenticado' })
-  }
-  
+// PATCH /api/auth/change-password - AGORA USA JWT
+router.patch('/change-password', requireJWT, async (req, res) => {
   try {
     const { current_password, new_password } = req.body
     
@@ -302,7 +273,7 @@ router.patch('/change-password', async (req, res) => {
     
     const result = await query(
       'SELECT password_hash FROM users WHERE id = $1',
-      [req.session.userId]
+      [req.userId]
     )
     
     if (result.rows.length === 0) {
@@ -327,7 +298,7 @@ router.patch('/change-password', async (req, res) => {
     
     await query(
       'UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2',
-      [newPasswordHash, req.session.userId]
+      [newPasswordHash, req.userId]
     )
     
     res.json({ success: true })
@@ -338,23 +309,13 @@ router.patch('/change-password', async (req, res) => {
   }
 })
 
-// DELETE /api/auth/delete-account
-router.delete('/delete-account', async (req, res) => {
-  if (!req.session || !req.session.userId) {
-    return res.status(401).json({ success: false, error: 'Não autenticado' })
-  }
-  
+// DELETE /api/auth/delete-account - AGORA USA JWT
+router.delete('/delete-account', requireJWT, async (req, res) => {
   try {
     await query(
       'UPDATE users SET is_active = false, updated_at = NOW() WHERE id = $1',
-      [req.session.userId]
+      [req.userId]
     )
-    
-    req.session.destroy((err) => {
-      if (err) {
-        console.error('Erro ao destruir sessão:', err)
-      }
-    })
     
     res.json({ success: true })
     
