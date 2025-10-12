@@ -534,27 +534,40 @@
     const API_BASE = 'https://autogiro.onrender.com/api';
     let currentUser = null;
 
-    async function checkAuth() {
-        try {
-            const response = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
-            const data = await response.json();
-            
-            if (!data.success || !data.user) {
-                window.location.href = 'login';
-                return false;
-            }
-            
-            currentUser = data.user;
-            updateUserUI();
-            loadProfile();
-            return true;
-        } catch (error) {
-            console.error('Erro ao verificar auth:', error);
+   async function checkAuth() {
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        if (!token) {
             window.location.href = 'login';
             return false;
         }
+        
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success || !data.user) {
+            localStorage.removeItem('token'); // 🔥 REMOVER TOKEN INVÁLIDO
+            window.location.href = 'login';
+            return false;
+        }
+        
+        currentUser = data.user;
+        updateUserUI();
+        loadProfile();
+        return true;
+    } catch (error) {
+        console.error('Erro ao verificar auth:', error);
+        localStorage.removeItem('token');
+        window.location.href = 'login';
+        return false;
     }
-
+}
     function updateUserUI() {
         const userInfo = document.getElementById('userInfo');
         const userName = document.getElementById('userName');
@@ -584,16 +597,23 @@
         profileCpf.value = currentUser.cpf ? formatCpf(currentUser.cpf) : '';
         statCredits.textContent = parseFloat(currentUser.credits).toFixed(1);
         
-        try {
-            const response = await fetch(`${API_BASE}/proposals/my`, { credentials: 'include' });
-            const data = await response.json();
-            
-            if (data.success) {
-                document.getElementById('statProposals').textContent = data.proposals.length;
-            }
-        } catch (error) {
-            console.error('Erro ao carregar propostas:', error);
+       try {
+    const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+    
+    const response = await fetch(`${API_BASE}/proposals/my`, {
+        headers: {
+            'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
         }
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
+        document.getElementById('statProposals').textContent = data.proposals.length;
+    }
+} catch (error) {
+    console.error('Erro ao carregar propostas:', error);
+}
     }
 
     function formatCpf(cpf) {
@@ -630,12 +650,16 @@
         btn.textContent = 'Salvando...';
         
         try {
-            const response = await fetch(`${API_BASE}/auth/update-profile`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ name, email, cpf: cpf || null })
-            });
+    const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+    
+    const response = await fetch(`${API_BASE}/auth/update-profile`, {
+        method: 'PATCH',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+        },
+        body: JSON.stringify({ name, email, cpf: cpf || null })
+    });
             
             const data = await response.json();
             
@@ -673,12 +697,16 @@
         btn.textContent = 'Alterando...';
         
         try {
-            const response = await fetch(`${API_BASE}/auth/change-password`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
-            });
+    const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+    
+    const response = await fetch(`${API_BASE}/auth/change-password`, {
+        method: 'PATCH',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+        },
+        body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+    });
             
             const data = await response.json();
             
@@ -704,11 +732,15 @@
     }
 
     async function deleteAccount() {
-        try {
-            const response = await fetch(`${API_BASE}/auth/delete-account`, {
-                method: 'DELETE',
-                credentials: 'include'
-            });
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        const response = await fetch(`${API_BASE}/auth/delete-account`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            }
+        });
             
             const data = await response.json();
             
@@ -727,17 +759,9 @@
     }
 
     async function logout() {
-        try {
-            await fetch(`${API_BASE}/auth/logout`, {
-                method: 'POST',
-                credentials: 'include'
-            });
-            
-            window.location.href = 'login';
-        } catch (error) {
-            console.error('Erro no logout:', error);
-        }
-    }
+    localStorage.removeItem('token'); // 🔥 REMOVER TOKEN
+    window.location.href = 'login';
+}
 
     function showToast(message, type = 'success') {
         const container = document.getElementById('toastContainer');
