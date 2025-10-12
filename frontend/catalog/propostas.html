@@ -601,25 +601,38 @@
     let allProposals = [];
 
     async function checkAuth() {
-        try {
-            const response = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
-            const data = await response.json();
-            
-            if (!data.success || !data.user) {
-                window.location.href = 'login';
-                return false;
-            }
-            
-            currentUser = data.user;
-            updateUserUI();
-            return true;
-        } catch (error) {
-            console.error('Erro ao verificar auth:', error);
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        if (!token) {
             window.location.href = 'login';
             return false;
         }
+        
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (!data.success || !data.user) {
+            localStorage.removeItem('token'); // 🔥 REMOVER TOKEN INVÁLIDO
+            window.location.href = 'login';
+            return false;
+        }
+        
+        currentUser = data.user;
+        updateUserUI();
+        return true;
+    } catch (error) {
+        console.error('Erro ao verificar auth:', error);
+        localStorage.removeItem('token');
+        window.location.href = 'login';
+        return false;
     }
-
+}
     function updateUserUI() {
         const userInfo = document.getElementById('userInfo');
         const userName = document.getElementById('userName');
@@ -633,23 +646,29 @@
     }
 
     async function loadProposals() {
-        try {
-            const response = await fetch(`${API_BASE}/proposals/my`, { credentials: 'include' });
-            const data = await response.json();
-            
-            if (data.success) {
-                renderProposals(data.proposals);
-            } else {
-                showToast(data.error || 'Erro ao carregar propostas', 'error');
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        const response = await fetch(`${API_BASE}/proposals/my`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
             }
-        } catch (error) {
-            console.error('Erro ao carregar propostas:', error);
-            showToast('Erro ao conectar com o servidor', 'error');
-        } finally {
-            document.getElementById('loading').classList.add('hidden');
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            renderProposals(data.proposals);
+        } else {
+            showToast(data.error || 'Erro ao carregar propostas', 'error');
         }
+    } catch (error) {
+        console.error('Erro ao carregar propostas:', error);
+        showToast('Erro ao conectar com o servidor', 'error');
+    } finally {
+        document.getElementById('loading').classList.add('hidden');
     }
-
+}
     function renderProposals(proposals) {
         const grid = document.getElementById('proposalsGrid');
         const emptyState = document.getElementById('emptyState');
@@ -854,18 +873,9 @@
     }
 
     async function logout() {
-        try {
-            await fetch(`${API_BASE}/auth/logout`, {
-                method: 'POST',
-                credentials: 'include'
-            });
-            
-            window.location.href = 'login';
-        } catch (error) {
-            console.error('Erro no logout:', error);
-        }
-    }
-
+    localStorage.removeItem('token'); // 🔥 REMOVER TOKEN
+    window.location.href = 'login';
+}
     function showToast(message, type = 'success') {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
@@ -880,59 +890,66 @@
         }, 3000);
     }
 
-    // Funções para ver detalhes e fotos do veículo
-    async function viewVehicleDetails(vehicleExternalId) {
-        // Primeiro tenta buscar da API por external_id
-        try {
-            const response = await fetch(`${API_BASE}/vehicles/by-external-id/${vehicleExternalId}`, { 
-                credentials: 'include' 
-            });
-            const data = await response.json();
-            
-            if (data.success && data.vehicle) {
-                openVehicleDetailsModal({ vehicle_info: data.vehicle });
-                return;
+// Funções para ver detalhes e fotos do veículo
+async function viewVehicleDetails(vehicleExternalId) {
+    // Primeiro tenta buscar da API por external_id
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        const response = await fetch(`${API_BASE}/vehicles/by-external-id/${vehicleExternalId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
             }
-        } catch (error) {
-            console.log('Veículo não encontrado na API, usando dados da proposta');
-        }
+        });
+        const data = await response.json();
         
-        // Fallback: usa dados da proposta armazenada
-        const proposal = allProposals.find(p => p.vehicle_external_id === vehicleExternalId);
-        
-        if (proposal) {
-            openVehicleDetailsModal(proposal);
-        } else {
-            showToast('Detalhes do veículo não disponíveis', 'error');
+        if (data.success && data.vehicle) {
+            openVehicleDetailsModal({ vehicle_info: data.vehicle });
+            return;
         }
+    } catch (error) {
+        console.log('Veículo não encontrado na API, usando dados da proposta');
     }
+    
+    // Fallback: usa dados da proposta armazenada
+    const proposal = allProposals.find(p => p.vehicle_external_id === vehicleExternalId);
+    
+    if (proposal) {
+        openVehicleDetailsModal(proposal);
+    } else {
+        showToast('Detalhes do veículo não disponíveis', 'error');
+    }
+} // 🔥 FECHA AQUI!
 
-    async function viewVehiclePhotos(vehicleExternalId) {
-        // Primeiro tenta buscar da API por external_id
-        try {
-            const response = await fetch(`${API_BASE}/vehicles/by-external-id/${vehicleExternalId}`, { 
-                credentials: 'include' 
-            });
-            const data = await response.json();
-            
-            if (data.success && data.vehicle) {
-                openVehicleGallery({ vehicle_info: data.vehicle });
-                return;
+async function viewVehiclePhotos(vehicleExternalId) {
+    // Primeiro tenta buscar da API por external_id
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        const response = await fetch(`${API_BASE}/vehicles/by-external-id/${vehicleExternalId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
             }
-        } catch (error) {
-            console.log('Veículo não encontrado na API, usando dados da proposta');
-        }
+        });
+        const data = await response.json();
         
-        // Fallback: usa dados da proposta armazenada
-        const proposal = allProposals.find(p => p.vehicle_external_id === vehicleExternalId);
-        
-        if (proposal) {
-            openVehicleGallery(proposal);
-        } else {
-            showToast('Fotos do veículo não disponíveis', 'error');
+        if (data.success && data.vehicle) {
+            openVehicleGallery({ vehicle_info: data.vehicle });
+            return;
         }
+    } catch (error) {
+        console.log('Veículo não encontrado na API, usando dados da proposta');
     }
-
+    
+    // Fallback: usa dados da proposta armazenada
+    const proposal = allProposals.find(p => p.vehicle_external_id === vehicleExternalId);
+    
+    if (proposal) {
+        openVehicleGallery(proposal);
+    } else {
+        showToast('Fotos do veículo não disponíveis', 'error');
+    }
+} // 🔥 FECHA AQUI!
     function openVehicleDetailsModal(proposalData) {
         // Parse do vehicle_info se necessário
         let vehicleInfo = proposalData.vehicle_info;
