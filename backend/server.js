@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
-const session = require('express-session')
+// ❌ REMOVIDO: const session = require('express-session')
 const path = require('path')
 const cron = require('node-cron')
 const { query } = require('./config/database')
@@ -17,23 +17,23 @@ app.use(cors({
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'] // Authorization para JWT
 }));
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Session
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'sua_chave_secreta_aqui',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 horas
-    }
-}))
+// ❌ REMOVIDO: Session - não é mais necessário com JWT
+// app.use(session({
+//     secret: process.env.SESSION_SECRET || 'sua_chave_secreta_aqui',
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         secure: process.env.NODE_ENV === 'production',
+//         httpOnly: true,
+//         maxAge: 24 * 60 * 60 * 1000 // 24 horas
+//     }
+// }))
 
 // Servir arquivos estáticos do frontend
 app.use(express.static(path.join(__dirname, '../frontend')))
@@ -164,14 +164,15 @@ cron.schedule('0 20 * * *', async () => {
 
 // Iniciar servidor
 app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`)
-    console.log(`API disponível em http://localhost:${PORT}/api`)
-    console.log(`Catálogo em http://localhost:${PORT}`)
-    console.log(`Login em http://localhost:${PORT}/login`)
-    console.log(`Propostas em http://localhost:${PORT}/propostas`)
-    console.log(`Recarga em http://localhost:${PORT}/recarga`)
-    console.log(`Perfil em http://localhost:${PORT}/perfil`)
-    console.log(`Admin em http://localhost:${PORT}/admin`)
-    console.log(`Cron job 1: Desativação às 00:00`)
-    console.log(`Cron job 2: Scraper às 20:00`)
+    console.log(`🚀 Servidor rodando em http://localhost:${PORT}`)
+    console.log(`📡 API disponível em http://localhost:${PORT}/api`)
+    console.log(`🏠 Catálogo em http://localhost:${PORT}`)
+    console.log(`🔐 Login em http://localhost:${PORT}/login`)
+    console.log(`💰 Propostas em http://localhost:${PORT}/propostas`)
+    console.log(`💳 Recarga em http://localhost:${PORT}/recarga`)
+    console.log(`👤 Perfil em http://localhost:${PORT}/perfil`)
+    console.log(`⚙️  Admin em http://localhost:${PORT}/admin`)
+    console.log(`⏰ Cron job 1: Desativação às 17:00`)
+    console.log(`⏰ Cron job 2: Scraper às 20:00`)
+    console.log(`🔑 Autenticação: JWT (stateless)`)
 })
