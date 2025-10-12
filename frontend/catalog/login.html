@@ -382,89 +382,91 @@
     }
 
     async function handleLogin(event) {
-        event.preventDefault();
+    event.preventDefault();
+    
+    const phone = document.getElementById('loginPhone').value;
+    const password = document.getElementById('loginPassword').value;
+    const btn = event.target.querySelector('.btn-submit');
+    
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+    
+    try {
+        const response = await fetch(`${API_BASE}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone, password })
+        });
         
-        const phone = document.getElementById('loginPhone').value;
-        const password = document.getElementById('loginPassword').value;
-        const btn = event.target.querySelector('.btn-submit');
+        const data = await response.json();
         
-        btn.disabled = true;
-        btn.textContent = 'Entrando...';
-        
-        try {
-            const response = await fetch(`${API_BASE}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ phone, password })
-            });
+        if (data.success) {
+            // 🔥 SALVAR O TOKEN
+            localStorage.setItem('token', data.token);
             
-            const data = await response.json();
-            
-            if (data.success) {
-                showToast('Login realizado com sucesso!', 'success');
-                setTimeout(() => {
-                    window.location.href = 'index';
-                }, 1000);
-            } else {
-                showToast(data.error || 'Erro ao fazer login', 'error');
-                btn.disabled = false;
-                btn.textContent = 'Entrar';
-            }
-        } catch (error) {
-            console.error('Erro no login:', error);
-            showToast('Erro ao conectar com o servidor', 'error');
+            showToast('Login realizado com sucesso!', 'success');
+            setTimeout(() => {
+                window.location.href = 'index';
+            }, 1000);
+        } else {
+            showToast(data.error || 'Erro ao fazer login', 'error');
             btn.disabled = false;
             btn.textContent = 'Entrar';
         }
+    } catch (error) {
+        console.error('Erro no login:', error);
+        showToast('Erro ao conectar com o servidor', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Entrar';
     }
-
+}
     async function handleRegister(event) {
-        event.preventDefault();
+    event.preventDefault();
+    
+    const name = document.getElementById('registerName').value;
+    const phone = document.getElementById('registerPhone').value;
+    const email = document.getElementById('registerEmail').value || null;
+    const password = document.getElementById('registerPassword').value;
+    const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+    const btn = event.target.querySelector('.btn-submit');
+    
+    if (password !== passwordConfirm) {
+        showToast('As senhas não coincidem', 'error');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = 'Criando conta...';
+    
+    try {
+        const response = await fetch(`${API_BASE}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, phone, email, password })
+        });
         
-        const name = document.getElementById('registerName').value;
-        const phone = document.getElementById('registerPhone').value;
-        const email = document.getElementById('registerEmail').value || null;
-        const password = document.getElementById('registerPassword').value;
-        const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
-        const btn = event.target.querySelector('.btn-submit');
+        const data = await response.json();
         
-        if (password !== passwordConfirm) {
-            showToast('As senhas não coincidem', 'error');
-            return;
-        }
-        
-        btn.disabled = true;
-        btn.textContent = 'Criando conta...';
-        
-        try {
-            const response = await fetch(`${API_BASE}/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ name, phone, email, password })
-            });
+        if (data.success) {
+            // 🔥 SALVAR O TOKEN
+            localStorage.setItem('token', data.token);
             
-            const data = await response.json();
-            
-            if (data.success) {
-                showToast('Conta criada com sucesso!', 'success');
-                setTimeout(() => {
-                    window.location.href = 'index';
-                }, 1000);
-            } else {
-                showToast(data.error || 'Erro ao criar conta', 'error');
-                btn.disabled = false;
-                btn.textContent = 'Criar Conta';
-            }
-        } catch (error) {
-            console.error('Erro no registro:', error);
-            showToast('Erro ao conectar com o servidor', 'error');
+            showToast('Conta criada com sucesso!', 'success');
+            setTimeout(() => {
+                window.location.href = 'index';
+            }, 1000);
+        } else {
+            showToast(data.error || 'Erro ao criar conta', 'error');
             btn.disabled = false;
             btn.textContent = 'Criar Conta';
         }
+    } catch (error) {
+        console.error('Erro no registro:', error);
+        showToast('Erro ao conectar com o servidor', 'error');
+        btn.disabled = false;
+        btn.textContent = 'Criar Conta';
     }
-
+}
     function showToast(message, type = 'success') {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
@@ -481,20 +483,32 @@
 
     // Verifica se já está logado ao carregar a página
     async function checkAuth() {
-        try {
-            const response = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
-            const data = await response.json();
-            
-            if (data.success && data.user) {
-                // Se já está logado, redireciona para o catálogo
-                window.location.href = 'index';
+    try {
+        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+        
+        if (!token) return; // Se não tem token, não faz nada
+        
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
             }
-        } catch (error) {
-            // Ignora erros - usuário não está logado
-            console.log('Usuário não autenticado');
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.user) {
+            // Se já está logado, redireciona para o catálogo
+            window.location.href = 'index';
+        } else {
+            // Token inválido
+            localStorage.removeItem('token');
         }
+    } catch (error) {
+        // Ignora erros - usuário não está logado
+        console.log('Usuário não autenticado');
+        localStorage.removeItem('token');
     }
-
+}
     window.addEventListener('DOMContentLoaded', checkAuth);
 </script>
 </body>
