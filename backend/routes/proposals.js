@@ -1,10 +1,11 @@
 const express = require('express')
 const { query } = require('../config/database')
-const { requireJWT, checkCredits } = require('../middleware/jwtAuth') // 🔥 MUDOU
+const { requireJWT, checkCredits } = require('../middleware/jwtAuth')
+const { sendPushNotification } = require('../services/notificationService') // 🔥 NOVO
 const router = express.Router()
 
 // POST /api/proposals - Criar proposta (requer autenticação e créditos)
-router.post('/', requireJWT, checkCredits(1), async (req, res) => { // 🔥 MUDOU
+router.post('/', requireJWT, checkCredits(1), async (req, res) => {
   const client = await require('../config/database').pool.connect()
   
   try {
@@ -35,7 +36,7 @@ router.post('/', requireJWT, checkCredits(1), async (req, res) => { // 🔥 MUDO
     // Buscar saldo atual do usuário
     const userResult = await client.query(
       'SELECT credits FROM users WHERE id = $1',
-      [req.userId] // 🔥 MUDOU
+      [req.userId]
     )
     
     const currentCredits = parseFloat(userResult.rows[0].credits)
@@ -70,14 +71,14 @@ router.post('/', requireJWT, checkCredits(1), async (req, res) => { // 🔥 MUDO
         year: vehicle.year,
         price: vehicle.price
       }),
-      req.userId, // 🔥 MUDOU
+      req.userId,
       1.0
     ])
     
     // Debitar crédito
     await client.query(
       'UPDATE users SET credits = credits - 1 WHERE id = $1',
-      [req.userId] // 🔥 MUDOU
+      [req.userId]
     )
     
     // Registrar transação
@@ -87,7 +88,7 @@ router.post('/', requireJWT, checkCredits(1), async (req, res) => { // 🔥 MUDO
         proposal_id, description
       ) VALUES ($1, 'proposal_debit', -1, $2, $3, $4, $5)
     `, [
-      req.userId, // 🔥 MUDOU
+      req.userId,
       currentCredits,
       currentCredits - 1,
       proposalResult.rows[0].id,
@@ -112,7 +113,7 @@ router.post('/', requireJWT, checkCredits(1), async (req, res) => { // 🔥 MUDO
 })
 
 // GET /api/proposals/my - Minhas propostas
-router.get('/my', requireJWT, async (req, res) => { // 🔥 MUDOU
+router.get('/my', requireJWT, async (req, res) => {
   const client = await require('../config/database').pool.connect()
   
   try {
@@ -126,7 +127,7 @@ router.get('/my', requireJWT, async (req, res) => { // 🔥 MUDOU
       LEFT JOIN vehicles v ON p.vehicle_id = v.id
       WHERE p.user_id = $1
       ORDER BY p.created_at DESC
-    `, [req.userId]) // 🔥 MUDOU
+    `, [req.userId])
     
     // Mapeia os resultados para garantir que vehicle_info seja um objeto JSON
     const proposals = result.rows.map(row => {
@@ -154,7 +155,7 @@ router.get('/my', requireJWT, async (req, res) => { // 🔥 MUDOU
 })
 
 // PATCH /api/proposals/:id/status - Atualizar status da proposta
-router.patch('/:id/status', requireJWT, async (req, res) => { // 🔥 MUDOU
+router.patch('/:id/status', requireJWT, async (req, res) => {
   const client = await require('../config/database').pool.connect()
   
   try {
@@ -184,11 +185,16 @@ router.patch('/:id/status', requireJWT, async (req, res) => { // 🔥 MUDOU
     
     await client.query('BEGIN')
     
-    // Buscar proposta atual
-    const proposalResult = await client.query(
-      'SELECT id, user_id, status, credits_used, vehicle_id FROM proposals WHERE id = $1',
-      [id]
-    )
+    // 🔥 MUDOU: Buscar proposta E informações do veículo
+    const proposalResult = await client.query(`
+      SELECT 
+        p.id, p.user_id, p.status, p.credits_used, p.vehicle_id,
+        p.vehicle_info,
+        v.brand, v.model, v.year, v.title
+      FROM proposals p
+      LEFT JOIN vehicles v ON p.vehicle_id = v.id
+      WHERE p.id = $1
+    `, [id])
     
     if (proposalResult.rows.length === 0) {
       await client.query('ROLLBACK')
@@ -201,11 +207,11 @@ router.patch('/:id/status', requireJWT, async (req, res) => { // 🔥 MUDOU
     // Buscar informações do usuário logado para verificar permissão
     const currentUserResult = await client.query(
       'SELECT role FROM users WHERE id = $1',
-      [req.userId] // 🔥 MUDOU
+      [req.userId]
     )
     
     const isAdmin = currentUserResult.rows[0]?.role === 'admin'
-    const isOwner = proposal.user_id === req.userId // 🔥 MUDOU
+    const isOwner = proposal.user_id === req.userId
     
     // Verifica se é admin ou dono da proposta
     if (!isAdmin && !isOwner) {
@@ -214,7 +220,6 @@ router.patch('/:id/status', requireJWT, async (req, res) => { // 🔥 MUDOU
     }
     
     // Regras de reembolso
-    // Reembolsa se: rejected, outbid, ou bank_rejected
     const shouldRefund = (
       (status === 'rejected' || status === 'outbid') && 
       (oldStatus === 'pending' || oldStatus === 'accepted')
@@ -284,6 +289,98 @@ router.patch('/:id/status', requireJWT, async (req, res) => { // 🔥 MUDOU
     await client.query(updateQuery, updateParams)
     
     await client.query('COMMIT')
+    
+    // 🔥 NOVO: ENVIAR NOTIFICAÇÃO PUSH
+    try {
+      // Buscar token FCM do usuário
+      const tokenResult = await client.query(
+        'SELECT fcm_token FROM device_tokens WHERE user_id = $1 LIMIT 1',
+        [proposal.user_id]
+      )
+      
+      if (tokenResult.rows.length > 0) {
+        const fcmToken = tokenResult.rows[0].fcm_token
+        
+        // Montar mensagem baseada no status
+        let title = '📢 Atualização de Proposta'
+        let body = ''
+        
+        // Parse vehicle_info se for string
+        let vehicleInfo = proposal.vehicle_info
+        if (typeof vehicleInfo === 'string') {
+          try {
+            vehicleInfo = JSON.parse(vehicleInfo)
+          } catch (e) {
+            vehicleInfo = {}
+          }
+        }
+        
+        const vehicleName = vehicleInfo?.title || 
+                          `${proposal.brand || ''} ${proposal.model || ''} ${proposal.year || ''}`.trim()
+        
+        switch (status) {
+          case 'accepted':
+            title = '✅ Proposta Aceita!'
+            body = `Sua proposta para o ${vehicleName} foi aceita!`
+            break
+          case 'rejected':
+            title = '❌ Proposta Recusada'
+            body = `Sua proposta para o ${vehicleName} foi recusada. Crédito reembolsado.`
+            break
+          case 'outbid':
+            title = '⚠️ Proposta Superada'
+            body = `Outra proposta superou a sua para o ${vehicleName}. Crédito reembolsado.`
+            break
+          case 'won':
+            title = '🎉 Parabéns! Você Ganhou!'
+            body = `Você arrematou o ${vehicleName}!`
+            break
+          case 'awaiting_bank':
+            title = '🏦 Aguardando Banco'
+            body = `Sua proposta para o ${vehicleName} está aguardando aprovação do banco.`
+            break
+          case 'bank_approved':
+            title = '✅ Banco Aprovou!'
+            body = `O banco aprovou sua proposta para o ${vehicleName}!`
+            break
+          case 'bank_rejected':
+            title = '❌ Banco Recusou'
+            body = `O banco recusou sua proposta para o ${vehicleName}. Crédito reembolsado.`
+            break
+          case 'in_withdrawal':
+            title = '🚗 Em Processo de Retirada'
+            body = `O ${vehicleName} está em processo de retirada.`
+            break
+          case 'completed':
+            title = '✅ Concluído!'
+            body = `Parabéns! O processo do ${vehicleName} foi concluído.`
+            break
+          default:
+            body = `Status da sua proposta para o ${vehicleName} foi atualizado para: ${status}`
+        }
+        
+        // Enviar notificação
+        await sendPushNotification(
+          fcmToken,
+          title,
+          body,
+          {
+            type: 'proposal_status_changed',
+            proposal_id: id,
+            old_status: oldStatus,
+            new_status: status,
+            vehicle_name: vehicleName
+          }
+        )
+        
+        console.log(`📤 Notificação enviada para usuário ${proposal.user_id}: ${title}`)
+      } else {
+        console.log(`⚠️ Usuário ${proposal.user_id} não tem token FCM registrado`)
+      }
+    } catch (notifError) {
+      // Não quebra a requisição se a notificação falhar
+      console.error('❌ Erro ao enviar notificação:', notifError)
+    }
     
     res.json({ 
       success: true,
