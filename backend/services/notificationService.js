@@ -45,43 +45,50 @@ initializeFirebase()
  */
 async function sendPushNotification(token, title, body, data = {}) {
     if (!firebaseInitialized) {
-        console.warn('Firebase não inicializado. Notificação não enviada.')
-        return { success: false, error: 'Firebase não configurado' }
+        const error = new Error('Firebase não configurado')
+        error.code = 'firebase/not-initialized'
+        throw error
     }
     
-    try {
-        const message = {
-            token: token,
+    // Converter data object para strings (Firebase exige)
+    const stringData = {}
+    if (data && typeof data === 'object') {
+        for (const [key, value] of Object.entries(data)) {
+            stringData[key] = String(value)
+        }
+    }
+    
+    const message = {
+        token: token,
+        notification: {
+            title: title,
+            body: body
+        },
+        data: stringData,
+        android: {
+            priority: 'high',
             notification: {
-                title: title,
-                body: body
-            },
-            data: data,
-            android: {
-                priority: 'high',
-                notification: {
+                sound: 'default',
+                channelId: 'high_importance_channel'
+            }
+        },
+        apns: {
+            payload: {
+                aps: {
                     sound: 'default',
-                    channelId: 'high_importance_channel'
-                }
-            },
-            apns: {
-                payload: {
-                    aps: {
-                        sound: 'default',
-                        badge: 1
-                    }
+                    badge: 1
                 }
             }
         }
-        
-        const response = await admin.messaging().send(message)
-        console.log('📱 Notificação enviada:', response)
-        return { success: true, messageId: response }
-        
-    } catch (error) {
-        console.error('❌ Erro ao enviar notificação:', error.message)
-        return { success: false, error: error.message }
     }
+    
+    // ✅ Se der erro, lança exceção (não retorna objeto)
+    const response = await admin.messaging().send(message)
+    
+    // ✅ Log SOMENTE se enviou com sucesso
+    console.log('📱 Notificação enviada com sucesso:', response)
+    
+    return response
 }
 
 /**
@@ -93,35 +100,56 @@ async function sendPushNotification(token, title, body, data = {}) {
  */
 async function sendMulticastNotification(tokens, title, body, data = {}) {
     if (!firebaseInitialized || !tokens || tokens.length === 0) {
-        return { success: false, error: 'Tokens inválidos ou Firebase não configurado' }
+        throw new Error('Tokens inválidos ou Firebase não configurado')
     }
     
-    try {
-        const message = {
-            tokens: tokens,
+    // Converter data object para strings
+    const stringData = {}
+    if (data && typeof data === 'object') {
+        for (const [key, value] of Object.entries(data)) {
+            stringData[key] = String(value)
+        }
+    }
+    
+    const message = {
+        tokens: tokens,
+        notification: {
+            title: title,
+            body: body
+        },
+        data: stringData,
+        android: {
+            priority: 'high',
             notification: {
-                title: title,
-                body: body
-            },
-            data: data,
-            android: {
-                priority: 'high'
+                sound: 'default',
+                channelId: 'high_importance_channel'
+            }
+        },
+        apns: {
+            payload: {
+                aps: {
+                    sound: 'default',
+                    badge: 1
+                }
             }
         }
-        
-        const response = await admin.messaging().sendEachForMulticast(message)
-        console.log(`📱 ${response.successCount} notificações enviadas de ${tokens.length}`)
-        
-        return {
-            success: true,
-            successCount: response.successCount,
-            failureCount: response.failureCount
-        }
-        
-    } catch (error) {
-        console.error('❌ Erro ao enviar notificações:', error.message)
-        return { success: false, error: error.message }
     }
+    
+    const response = await admin.messaging().sendEachForMulticast(message)
+    
+    console.log(`📱 ${response.successCount} notificações enviadas de ${tokens.length}`)
+    
+    if (response.failureCount > 0) {
+        console.warn(`⚠️ ${response.failureCount} notificações falharam`)
+        // Log dos tokens que falharam
+        response.responses.forEach((resp, idx) => {
+            if (!resp.success) {
+                console.error(`❌ Token ${tokens[idx].substring(0, 20)}... falhou:`, resp.error?.message)
+            }
+        })
+    }
+    
+    return response
 }
 
 module.exports = {
