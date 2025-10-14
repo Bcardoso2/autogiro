@@ -42,29 +42,28 @@
 
         .hidden { display: none !important; }
 
-        /* Header - Mobile First */
         .header {
-    background: rgba(30, 41, 59, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-    padding: 1rem 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 100;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    transform: translateY(0);
-    will-change: transform; /* Adicione isso */
-}
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(0);
+            will-change: transform;
+        }
 
-.header.hidden {
-    transform: translateY(-100%);
-}
+        .header.hidden {
+            transform: translateY(-100%);
+        }
 
-.header.scrolled {
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-}
+        .header.scrolled {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
 
         .header-content {
             max-width: 1000px;
@@ -160,7 +159,6 @@
             background: rgba(239, 68, 68, 0.2);
         }
 
-        /* Container */
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -183,7 +181,6 @@
             font-size: 0.95rem;
         }
 
-        /* Credit Balance Card */
         .balance-card {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
             border: 1px solid rgba(59, 130, 246, 0.2);
@@ -217,7 +214,6 @@
             font-size: 0.85rem;
         }
 
-        /* Recharge Form */
         .recharge-section {
             background: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(20px);
@@ -367,7 +363,6 @@
             transform: none;
         }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -578,239 +573,17 @@
         .toast-success { border-left: 4px solid var(--success); }
         .toast-error { border-left: 4px solid var(--danger); }
 
-        /* Tablet */
         @media (min-width: 640px) {
             .quick-values {
                 grid-template-columns: repeat(4, 1fr);
             }
         }
 
-        /* Desktop */
         @media (min-width: 768px) {
-            body {
-                padding-top: 100px;
-            }
-
-            .header {
-                padding: 1.25rem 0;
-            }
-
-            .header-content {
-                flex-direction: row;
-                justify-content: space-between;
-                padding: 0 1.5rem;
-                gap: 2rem;
-            }
-
-            .logo-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
-            }
-
-            .logo-text {
-                font-size: 1.75rem;
-            }
-
-            .nav-menu {
-                width: auto;
-            }
-
-            .nav-link {
-                font-size: 0.95rem;
-            }
-
-            .user-info {
-                font-size: 0.95rem;
-                padding: 0.75rem 1.25rem;
-                gap: 1rem;
-            }
-
-            .btn-logout {
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem;
-            }
-
-            .container {
-                padding: 2.5rem 1.5rem;
-            }
-
-            .page-header {
-                margin-bottom: 3rem;
-            }
-
-            .page-title {
-                font-size: 2.5rem;
-            }
-
-            .page-subtitle {
-                font-size: 1.1rem;
-            }
-
-            .balance-card {
-                padding: 2rem;
-                margin-bottom: 3rem;
-            }
-
-            .balance-label {
-                font-size: 0.9rem;
-            }
-
-            .balance-value {
-                font-size: 3rem;
-            }
-
-            .balance-note {
-                font-size: 0.9rem;
-            }
-
-            .recharge-section {
-                padding: 2.5rem;
-            }
-
-            .section-title {
-                font-size: 1.5rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .quick-values {
-                gap: 1rem;
-                margin-bottom: 2rem;
-            }
-
-            .value-btn {
-                padding: 1.25rem;
-            }
-
-            .value-amount {
-                font-size: 1.5rem;
-            }
-
-            .value-credits {
-                font-size: 0.85rem;
-            }
-
-            .form-group {
-                margin-bottom: 1.5rem;
-            }
-
-            .form-label {
-                font-size: 0.9rem;
-            }
-
-            .form-input {
-                padding: 0.875rem 1rem;
-                font-size: 1rem;
-            }
-
-            .form-hint {
-                font-size: 0.8rem;
-            }
-
-            .info-box {
-                padding: 1.25rem;
-                margin: 1.5rem 0;
-            }
-
-            .info-box h4 {
-                font-size: 0.95rem;
-                margin-bottom: 0.75rem;
-            }
-
-            .info-box ul {
-                font-size: 0.9rem;
-                padding-left: 1.25rem;
-            }
-
-            .info-box li {
-                margin-bottom: 0.5rem;
-            }
-
-            .btn-submit {
-                padding: 1rem;
-                font-size: 1rem;
-            }
-
-            .modal-header {
-                padding: 1.5rem;
-            }
-
-            .modal-title {
-                font-size: 1.5rem;
-            }
-
-            .modal-close {
-                width: 40px;
-                height: 40px;
-            }
-
-            .modal-body {
-                padding: 1.5rem;
-            }
-
-            .pix-amount {
-                padding: 1.5rem;
-                margin: 1.5rem 0;
-            }
-
-            .pix-amount-label {
-                font-size: 0.9rem;
-            }
-
-            .pix-amount-value {
-                font-size: 2.5rem;
-            }
-
-            .pix-amount-credits {
-                font-size: 0.9rem;
-            }
-
-            .qr-code-container {
-                margin: 2rem 0;
-            }
-
-            .qr-code-image {
-                width: 280px;
-                height: 280px;
-            }
-
-            .qr-code-image img {
-                height: 730px;
-                top: -320px;
-                right: -150px;
-            }
-
-            .pix-code-section {
-                padding: 1.5rem;
-                margin: 1.5rem 0;
-            }
-
-            .pix-code-label {
-                margin-bottom: 0.75rem;
-            }
-
-            .pix-code-textarea {
-                min-height: 70px;
-                padding: 0.75rem;
-                font-size: 0.7rem;
-            }
-
-            .btn-copy {
-                margin-top: 0.75rem;
-                padding: 0.75rem;
-            }
-
-            #toastContainer {
-                top: 1.25rem;
-                right: 1.25rem;
-            }
-
-            .toast {
-                padding: 1rem 1.5rem;
-                margin-bottom: 0.75rem;
-                min-width: 300px;
-                font-size: 0.95rem;
-            }
+            body { padding-top: 100px; }
+            .header { padding: 1.25rem 0; }
+            .header-content { flex-direction: row; justify-content: space-between; padding: 0 1.5rem; gap: 2rem; }
+            .container { padding: 2.5rem 1.5rem; }
         }
     </style>
 </head>
@@ -900,30 +673,55 @@
     <script>
         const API_BASE = 'https://autogiro.onrender.com/api';
         let currentUser = null;
-        console.log('🔍 Iniciando página de recarga...');
-        console.log('API_BASE:', API_BASE);
+        let token = null;
         let paymentCheckInterval = null;
 
-        async function checkAuth() {
-    try {
-        const response = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
-        const data = await response.json();
-        
-        if (!data.success || !data.user) {
-            window.location.href = 'login';
-            return false;
+        function getToken() {
+            return localStorage.getItem('authToken');
         }
-        
-        // IMPORTANTE: Atribui o usuário ANTES de atualizar UI
-        currentUser = data.user;
-        updateUserUI();
-        return true;
-    } catch (error) {
-        console.error('Erro ao verificar auth:', error);
-        window.location.href = 'login';
-        return false;
-    }
-}
+
+        function setToken(newToken) {
+            token = newToken;
+            localStorage.setItem('authToken', newToken);
+        }
+
+        function clearToken() {
+            token = null;
+            localStorage.removeItem('authToken');
+        }
+
+        function getAuthHeader() {
+            const authToken = getToken();
+            return {
+                'Content-Type': 'application/json',
+                ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+            };
+        }
+
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: getAuthHeader()
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success || !data.user) {
+                    clearToken();
+                    window.location.href = 'login';
+                    return false;
+                }
+                
+                currentUser = data.user;
+                updateUserUI();
+                return true;
+            } catch (error) {
+                console.error('Erro ao verificar auth:', error);
+                clearToken();
+                window.location.href = 'login';
+                return false;
+            }
+        }
 
         function updateUserUI() {
             const userInfo = document.getElementById('userInfo');
@@ -947,51 +745,49 @@
         }
 
         async function handleRecharge(event) {
-    event.preventDefault();
-    
-    // Verifica se currentUser foi carregado
-    if (!currentUser) {
-        showToast('Erro ao carregar dados do usuário. Recarregue a página.', 'error');
-        return;
-    }
-    
-    if (!currentUser.cpf) {
-        showToast('Complete seu cadastro com CPF antes de fazer recargas', 'error');
-        setTimeout(() => {
-            window.location.href = 'perfil';
-        }, 2000);
-        return;
-    }
-    
-    const amount = parseFloat(document.getElementById('rechargeAmount').value);
-    const btn = event.target.querySelector('.btn-submit');
-    
-    btn.disabled = true;
-    btn.textContent = 'Gerando PIX...';
-    
-    try {
-        const response = await fetch(`${API_BASE}/credits/request-recharge`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ amount })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            showPixModal(data.purchase);
-        } else {
-            showToast(data.error || 'Erro ao gerar PIX', 'error');
+            event.preventDefault();
+            
+            if (!currentUser) {
+                showToast('Erro ao carregar dados do usuário. Recarregue a página.', 'error');
+                return;
+            }
+            
+            if (!currentUser.cpf) {
+                showToast('Complete seu cadastro com CPF antes de fazer recargas', 'error');
+                setTimeout(() => {
+                    window.location.href = 'perfil';
+                }, 2000);
+                return;
+            }
+            
+            const amount = parseFloat(document.getElementById('rechargeAmount').value);
+            const btn = event.target.querySelector('.btn-submit');
+            
+            btn.disabled = true;
+            btn.textContent = 'Gerando PIX...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/credits/request-recharge`, {
+                    method: 'POST',
+                    headers: getAuthHeader(),
+                    body: JSON.stringify({ amount })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showPixModal(data.purchase);
+                } else {
+                    showToast(data.error || 'Erro ao gerar PIX', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao gerar PIX:', error);
+                showToast('Erro ao conectar com o servidor', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Gerar PIX';
+            }
         }
-    } catch (error) {
-        console.error('Erro ao gerar PIX:', error);
-        showToast('Erro ao conectar com o servidor', 'error');
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Gerar PIX';
-    }
-}
 
         function showPixModal(purchase) {
             const modal = document.createElement('div');
@@ -1054,7 +850,7 @@
             paymentCheckInterval = setInterval(async () => {
                 try {
                     const response = await fetch(`${API_BASE}/credits/check-payment/${purchaseId}`, {
-                        credentials: 'include'
+                        headers: getAuthHeader()
                     });
                     
                     const data = await response.json();
@@ -1108,12 +904,15 @@
             try {
                 await fetch(`${API_BASE}/auth/logout`, {
                     method: 'POST',
-                    credentials: 'include'
+                    headers: getAuthHeader()
                 });
                 
+                clearToken();
                 window.location.href = 'login';
             } catch (error) {
                 console.error('Erro no logout:', error);
+                clearToken();
+                window.location.href = 'login';
             }
         }
 
@@ -1131,42 +930,40 @@
             }, 3000);
         }
 
-        // Controle de scroll do header
-       // Controle de scroll do header
-let lastScrollTop = 0;
-const header = document.querySelector('.header');
-const scrollThreshold = 80;
-let ticking = false;
+        let lastScrollTop = 0;
+        const header = document.querySelector('.header');
+        const scrollThreshold = 80;
+        let ticking = false;
 
-function updateHeader(scrollTop) {
-    if (scrollTop > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
-    }
-    
-    if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-        header.classList.add('hidden');
-    } else if (scrollTop < lastScrollTop) {
-        header.classList.remove('hidden');
-    }
-    
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-}
+        function updateHeader(scrollTop) {
+            if (scrollTop > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            
+            if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+                header.classList.add('hidden');
+            } else if (scrollTop < lastScrollTop) {
+                header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }
 
-window.addEventListener('scroll', () => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    if (!ticking) {
-        window.requestAnimationFrame(() => {
-            updateHeader(scrollTop);
-            ticking = false;
-        });
-        ticking = true;
-    }
-}, { passive: true });
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    updateHeader(scrollTop);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
         
-    window.addEventListener('DOMContentLoaded', async () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             console.log('📄 DOMContentLoaded disparado');
             await checkAuth();
             console.log('✅ checkAuth finalizado, currentUser:', currentUser);
