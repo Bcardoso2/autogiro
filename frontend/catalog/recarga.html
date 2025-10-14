@@ -775,12 +775,17 @@
         async function handleRecharge(event) {
             event.preventDefault();
             
+            console.log('💳 Iniciando processo de recarga...');
+            console.log('👤 Usuário atual:', currentUser);
+            
             if (!currentUser) {
+                console.error('❌ currentUser não está definido');
                 showToast('Erro ao carregar dados do usuário. Recarregue a página.', 'error');
                 return;
             }
             
             if (!currentUser.cpf) {
+                console.warn('⚠️ Usuário sem CPF cadastrado');
                 showToast('Complete seu cadastro com CPF antes de fazer recargas', 'error');
                 setTimeout(() => {
                     window.location.href = 'perfil';
@@ -789,33 +794,52 @@
             }
             
             const amount = parseFloat(document.getElementById('rechargeAmount').value);
+            console.log('💰 Valor da recarga:', amount);
+            
             const btn = event.target.querySelector('.btn-submit');
             
             btn.disabled = true;
             btn.textContent = 'Gerando PIX...';
             
             try {
+                const headers = getAuthHeader();
+                console.log('📤 Headers da requisição:', headers);
+                console.log('📍 URL:', `${API_BASE}/credits/request-recharge`);
+                console.log('📦 Body:', JSON.stringify({ amount }));
+                
                 const response = await fetch(`${API_BASE}/credits/request-recharge`, {
                     method: 'POST',
-                    headers: getAuthHeader(),
+                    headers: headers,
                     body: JSON.stringify({ amount })
                 });
                 
+                console.log('📥 Status da resposta:', response.status);
+                
                 const data = await response.json();
+                console.log('📦 Dados recebidos:', data);
+                
+                if (!response.ok) {
+                    console.error('❌ Erro na resposta:', data);
+                    showToast(data.error || 'Erro ao gerar PIX', 'error');
+                    return;
+                }
                 
                 if (data.success) {
+                    console.log('✅ PIX gerado com sucesso!');
                     showPixModal(data.purchase);
                 } else {
+                    console.error('❌ Falha ao gerar PIX:', data.error);
                     showToast(data.error || 'Erro ao gerar PIX', 'error');
                 }
             } catch (error) {
-                console.error('Erro ao gerar PIX:', error);
+                console.error('❌ Erro ao gerar PIX:', error);
                 showToast('Erro ao conectar com o servidor', 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Gerar PIX';
             }
         }
+                
 
         function showPixModal(purchase) {
             const modal = document.createElement('div');
@@ -855,4 +879,147 @@
                             <ul>
                                 <li>Abra o app do seu banco</li>
                                 <li>Escolha "Pagar com PIX"</li>
-                                <li
+                                <li>Escaneie o QR Code acima</li>
+                                <li>Confirme o pagamento de R$ ${purchase.amount.toFixed(2)}</li>
+                                <li>Aguarde até 5 minutos</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            setTimeout(() => modal.classList.add('active'), 10);
+            
+            startPaymentPolling(purchase.id);
+        }
+
+        function startPaymentPolling(purchaseId) {
+            if (paymentCheckInterval) {
+                clearInterval(paymentCheckInterval);
+            }
+            
+            paymentCheckInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/credits/check-payment/${purchaseId}`, {
+                        headers: getAuthHeader()
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.status === 'paid') {
+                        clearInterval(paymentCheckInterval);
+                        currentUser.credits = data.new_balance;
+                        updateUserUI();
+                        closeModal();
+                        showToast(`Pagamento confirmado! ${data.credits_added.toFixed(1)} créditos adicionados`, 'success');
+                    }
+                } catch (error) {
+                    console.error('Erro ao verificar pagamento:', error);
+                }
+            }, 10000);
+            
+            setTimeout(() => {
+                if (paymentCheckInterval) {
+                    clearInterval(paymentCheckInterval);
+                }
+            }, 300000);
+        }
+
+        function copyPixCode() {
+            const pixCode = document.getElementById('pixCode');
+            if (pixCode) {
+                pixCode.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('Código PIX copiado!', 'success');
+                } catch (err) {
+                    navigator.clipboard.writeText(pixCode.value).then(() => {
+                        showToast('Código PIX copiado!', 'success');
+                    });
+                }
+            }
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => modal.remove(), 300);
+            }
+            if (paymentCheckInterval) {
+                clearInterval(paymentCheckInterval);
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch(`${API_BASE}/auth/logout`, {
+                    method: 'POST',
+                    headers: getAuthHeader()
+                });
+                
+                clearToken();
+                window.location.href = 'login';
+            } catch (error) {
+                console.error('Erro no logout:', error);
+                clearToken();
+                window.location.href = 'login';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(400px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        let lastScrollTop = 0;
+        const header = document.querySelector('.header');
+        const scrollThreshold = 80;
+        let ticking = false;
+
+        function updateHeader(scrollTop) {
+            if (scrollTop > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            
+            if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
+                header.classList.add('hidden');
+            } else if (scrollTop < lastScrollTop) {
+                header.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    updateHeader(scrollTop);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
+        
+        // ✅ INICIALIZAÇÃO CORRIGIDA
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('📄 Página carregada, iniciando verificação de autenticação...');
+            await checkAuth();
+        });
+    </script>
+</body>
+</html>
