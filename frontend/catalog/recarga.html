@@ -673,50 +673,78 @@
     <script>
         const API_BASE = 'https://autogiro.onrender.com/api';
         let currentUser = null;
-        let token = null;
         let paymentCheckInterval = null;
 
+        // ✅ FUNÇÕES DE TOKEN
         function getToken() {
             return localStorage.getItem('authToken');
         }
 
         function setToken(newToken) {
-            token = newToken;
             localStorage.setItem('authToken', newToken);
         }
 
         function clearToken() {
-            token = null;
             localStorage.removeItem('authToken');
         }
 
         function getAuthHeader() {
-            const authToken = getToken();
+            const token = getToken();
+            
+            if (!token) {
+                console.error('❌ Token não encontrado no localStorage');
+                return {
+                    'Content-Type': 'application/json'
+                };
+            }
+            
+            console.log('✅ Token encontrado:', token.substring(0, 20) + '...');
+            
             return {
                 'Content-Type': 'application/json',
-                ...(authToken && { 'Authorization': `Bearer ${authToken}` })
+                'Authorization': `Bearer ${token}`
             };
         }
 
+        // ✅ VERIFICAR AUTENTICAÇÃO
         async function checkAuth() {
+            console.log('🔍 Iniciando checkAuth...');
+            
+            const token = getToken();
+            
+            if (!token) {
+                console.error('❌ Nenhum token encontrado, redirecionando para login');
+                window.location.href = 'login';
+                return false;
+            }
+            
             try {
+                console.log('📡 Fazendo requisição para /auth/me...');
+                
                 const response = await fetch(`${API_BASE}/auth/me`, {
+                    method: 'GET',
                     headers: getAuthHeader()
                 });
                 
-                const data = await response.json();
+                console.log('📥 Resposta recebida, status:', response.status);
                 
-                if (!data.success || !data.user) {
+                const data = await response.json();
+                console.log('📦 Dados recebidos:', data);
+                
+                if (!response.ok || !data.success || !data.user) {
+                    console.error('❌ Resposta inválida:', data);
                     clearToken();
                     window.location.href = 'login';
                     return false;
                 }
                 
                 currentUser = data.user;
+                console.log('✅ Usuário autenticado:', currentUser);
                 updateUserUI();
                 return true;
+                
             } catch (error) {
-                console.error('Erro ao verificar auth:', error);
+                console.error('❌ Erro ao verificar autenticação:', error);
                 clearToken();
                 window.location.href = 'login';
                 return false;
@@ -827,147 +855,4 @@
                             <ul>
                                 <li>Abra o app do seu banco</li>
                                 <li>Escolha "Pagar com PIX"</li>
-                                <li>Escaneie o QR Code acima</li>
-                                <li>Confirme o pagamento de R$ ${purchase.amount.toFixed(2)}</li>
-                                <li>Aguarde até 5 minutos</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            setTimeout(() => modal.classList.add('active'), 10);
-            
-            startPaymentPolling(purchase.id);
-        }
-
-        function startPaymentPolling(purchaseId) {
-            if (paymentCheckInterval) {
-                clearInterval(paymentCheckInterval);
-            }
-            
-            paymentCheckInterval = setInterval(async () => {
-                try {
-                    const response = await fetch(`${API_BASE}/credits/check-payment/${purchaseId}`, {
-                        headers: getAuthHeader()
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success && data.status === 'paid') {
-                        clearInterval(paymentCheckInterval);
-                        currentUser.credits = data.new_balance;
-                        updateUserUI();
-                        closeModal();
-                        showToast(`Pagamento confirmado! ${data.credits_added.toFixed(1)} créditos adicionados`, 'success');
-                    }
-                } catch (error) {
-                    console.error('Erro ao verificar pagamento:', error);
-                }
-            }, 10000);
-            
-            setTimeout(() => {
-                if (paymentCheckInterval) {
-                    clearInterval(paymentCheckInterval);
-                }
-            }, 300000);
-        }
-
-        function copyPixCode() {
-            const pixCode = document.getElementById('pixCode');
-            if (pixCode) {
-                pixCode.select();
-                try {
-                    document.execCommand('copy');
-                    showToast('Código PIX copiado!', 'success');
-                } catch (err) {
-                    navigator.clipboard.writeText(pixCode.value).then(() => {
-                        showToast('Código PIX copiado!', 'success');
-                    });
-                }
-            }
-        }
-
-        function closeModal() {
-            const modal = document.querySelector('.modal-overlay');
-            if (modal) {
-                modal.classList.remove('active');
-                setTimeout(() => modal.remove(), 300);
-            }
-            if (paymentCheckInterval) {
-                clearInterval(paymentCheckInterval);
-            }
-        }
-
-        async function logout() {
-            try {
-                await fetch(`${API_BASE}/auth/logout`, {
-                    method: 'POST',
-                    headers: getAuthHeader()
-                });
-                
-                clearToken();
-                window.location.href = 'login';
-            } catch (error) {
-                console.error('Erro no logout:', error);
-                clearToken();
-                window.location.href = 'login';
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(400px)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        let lastScrollTop = 0;
-        const header = document.querySelector('.header');
-        const scrollThreshold = 80;
-        let ticking = false;
-
-        function updateHeader(scrollTop) {
-            if (scrollTop > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-            
-            if (scrollTop > lastScrollTop && scrollTop > scrollThreshold) {
-                header.classList.add('hidden');
-            } else if (scrollTop < lastScrollTop) {
-                header.classList.remove('hidden');
-            }
-            
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        }
-
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    updateHeader(scrollTop);
-                    ticking = false;
-                });
-                ticking = true;
-            }
-        }, { passive: true });
-        
-        window.addEventListener('DOMContentLoaded', async () => {
-            console.log('📄 DOMContentLoaded disparado');
-            await checkAuth();
-            console.log('✅ checkAuth finalizado, currentUser:', currentUser);
-        });
-    </script>
-</body>
-</html>
+                                <li
