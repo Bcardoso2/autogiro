@@ -675,17 +675,17 @@
         let currentUser = null;
         let paymentCheckInterval = null;
 
-        // ✅ FUNÇÕES DE TOKEN
+        // ✅ FUNÇÕES DE TOKEN - CORRIGIDO PARA 'token'
         function getToken() {
-            return localStorage.getItem('authToken');
+            return localStorage.getItem('token');  // ✅ ERA 'authToken', AGORA É 'token'
         }
 
         function setToken(newToken) {
-            localStorage.setItem('authToken', newToken);
+            localStorage.setItem('token', newToken);  // ✅ CORRIGIDO
         }
 
         function clearToken() {
-            localStorage.removeItem('authToken');
+            localStorage.removeItem('token');  // ✅ CORRIGIDO
         }
 
         function getAuthHeader() {
