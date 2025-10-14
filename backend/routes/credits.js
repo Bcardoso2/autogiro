@@ -1,15 +1,15 @@
 const express = require('express')
 const { query } = require('../config/database')
-const { requireJWT } = require('../middleware/jwtAuth') // 🔥 MUDOU
+const { requireJWT } = require('../middleware/jwtAuth')
 const coraService = require('../services/coraService')
 const router = express.Router()
 
 // GET /api/credits/balance - Saldo de créditos do usuário logado
-router.get('/balance', requireJWT, async (req, res) => { // 🔥 MUDOU
+router.get('/balance', requireJWT, async (req, res) => {
   try {
     const result = await query(
       'SELECT credits, total_credits_purchased FROM users WHERE id = $1',
-      [req.userId] // 🔥 MUDOU
+      [req.user.id]  // ✅ CORRIGIDO
     )
     
     if (result.rows.length === 0) {
@@ -28,7 +28,7 @@ router.get('/balance', requireJWT, async (req, res) => { // 🔥 MUDOU
 })
 
 // GET /api/credits/transactions - Histórico de transações
-router.get('/transactions', requireJWT, async (req, res) => { // 🔥 MUDOU
+router.get('/transactions', requireJWT, async (req, res) => {
   try {
     const result = await query(`
       SELECT 
@@ -39,7 +39,7 @@ router.get('/transactions', requireJWT, async (req, res) => { // 🔥 MUDOU
       WHERE user_id = $1
       ORDER BY created_at DESC
       LIMIT 50
-    `, [req.userId]) // 🔥 MUDOU
+    `, [req.user.id])  // ✅ CORRIGIDO
     
     res.json({ 
       success: true,
@@ -52,9 +52,14 @@ router.get('/transactions', requireJWT, async (req, res) => { // 🔥 MUDOU
 })
 
 // POST /api/credits/request-recharge - Solicitar recarga (gerar QR Code PIX)
-router.post('/request-recharge', requireJWT, async (req, res) => { // 🔥 MUDOU
+router.post('/request-recharge', requireJWT, async (req, res) => {
   try {
     const { amount } = req.body
+    
+    console.log('💳 Requisição de recarga recebida:', {
+      userId: req.user.id,
+      amount: amount
+    })
     
     // Validação de valor mínimo
     if (!amount || amount < 1000) {
@@ -71,6 +76,7 @@ router.post('/request-recharge', requireJWT, async (req, res) => { // 🔥 MUDOU
     )
     
     if (configResult.rows.length === 0) {
+      console.error('❌ Configuração Cora não encontrada')
       return res.status(404).json({ 
         success: false, 
         error: 'Configuração de pagamento não encontrada' 
@@ -80,7 +86,7 @@ router.post('/request-recharge', requireJWT, async (req, res) => { // 🔥 MUDOU
     // Buscar dados do usuário COM CPF
     const userResult = await query(
       'SELECT id, name, email, phone, cpf FROM users WHERE id = $1',
-      [req.userId] // 🔥 MUDOU
+      [req.user.id]  // ✅ CORRIGIDO
     )
     
     if (userResult.rows.length === 0) {
@@ -140,7 +146,7 @@ router.post('/request-recharge', requireJWT, async (req, res) => { // 🔥 MUDOU
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending', $9)
       RETURNING *
     `, [
-      req.userId, // 🔥 MUDOU
+      req.user.id,  // ✅ CORRIGIDO
       'client1',
       amount,
       creditsToAdd,
@@ -178,13 +184,13 @@ router.post('/request-recharge', requireJWT, async (req, res) => { // 🔥 MUDOU
 })
 
 // GET /api/credits/check-payment/:purchaseId - Verificar status do pagamento
-router.get('/check-payment/:purchaseId', requireJWT, async (req, res) => { // 🔥 MUDOU
+router.get('/check-payment/:purchaseId', requireJWT, async (req, res) => {
   try {
     const { purchaseId } = req.params
     
     const purchase = await query(
       'SELECT * FROM pending_credit_purchases WHERE id = $1 AND user_id = $2',
-      [purchaseId, req.userId] // 🔥 MUDOU
+      [purchaseId, req.user.id]  // ✅ CORRIGIDO
     )
     
     if (purchase.rows.length === 0) {
@@ -228,7 +234,7 @@ router.get('/check-payment/:purchaseId', requireJWT, async (req, res) => { // �
         
         const userResult = await query(
           'SELECT credits FROM users WHERE id = $1', 
-          [req.userId] // 🔥 MUDOU
+          [req.user.id]  // ✅ CORRIGIDO
         )
         const currentCredits = parseFloat(userResult.rows[0].credits)
         const newCredits = currentCredits + parseFloat(pendingPurchase.credits_to_add)
@@ -240,7 +246,7 @@ router.get('/check-payment/:purchaseId', requireJWT, async (req, res) => { // �
               total_credits_purchased = total_credits_purchased + $2,
               updated_at = NOW()
           WHERE id = $3
-        `, [newCredits, pendingPurchase.credits_to_add, req.userId]) // 🔥 MUDOU
+        `, [newCredits, pendingPurchase.credits_to_add, req.user.id])  // ✅ CORRIGIDO
         
         // Marcar como pago
         await query(`
@@ -259,7 +265,7 @@ router.get('/check-payment/:purchaseId', requireJWT, async (req, res) => { // �
             payment_status, payment_confirmed_at, description
           ) VALUES ($1, 'purchase', $2, $3, $4, $5, 'pix', $6, 'confirmed', NOW(), $7)
         `, [
-          req.userId, // 🔥 MUDOU
+          req.user.id,  // ✅ CORRIGIDO
           pendingPurchase.credits_to_add,
           currentCredits,
           newCredits,
@@ -270,7 +276,7 @@ router.get('/check-payment/:purchaseId', requireJWT, async (req, res) => { // �
         
         await query('COMMIT')
         
-        console.log(`✅ Pagamento confirmado! User ${req.userId} recebeu ${pendingPurchase.credits_to_add} créditos`) // 🔥 MUDOU
+        console.log(`✅ Pagamento confirmado! User ${req.user.id} recebeu ${pendingPurchase.credits_to_add} créditos`)  // ✅ CORRIGIDO
         
         return res.json({ 
           success: true, 
@@ -306,7 +312,7 @@ router.get('/check-payment/:purchaseId', requireJWT, async (req, res) => { // �
 })
 
 // GET /api/credits/pending-purchases - Listar recargas pendentes
-router.get('/pending-purchases', requireJWT, async (req, res) => { // 🔥 MUDOU
+router.get('/pending-purchases', requireJWT, async (req, res) => {
   try {
     const result = await query(`
       SELECT 
@@ -316,7 +322,7 @@ router.get('/pending-purchases', requireJWT, async (req, res) => { // 🔥 MUDOU
       WHERE user_id = $1 AND status = 'pending'
       ORDER BY created_at DESC
       LIMIT 10
-    `, [req.userId]) // 🔥 MUDOU
+    `, [req.user.id])  // ✅ CORRIGIDO
     
     res.json({ 
       success: true,
@@ -332,7 +338,7 @@ router.get('/pending-purchases', requireJWT, async (req, res) => { // 🔥 MUDOU
 })
 
 // PATCH /api/credits/update-cpf - Atualizar CPF do usuário
-router.patch('/update-cpf', requireJWT, async (req, res) => { // 🔥 MUDOU
+router.patch('/update-cpf', requireJWT, async (req, res) => {
   try {
     const { cpf } = req.body
     
@@ -357,7 +363,7 @@ router.patch('/update-cpf', requireJWT, async (req, res) => { // 🔥 MUDOU
     // Verificar se CPF já está em uso
     const existingCpf = await query(
       'SELECT id FROM users WHERE cpf = $1 AND id != $2',
-      [cleanCpf, req.userId] // 🔥 MUDOU
+      [cleanCpf, req.user.id]  // ✅ CORRIGIDO
     )
     
     if (existingCpf.rows.length > 0) {
@@ -370,10 +376,10 @@ router.patch('/update-cpf', requireJWT, async (req, res) => { // 🔥 MUDOU
     // Atualizar CPF
     await query(
       'UPDATE users SET cpf = $1, updated_at = NOW() WHERE id = $2',
-      [cleanCpf, req.userId] // 🔥 MUDOU
+      [cleanCpf, req.user.id]  // ✅ CORRIGIDO
     )
     
-    console.log(`✅ CPF atualizado para usuário ${req.userId}`) // 🔥 MUDOU
+    console.log(`✅ CPF atualizado para usuário ${req.user.id}`)  // ✅ CORRIGIDO
     
     res.json({ 
       success: true,
