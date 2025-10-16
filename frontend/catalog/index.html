@@ -994,6 +994,7 @@
                 if (data.success) {
                     APP_STATE.vehicles = data.vehicles
                     console.log('Veículos carregados:', APP_STATE.vehicles.length)
+                    populateStateFilter()
                     populateEventFilter()
                     renderVehicles()
                     updateStats()
@@ -1069,18 +1070,22 @@
         }
 
         function renderVehicles() {
-            const grid = document.getElementById('vehiclesGrid')
-            grid.innerHTML = ''
-            
-            const categoryFilter = document.getElementById('categoryFilter').value
-            const eventFilter = document.getElementById('eventFilter').value
-            
-            let filteredVehicles = APP_STATE.vehicles.filter(vehicle => {
-                const matchCategory = categoryFilter === 'all' || vehicle.category === categoryFilter
-                const vehicleEventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : null
-                const matchEvent = eventFilter === 'all' || vehicleEventDate === eventFilter
-                return matchCategory && matchEvent
-            })
+    const grid = document.getElementById('vehiclesGrid')
+    grid.innerHTML = ''
+    
+    const categoryFilter = document.getElementById('categoryFilter').value
+    const stateFilter = document.getElementById('stateFilter').value  // 👈 ADICIONE
+    const eventFilter = document.getElementById('eventFilter').value
+    
+    let filteredVehicles = APP_STATE.vehicles.filter(vehicle => {
+        const matchCategory = categoryFilter === 'all' || vehicle.category === categoryFilter
+        const vehicleState = extractStateFromLocation(vehicle.location)  // 👈 ADICIONE
+        const matchState = stateFilter === 'all' || vehicleState === stateFilter  // 👈 ADICIONE
+        const vehicleEventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : null
+        const matchEvent = eventFilter === 'all' || vehicleEventDate === eventFilter
+        return matchCategory && matchState && matchEvent  // 👈 MODIFIQUE
+    })
+
             
             const groupedByEvent = {}
             filteredVehicles.forEach(vehicle => {
@@ -1136,29 +1141,36 @@
             updateVisibleCount(filteredVehicles.length)
         }
 
-        function populateEventFilter() {
-            const eventFilter = document.getElementById('eventFilter')
-            const events = [...new Set(
-                APP_STATE.vehicles
-                    .map(v => v.event_date ? v.event_date.split('T')[0] : null)
-                    .filter(Boolean)
-            )]
-            events.sort((a, b) => new Date(b) - new Date(a))
-            
-            events.forEach(eventDate => {
-                const option = document.createElement('option')
-                option.value = eventDate
-                
-                const date = new Date(eventDate + 'T12:00:00')
-                option.textContent = date.toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                })
-                
-                eventFilter.appendChild(option)
-            })
+        function extractStateFromLocation(location) {
+    if (!location) return null
+    const parts = location.split(',')
+    if (parts.length >= 2) {
+        const state = parts[parts.length - 1].trim()
+        if (state.length === 2) {
+            return state.toUpperCase()
         }
+    }
+    return null
+}
+
+function populateStateFilter() {
+    const stateFilter = document.getElementById('stateFilter')
+    
+    const states = [...new Set(
+        APP_STATE.vehicles
+            .map(v => extractStateFromLocation(v.location))
+            .filter(Boolean)
+    )]
+    
+    states.sort()
+    
+    states.forEach(state => {
+        const option = document.createElement('option')
+        option.value = state
+        option.textContent = state
+        stateFilter.appendChild(option)
+    })
+}
 
         function updateVisibleCount(count) {
             document.getElementById('visibleCount').textContent = count
@@ -1304,72 +1316,77 @@
             document.getElementById('totalVehicles').textContent = APP_STATE.vehicles.length
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const searchInput = document.getElementById('searchInput')
-            const categoryFilter = document.getElementById('categoryFilter')
-            const eventFilter = document.getElementById('eventFilter')
+       document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput')
+    const categoryFilter = document.getElementById('categoryFilter')
+    const stateFilter = document.getElementById('stateFilter')  // ✅ JÁ EXISTE
+    const eventFilter = document.getElementById('eventFilter')
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase()
+            const allCards = document.querySelectorAll('.vehicle-card')
+            let count = 0
             
-            if (searchInput) {
-                searchInput.addEventListener('input', (e) => {
-                    const query = e.target.value.toLowerCase()
-                    const allCards = document.querySelectorAll('.vehicle-card')
-                    let count = 0
-                    
-                    allCards.forEach((card) => {
-                        const index = parseInt(card.getAttribute('data-index'))
-                        const vehicle = APP_STATE.vehicles[index]
-                        const text = `${vehicle.brand} ${vehicle.model} ${vehicle.description || ''} ${vehicle.color || ''}`.toLowerCase()
-                        
-                        if (text.includes(query)) {
-                            card.style.display = ''
-                            count++
-                        } else {
-                            card.style.display = 'none'
-                        }
-                    })
-                    
-                    document.getElementById('visibleCount').textContent = count
-                })
-            }
+            allCards.forEach((card) => {
+                const index = parseInt(card.getAttribute('data-index'))
+                const vehicle = APP_STATE.vehicles[index]
+                const text = `${vehicle.brand} ${vehicle.model} ${vehicle.description || ''} ${vehicle.color || ''}`.toLowerCase()
+                
+                if (text.includes(query)) {
+                    card.style.display = ''
+                    count++
+                } else {
+                    card.style.display = 'none'
+                }
+            })
             
-            if (categoryFilter) {
-                categoryFilter.addEventListener('change', renderVehicles)
-            }
-            
-            if (eventFilter) {
-                eventFilter.addEventListener('change', renderVehicles)
-            }
+            document.getElementById('visibleCount').textContent = count
         })
+    }
+    
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', renderVehicles)
+    }
+    
+    if (stateFilter) {  // 👈 ADICIONE ESTE BLOCO AQUI
+        stateFilter.addEventListener('change', renderVehicles)
+    }
+    
+    if (eventFilter) {
+        eventFilter.addEventListener('change', renderVehicles)
+    }
+})
 
-        async function handleProposal(index) {
-            const vehicle = APP_STATE.vehicles[index]
-            
-            if (!APP_STATE.isLoggedIn) {
-                showToast('Você precisa fazer login para fazer uma proposta', 'error')
-                setTimeout(() => {
-                    window.location.href = 'login'
-                }, 1500)
-                return
-            }
-            
-            if (!APP_STATE.currentUser.cpf) {
-                showToast('Complete seu cadastro para fazer propostas', 'error')
-                setTimeout(() => {
-                    window.location.href = 'perfil'
-                }, 1500)
-                return
-            }
-            
-            if (APP_STATE.currentUser.credits < 1) {
-                showToast('Créditos insuficientes', 'error')
-                setTimeout(() => {
-                    window.location.href = 'recarga'
-                }, 1500)
-                return
-            }
-            
-            openProposalModal(vehicle)
-        }
+async function handleProposal(index) {
+    const vehicle = APP_STATE.vehicles[index]
+    
+    if (!APP_STATE.isLoggedIn) {
+        showToast('Você precisa fazer login para fazer uma proposta', 'error')
+        setTimeout(() => {
+            window.location.href = 'login'
+        }, 1500)
+        return
+    }
+    
+    if (!APP_STATE.currentUser.cpf) {
+        showToast('Complete seu cadastro para fazer propostas', 'error')
+        setTimeout(() => {
+            window.location.href = 'perfil'
+        }, 1500)
+        return
+    }
+    
+    if (APP_STATE.currentUser.credits < 1) {
+        showToast('Créditos insuficientes', 'error')
+        setTimeout(() => {
+            window.location.href = 'recarga'
+        }, 1500)
+        return
+    }
+    
+    openProposalModal(vehicle)
+}
         
         function openProposalModal(vehicle) {
             createModal('Fazer Proposta', `
