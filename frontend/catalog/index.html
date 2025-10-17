@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#001C49">
     <title>Autogiro - Catálogo de Veículos</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,9 +27,15 @@
             --shadow: 0 1px 3px rgba(0, 28, 73, 0.1);
             --shadow-lg: 0 4px 12px rgba(0, 28, 73, 0.15);
             --transition: all 0.3s ease;
+            --header-height-mobile: 70px;
+            --header-height-desktop: 100px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
         body { 
             font-family: 'Inter', -apple-system, system-ui, sans-serif;
@@ -36,23 +43,25 @@
             color: var(--text-dark);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             min-height: 100vh;
-            padding-top: 85px;
+            padding-top: var(--header-height-mobile);
         }
 
         .hidden { display: none !important; }
         
-        /* Header */
+        /* ======================
+           HEADER - MOBILE FIRST
+           ====================== */
         .header {
             background: var(--bg-white);
             border-bottom: 1px solid var(--border);
-            padding: 1rem 0;
+            padding: 0.75rem 0;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 100;
-            transition: var(--transition);
             box-shadow: var(--shadow);
         }
         
@@ -62,77 +71,107 @@
             padding: 0 1rem;
             display: flex;
             flex-direction: column;
-            align-items: center;
             gap: 0.75rem;
+        }
+
+        /* Logo Row */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             text-decoration: none;
         }
         
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: var(--primary);
-            border-radius: 10px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 800;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
         }
         
         .logo-text {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 800;
             color: var(--primary);
             letter-spacing: -0.02em;
         }
 
-        .nav-menu {
-            display: none;
-            width: 100%;
+        /* Menu Toggle Button */
+        .menu-toggle {
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 40px;
+            height: 40px;
+            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
         }
 
-        .nav-menu.active {
-            display: flex;
+        .menu-toggle span {
+            width: 20px;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        /* Navigation */
+        .nav-menu {
+            display: none;
         }
 
         .nav-link {
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1rem;
             border-radius: 8px;
             text-decoration: none;
             color: var(--text-secondary);
             font-weight: 500;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             transition: var(--transition);
+            text-align: center;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover, 
+        .nav-link.active {
             background: rgba(0, 28, 73, 0.08);
             color: var(--primary);
         }
         
+        /* Stats - Simplified for mobile */
         .header-stats {
-            width: 100%;
             display: flex;
             justify-content: center;
-            gap: 1rem;
+            gap: 0.75rem;
         }
         
         .stat-item {
             background: var(--bg-light);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
             text-align: center;
+            flex: 1;
+            max-width: 120px;
         }
         
         .stat-number {
@@ -140,17 +179,19 @@
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--primary);
+            line-height: 1.2;
         }
         
         .stat-label {
             display: block;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-secondary);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
+        /* User Info */
         #userInfoContainer {
             width: 100%;
             display: flex;
@@ -159,13 +200,23 @@
 
         .user-info {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             background: var(--bg-light);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+
+        .user-info-row {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            width: 100%;
+            justify-content: center;
         }
 
         .user-credits {
@@ -177,12 +228,13 @@
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.2);
             color: var(--danger);
-            padding: 0.375rem 0.75rem;
+            padding: 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.8rem;
             font-weight: 600;
             transition: var(--transition);
+            min-height: 44px;
         }
 
         .btn-logout:hover {
@@ -192,25 +244,31 @@
         .btn-login {
             background: var(--primary);
             color: white;
-            padding: 0.625rem 1.25rem;
+            padding: 0.75rem 1.5rem;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             font-weight: 600;
             border: none;
             transition: var(--transition);
             text-decoration: none;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-login:hover {
             background: var(--primary-light);
         }
 
-        /* Container */
+        /* ======================
+           CONTAINER
+           ====================== */
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 1.5rem 1rem;
+            padding: 1rem;
         }
 
         /* Loading */
@@ -233,30 +291,64 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Filters */
+        /* ======================
+           FILTERS - MOBILE FIRST
+           ====================== */
         .filters-section {
             background: var(--bg-white);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1.5rem;
+            padding: 1rem;
             margin-bottom: 1rem;
             box-shadow: var(--shadow);
         }
         
         .search-bar {
             position: relative;
+            margin-bottom: 0.75rem;
         }
 
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 0.75rem 0.75rem 2.75rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-dark);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: var(--transition);
+            min-height: 44px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 28, 73, 0.1);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        /* Filters - Stack on mobile */
         .filters-row {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .filter-group {
-            flex: 1;
-            min-width: 200px;
+            width: 100%;
         }
 
         .filter-select {
@@ -266,19 +358,38 @@
             border: 1px solid var(--border);
             border-radius: var(--radius);
             color: var(--text-dark);
-            font-size: 0.875rem;
+            font-size: 1rem;
             font-family: inherit;
             transition: var(--transition);
             cursor: pointer;
+            min-height: 44px;
         }
 
         .filter-select:focus {
             outline: none;
             border-color: var(--primary);
-            border-width: 2px;
+            box-shadow: 0 0 0 3px rgba(0, 28, 73, 0.1);
         }
 
-        /* Event Group Headers */
+        /* Results Summary */
+        .results-summary {
+            background: var(--bg-light);
+            border-radius: 8px;
+            padding: 0.625rem 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .results-summary strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        /* ======================
+           EVENT GROUPS
+           ====================== */
         .event-group {
             margin-bottom: 2rem;
         }
@@ -292,10 +403,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .event-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 700;
             color: var(--primary);
         }
@@ -308,60 +421,14 @@
             padding: 0.25rem 0.75rem;
             border-radius: 20px;
         }
-        
-        .search-input {
-            width: 100%;
-            padding: 0.75rem 0.75rem 0.75rem 3rem;
-            background: var(--bg-white);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-dark);
-            font-size: 0.875rem;
-            font-family: inherit;
-            transition: var(--transition);
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            border-width: 2px;
-        }
-        
-        .search-input::placeholder {
-            color: var(--text-muted);
-        }
 
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            pointer-events: none;
-        }
-
-        /* Results Summary */
-        .results-summary {
-            background: var(--bg-light);
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1rem;
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-        
-        .results-summary strong {
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-
-        /* Vehicles Grid */
+        /* ======================
+           VEHICLES GRID - MOBILE FIRST
+           ====================== */
         .vehicles-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 1rem;
-            margin-bottom: 2rem;
         }
         
         .vehicle-card {
@@ -373,21 +440,19 @@
             box-shadow: var(--shadow);
         }
         
-        .vehicle-card:hover {
-            box-shadow: var(--shadow-lg);
+        .vehicle-card:active {
+            transform: scale(0.98);
         }
 
         /* Gallery */
         .vehicle-gallery {
             position: relative;
-            height: 250px;
-            overflow: hidden;
             background: var(--bg-light);
         }
         
         .main-image-container {
             position: relative;
-            height: 190px;
+            height: 220px;
             cursor: pointer;
             overflow: hidden;
         }
@@ -397,10 +462,6 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
-        }
-        
-        .vehicle-card:hover .main-image-container img {
-            transform: scale(1.05);
         }
         
         .image-overlay {
@@ -416,13 +477,14 @@
             color: white;
         }
         
-        .main-image-container:hover .image-overlay {
+        .main-image-container:active .image-overlay {
             opacity: 1;
         }
         
         .zoom-text {
             font-size: 0.875rem;
             margin-top: 0.5rem;
+            font-weight: 500;
         }
 
         .thumbnail-strip {
@@ -443,7 +505,7 @@
             border: 2px solid transparent;
         }
         
-        .thumbnail-strip img:hover {
+        .thumbnail-strip img:active {
             border-color: var(--primary);
         }
         
@@ -463,13 +525,13 @@
             font-size: 0.8rem;
         }
         
-        .more-photos:hover {
+        .more-photos:active {
             background: var(--primary);
             color: white;
         }
 
         .no-image {
-            height: 250px;
+            height: 220px;
             background: var(--bg-light);
             display: flex;
             flex-direction: column;
@@ -498,6 +560,7 @@
         
         .vehicle-title-section {
             flex: 1;
+            min-width: 0;
         }
         
         .vehicle-title {
@@ -506,17 +569,7 @@
             color: var(--text-dark);
             line-height: 1.3;
             margin-bottom: 0.5rem;
-        }
-        
-        .vehicle-year {
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--primary);
-            background: rgba(0, 28, 73, 0.08);
-            border: 1px solid rgba(0, 28, 73, 0.15);
-            padding: 0.2rem 0.6rem;
-            border-radius: 999px;
+            word-break: break-word;
         }
         
         .vehicle-badges {
@@ -538,8 +591,21 @@
             border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
+        /* Vehicle Details */
+        .vehicle-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .vehicle-detail svg {
+            flex-shrink: 0;
+        }
+
         .vehicle-pricing {
-            margin-bottom: 1rem;
+            margin: 1rem 0;
             text-align: center;
             padding: 1rem;
             background: rgba(16, 185, 129, 0.05);
@@ -551,6 +617,16 @@
             font-size: 1.5rem;
             font-weight: 800;
             color: var(--success);
+            line-height: 1.2;
+        }
+
+        .price-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
         }
 
         /* Actions */
@@ -564,16 +640,23 @@
             grid-column: 1 / -1;
         }
         
-        .btn-primary, .btn-secondary, .btn-proposal, .btn-laudo {
-            padding: 0.625rem 0.75rem;
+        .btn-primary, 
+        .btn-secondary, 
+        .btn-proposal, 
+        .btn-laudo {
+            padding: 0.75rem;
             border: none;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             text-align: center;
             font-family: inherit;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .btn-primary {
@@ -581,8 +664,9 @@
             color: white;
         }
         
-        .btn-primary:hover {
+        .btn-primary:active {
             background: var(--primary-light);
+            transform: scale(0.98);
         }
         
         .btn-secondary {
@@ -591,8 +675,9 @@
             border: 1px solid var(--border);
         }
         
-        .btn-secondary:hover {
+        .btn-secondary:active {
             background: var(--border);
+            transform: scale(0.98);
         }
         
         .btn-proposal {
@@ -600,8 +685,9 @@
             color: white;
         }
         
-        .btn-proposal:hover {
+        .btn-proposal:active {
             background: #059669;
+            transform: scale(0.98);
         }
         
         .btn-laudo {
@@ -609,11 +695,14 @@
             color: white;
         }
         
-        .btn-laudo:hover {
+        .btn-laudo:active {
             background: #d97706;
+            transform: scale(0.98);
         }
 
-        /* Modal Styles */
+        /* ======================
+           MODAL - MOBILE OPTIMIZED
+           ====================== */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -621,9 +710,9 @@
             backdrop-filter: blur(4px);
             z-index: 1000;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
-            padding: 1rem;
+            padding: 0;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
@@ -636,34 +725,38 @@
         
         .modal-content {
             background: var(--bg-white);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            max-width: 600px;
+            border-radius: var(--radius) var(--radius) 0 0;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            transform: scale(0.9);
+            transform: translateY(100%);
             transition: transform 0.3s ease;
             box-shadow: var(--shadow-lg);
         }
         
         .modal-overlay.active .modal-content {
-            transform: scale(1);
+            transform: translateY(0);
         }
         
         .modal-header {
-            padding: 1.25rem;
+            padding: 1rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-white);
+            z-index: 10;
         }
         
         .modal-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--text-dark);
             margin: 0;
+            flex: 1;
+            padding-right: 1rem;
         }
         
         .modal-close {
@@ -674,20 +767,21 @@
             color: var(--text-secondary);
             padding: 0.5rem;
             border-radius: 8px;
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: var(--transition);
+            flex-shrink: 0;
         }
         
-        .modal-close:hover {
+        .modal-close:active {
             background: var(--border);
         }
         
         .modal-body {
-            padding: 1.25rem;
+            padding: 1rem;
         }
 
         /* Form Styles */
@@ -700,42 +794,45 @@
             font-weight: 600;
             color: var(--text-dark);
             margin-bottom: 0.5rem;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
         }
         
         .form-input {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.875rem;
             background: var(--bg-white);
             border: 1px solid var(--border);
             border-radius: 8px;
             color: var(--text-dark);
-            font-size: 0.875rem;
+            font-size: 1rem;
             font-family: inherit;
             transition: var(--transition);
+            min-height: 44px;
         }
         
         .form-input:focus {
             outline: none;
             border-color: var(--primary);
-            border-width: 2px;
+            box-shadow: 0 0 0 3px rgba(0, 28, 73, 0.1);
         }
 
         .btn-submit {
             background: var(--primary);
             color: white;
-            padding: 0.875rem 1.25rem;
+            padding: 1rem 1.25rem;
             border: none;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: var(--transition);
             width: 100%;
+            min-height: 50px;
         }
         
-        .btn-submit:hover {
+        .btn-submit:active {
             background: var(--primary-light);
+            transform: scale(0.98);
         }
         
         .btn-submit:disabled {
@@ -746,85 +843,152 @@
 
         .info-box {
             background: rgba(245, 158, 11, 0.1);
-            padding: 0.875rem;
+            padding: 1rem;
             border-radius: 8px;
             margin: 1rem 0;
-            font-size: 0.8rem;
-            color: var(--warning);
-            line-height: 1.5;
+            font-size: 0.85rem;
+            color: #b45309;
+            line-height: 1.6;
+            border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
         /* Toast Notifications */
         #toastContainer {
             position: fixed;
-            top: 1rem;
+            bottom: 1rem;
+            left: 1rem;
             right: 1rem;
             z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
         
         .toast {
             background: var(--bg-white);
             border: 1px solid var(--border);
             border-radius: 10px;
-            padding: 0.875rem 1.25rem;
-            margin-bottom: 0.625rem;
+            padding: 1rem;
             box-shadow: var(--shadow-lg);
-            animation: slideIn 0.3s ease;
-            min-width: 250px;
-            max-width: 90vw;
+            animation: slideUp 0.3s ease;
             color: var(--text-dark);
-            font-size: 0.875rem;
+            font-size: 0.9rem;
         }
         
-        @keyframes slideIn {
-            from { transform: translateX(400px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         
         .toast-success { border-left: 4px solid var(--success); }
         .toast-error { border-left: 4px solid var(--danger); }
         
-        /* Tablet */
+        /* ======================
+           RESPONSIVE - TABLET & DESKTOP
+           ====================== */
+        
+        /* Tablet (640px+) */
         @media (min-width: 640px) {
             .vehicles-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .filters-row {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .filter-group {
+                flex: 1;
+                min-width: 200px;
+            }
+
+            .user-info {
+                flex-direction: row;
+                width: auto;
+            }
+
+            .modal-overlay {
+                align-items: center;
+                padding: 1rem;
+            }
+
+            .modal-content {
+                border-radius: var(--radius);
+                max-width: 600px;
+                transform: scale(0.9);
+            }
+
+            .modal-overlay.active .modal-content {
+                transform: scale(1);
+            }
+
+            #toastContainer {
+                top: 1rem;
+                right: 1rem;
+                left: auto;
+                bottom: auto;
+            }
+
+            .toast {
+                min-width: 300px;
+                animation: slideIn 0.3s ease;
+            }
+
+            @keyframes slideIn {
+                from { transform: translateX(400px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
         }
 
-        /* Desktop */
+        /* Desktop (768px+) */
         @media (min-width: 768px) {
             body {
-                padding-top: 100px;
+                padding-top: var(--header-height-desktop);
             }
 
             .header {
-                padding: 1.25rem 0;
+                padding: 1rem 0;
             }
 
             .header-content {
                 flex-direction: row;
                 justify-content: space-between;
+                align-items: center;
                 padding: 0 1.5rem;
-                gap: 2rem;
+            }
+
+            .header-top {
+                width: auto;
+            }
+
+            .menu-toggle {
+                display: none;
             }
 
             .logo-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
+                width: 48px;
+                height: 48px;
+                font-size: 1.4rem;
             }
 
             .logo-text {
-                font-size: 1.75rem;
+                font-size: 1.5rem;
             }
 
             .nav-menu {
                 display: flex !important;
+                flex-direction: row;
                 width: auto;
             }
 
             .nav-link {
                 font-size: 0.95rem;
+                min-height: auto;
+            }
+
+            .nav-link:hover {
+                background: rgba(0, 28, 73, 0.08);
             }
 
             .header-stats {
@@ -839,58 +1003,112 @@
                 font-size: 1.5rem;
             }
 
-            .stat-label {
-                font-size: 0.75rem;
+            .container {
+                padding: 1.5rem;
             }
 
-            #userInfoContainer {
-                width: auto;
+            .filters-section {
+                padding: 1.5rem;
             }
 
-            .user-info {
-                font-size: 0.95rem;
-                padding: 0.75rem 1.25rem;
-                gap: 1rem;
+            .main-image-container:hover .image-overlay {
+                opacity: 1;
             }
 
-            .btn-logout {
-                padding: 0.5rem 1rem;
-                font-size: 0.875rem;
+            .thumbnail-strip img:hover {
+                border-color: var(--primary);
             }
 
-            .btn-login {
-                padding: 0.75rem 1.5rem;
-                font-size: 0.95rem;
+            .more-photos:hover {
+                background: var(--primary);
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: var(--primary-light);
+                transform: none;
+            }
+
+            .btn-secondary:hover {
+                background: var(--border);
+            }
+
+            .btn-proposal:hover {
+                background: #059669;
+            }
+
+            .btn-laudo:hover {
+                background: #d97706;
+            }
+
+            .btn-submit:hover {
+                background: var(--primary-light);
+            }
+
+            .modal-close:hover {
+                background: var(--border);
+            }
+
+            .vehicle-card:hover {
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-2px);
+            }
+
+            .vehicle-card:active {
+                transform: translateY(0);
+            }
+        }
+
+        /* Large Desktop (1024px+) */
+        @media (min-width: 1024px) {
+            .vehicles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
             }
 
             .container {
                 padding: 2rem 1.5rem;
             }
 
-            .filters-section {
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
+            .main-image-container {
+                height: 250px;
             }
 
-            .search-input {
-                padding: 0.875rem 0.875rem 0.875rem 3rem;
-                font-size: 0.95rem;
-            }
-
-            .vehicle-info {
-                padding: 1.25rem;
-            }
-
-            .vehicle-title {
-                font-size: 1.125rem;
+            .no-image {
+                height: 250px;
             }
         }
 
-        /* Large Desktop */
-        @media (min-width: 1024px) {
+        /* Extra Large Desktop (1400px+) */
+        @media (min-width: 1400px) {
             .vehicles-grid {
-                grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             }
+        }
+
+        /* Accessibility & Touch Improvements */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .vehicle-card {
+                border-width: 2px;
+            }
+
+            .btn-primary, .btn-proposal, .btn-laudo {
+                border: 2px solid currentColor;
+            }
+        }
+
+        /* Focus visible for keyboard navigation */
+        *:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -899,12 +1117,20 @@
 
     <header class="header">
         <div class="header-content">
-            <a href="/" class="logo">
-                <div class="logo-icon">AG</div>
-                <div class="logo-text">Autogiro</div>
-            </a>
+            <div class="header-top">
+                <a href="/" class="logo">
+                    <div class="logo-icon">AG</div>
+                    <div class="logo-text">Autogiro</div>
+                </a>
 
-            <nav class="nav-menu hidden" id="navMenu">
+                <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <nav class="nav-menu" id="navMenu" role="navigation">
                 <a href="/" class="nav-link active">Catálogo</a>
                 <a href="propostas" class="nav-link">Propostas</a>
                 <a href="recarga" class="nav-link">Recarregar</a>
@@ -920,8 +1146,10 @@
 
             <div id="userInfoContainer">
                 <div class="user-info hidden" id="userInfo">
-                    <span id="userName"></span>
-                    <span class="user-credits" id="userCredits">0 créditos</span>
+                    <div class="user-info-row">
+                        <span id="userName"></span>
+                        <span class="user-credits" id="userCredits">0 créditos</span>
+                    </div>
                     <button class="btn-logout" onclick="logout()">Sair</button>
                 </div>
                 <a href="login" class="btn-login" id="btnLogin">Entrar</a>
@@ -938,16 +1166,21 @@
         <div id="catalogContent" class="hidden">
             <div class="filters-section">
                 <div class="search-bar">
-                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
-                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar por marca, modelo...">
+                    <input 
+                        type="search" 
+                        class="search-input" 
+                        id="searchInput" 
+                        placeholder="Buscar por marca, modelo..."
+                        aria-label="Buscar veículos">
                 </div>
                 
                 <div class="filters-row">
                     <div class="filter-group">
-                        <select class="filter-select" id="categoryFilter">
+                        <select class="filter-select" id="categoryFilter" aria-label="Filtrar por categoria">
                             <option value="all">Todas as Categorias</option>
                             <option value="Carro">Carros</option>
                             <option value="Caminhão">Caminhões</option>
@@ -955,20 +1188,19 @@
                         </select>
                     </div>
                     <div class="filter-group">
-                        <select class="filter-select" id="stateFilter">
+                        <select class="filter-select" id="stateFilter" aria-label="Filtrar por estado">
                             <option value="all">Todos os Estados</option>
                         </select>
                     </div>
-                    
                     <div class="filter-group">
-                        <select class="filter-select" id="eventFilter">
+                        <select class="filter-select" id="eventFilter" aria-label="Filtrar por evento">
                             <option value="all">Todos os Eventos</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <div class="results-summary">
+            <div class="results-summary" role="status" aria-live="polite">
                 Mostrando <strong id="visibleCount">0</strong> de <strong id="totalCount">0</strong> veículos
             </div>
 
@@ -984,6 +1216,11 @@
         }
 
         const API_BASE = 'https://autogiro.onrender.com/api'
+
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu')
+            navMenu.classList.toggle('active')
+        }
 
         async function loadVehicles() {
             try {
@@ -1010,45 +1247,45 @@
             }
         }
 
-      async function checkAuth() {
-    try {
-        console.log('Verificando autenticação...')
-        const token = localStorage.getItem('token') // 🔥 PEGAR TOKEN
-        
-        if (!token) {
-            APP_STATE.isLoggedIn = false
-            APP_STATE.currentUser = null
-            updateUserUI()
-            return
-        }
-        
-        const response = await fetch(`${API_BASE}/auth/me`, {
-            headers: {
-                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+        async function checkAuth() {
+            try {
+                console.log('Verificando autenticação...')
+                const token = localStorage.getItem('token')
+                
+                if (!token) {
+                    APP_STATE.isLoggedIn = false
+                    APP_STATE.currentUser = null
+                    updateUserUI()
+                    return
+                }
+                
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                
+                const data = await response.json()
+                
+                if (data.success && data.user) {
+                    APP_STATE.currentUser = data.user
+                    APP_STATE.isLoggedIn = true
+                } else {
+                    localStorage.removeItem('token')
+                    APP_STATE.isLoggedIn = false
+                    APP_STATE.currentUser = null
+                }
+                
+                updateUserUI()
+            } catch (error) {
+                console.error('Erro ao verificar auth:', error)
+                localStorage.removeItem('token')
+                APP_STATE.isLoggedIn = false
+                APP_STATE.currentUser = null
+                updateUserUI()
             }
-        })
-        
-        const data = await response.json()
-        
-        if (data.success && data.user) {
-            APP_STATE.currentUser = data.user
-            APP_STATE.isLoggedIn = true
-        } else {
-            // Token inválido/expirado
-            localStorage.removeItem('token') // 🔥 REMOVER TOKEN
-            APP_STATE.isLoggedIn = false
-            APP_STATE.currentUser = null
         }
-        
-        updateUserUI()
-    } catch (error) {
-        console.error('Erro ao verificar auth:', error)
-        localStorage.removeItem('token')
-        APP_STATE.isLoggedIn = false
-        APP_STATE.currentUser = null
-        updateUserUI()
-    }
-} 
+
         function updateUserUI() {
             const userInfo = document.getElementById('userInfo')
             const btnLogin = document.getElementById('btnLogin')
@@ -1059,7 +1296,9 @@
             if (APP_STATE.isLoggedIn && APP_STATE.currentUser) {
                 userInfo.classList.remove('hidden')
                 btnLogin.classList.add('hidden')
-                navMenu.classList.remove('hidden')
+                if (window.innerWidth >= 768) {
+                    navMenu.classList.remove('hidden')
+                }
                 userName.textContent = APP_STATE.currentUser.name
                 userCredits.textContent = `${parseFloat(APP_STATE.currentUser.credits).toFixed(1)} créditos`
             } else {
@@ -1070,22 +1309,21 @@
         }
 
         function renderVehicles() {
-    const grid = document.getElementById('vehiclesGrid')
-    grid.innerHTML = ''
-    
-    const categoryFilter = document.getElementById('categoryFilter').value
-    const stateFilter = document.getElementById('stateFilter').value  // 👈 ADICIONE
-    const eventFilter = document.getElementById('eventFilter').value
-    
-    let filteredVehicles = APP_STATE.vehicles.filter(vehicle => {
-        const matchCategory = categoryFilter === 'all' || vehicle.category === categoryFilter
-        const vehicleState = extractStateFromLocation(vehicle.location)  // 👈 ADICIONE
-        const matchState = stateFilter === 'all' || vehicleState === stateFilter  // 👈 ADICIONE
-        const vehicleEventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : null
-        const matchEvent = eventFilter === 'all' || vehicleEventDate === eventFilter
-        return matchCategory && matchState && matchEvent  // 👈 MODIFIQUE
-    })
-
+            const grid = document.getElementById('vehiclesGrid')
+            grid.innerHTML = ''
+            
+            const categoryFilter = document.getElementById('categoryFilter').value
+            const stateFilter = document.getElementById('stateFilter').value
+            const eventFilter = document.getElementById('eventFilter').value
+            
+            let filteredVehicles = APP_STATE.vehicles.filter(vehicle => {
+                const matchCategory = categoryFilter === 'all' || vehicle.category === categoryFilter
+                const vehicleState = extractStateFromLocation(vehicle.location)
+                const matchState = stateFilter === 'all' || vehicleState === stateFilter
+                const vehicleEventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : null
+                const matchEvent = eventFilter === 'all' || vehicleEventDate === eventFilter
+                return matchCategory && matchState && matchEvent
+            })
             
             const groupedByEvent = {}
             filteredVehicles.forEach(vehicle => {
@@ -1142,59 +1380,59 @@
         }
 
         function extractStateFromLocation(location) {
-    if (!location) return null
-    const parts = location.split(',')
-    if (parts.length >= 2) {
-        const state = parts[parts.length - 1].trim()
-        if (state.length === 2) {
-            return state.toUpperCase()
+            if (!location) return null
+            const parts = location.split(',')
+            if (parts.length >= 2) {
+                const state = parts[parts.length - 1].trim()
+                if (state.length === 2) {
+                    return state.toUpperCase()
+                }
+            }
+            return null
         }
-    }
-    return null
-}
 
-function populateStateFilter() {
-    const stateFilter = document.getElementById('stateFilter')
-    
-    const states = [...new Set(
-        APP_STATE.vehicles
-            .map(v => extractStateFromLocation(v.location))
-            .filter(Boolean)
-    )]
-    
-    states.sort()
-    
-    states.forEach(state => {
-        const option = document.createElement('option')
-        option.value = state
-        option.textContent = state
-        stateFilter.appendChild(option)
-    })
-}
-// 👇 ADICIONE ESTA FUNÇÃO AQUI 👇
-function populateEventFilter() {
-    const eventFilter = document.getElementById('eventFilter')
-    const events = [...new Set(
-        APP_STATE.vehicles
-            .map(v => v.event_date ? v.event_date.split('T')[0] : null)
-            .filter(Boolean)
-    )]
-    events.sort((a, b) => new Date(b) - new Date(a))
-    
-    events.forEach(eventDate => {
-        const option = document.createElement('option')
-        option.value = eventDate
-        
-        const date = new Date(eventDate + 'T12:00:00')
-        option.textContent = date.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        })
-        
-        eventFilter.appendChild(option)
-    })
-}
+        function populateStateFilter() {
+            const stateFilter = document.getElementById('stateFilter')
+            
+            const states = [...new Set(
+                APP_STATE.vehicles
+                    .map(v => extractStateFromLocation(v.location))
+                    .filter(Boolean)
+            )]
+            
+            states.sort()
+            
+            states.forEach(state => {
+                const option = document.createElement('option')
+                option.value = state
+                option.textContent = state
+                stateFilter.appendChild(option)
+            })
+        }
+
+        function populateEventFilter() {
+            const eventFilter = document.getElementById('eventFilter')
+            const events = [...new Set(
+                APP_STATE.vehicles
+                    .map(v => v.event_date ? v.event_date.split('T')[0] : null)
+                    .filter(Boolean)
+            )]
+            events.sort((a, b) => new Date(b) - new Date(a))
+            
+            events.forEach(eventDate => {
+                const option = document.createElement('option')
+                option.value = eventDate
+                
+                const date = new Date(eventDate + 'T12:00:00')
+                option.textContent = date.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                })
+                
+                eventFilter.appendChild(option)
+            })
+        }
 
         function updateVisibleCount(count) {
             document.getElementById('visibleCount').textContent = count
@@ -1212,10 +1450,10 @@ function populateEventFilter() {
             div.innerHTML = `
                 <div class="vehicle-gallery">
                     ${hasImages ? `
-                        <div class="main-image-container" onclick="openGallery(${index})">
-                            <img src="${images[0].url}" alt="${vehicle.brand} ${vehicle.model}">
+                        <div class="main-image-container" onclick="openGallery(${index})" role="button" tabindex="0" aria-label="Ver galeria de fotos">
+                            <img src="${images[0].url}" alt="${vehicle.brand} ${vehicle.model}" loading="lazy">
                             <div class="image-overlay">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                     <circle cx="11" cy="11" r="8"></circle>
                                     <path d="m21 21-4.35-4.35"></path>
                                 </svg>
@@ -1225,7 +1463,7 @@ function populateEventFilter() {
                         ${images.length > 1 ? `
                             <div class="thumbnail-strip">
                                 ${images.slice(1, 4).map((img, idx) => `
-                                    <img src="${img.thumb || img.url}" alt="Foto ${idx + 2}" 
+                                    <img src="${img.thumb || img.url}" alt="Foto ${idx + 2}" loading="lazy"
                                          onclick="openGallery(${index}, ${idx + 1})">
                                 `).join('')}
                                 ${images.length > 4 ? `
@@ -1235,7 +1473,7 @@ function populateEventFilter() {
                         ` : ''}
                     ` : `
                         <div class="no-image">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3" aria-hidden="true">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                                 <polyline points="21 15 16 10 5 21"></polyline>
@@ -1256,61 +1494,59 @@ function populateEventFilter() {
                     </div>
 
                     ${vehicle.location ? `
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <div class="vehicle-detail">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
-                            <span style="color: var(--text-secondary); font-size: 0.875rem;">${vehicle.location}</span>
+                            <span style="color: var(--text-secondary);">${vehicle.location}</span>
                         </div>
                     ` : ''}
 
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="vehicle-detail">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
                             <line x1="3" y1="10" x2="21" y2="10"></line>
                         </svg>
-                        <span style="color: var(--text-dark); font-size: 0.875rem; font-weight: 500;">Ano: ${vehicle.year}</span>
+                        <span style="color: var(--text-dark); font-weight: 500;">Ano: ${vehicle.year}</span>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <div class="vehicle-detail">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        <span style="color: var(--text-dark); font-size: 0.875rem; font-weight: 500;">${formatNumber(vehicle.mileage)} km</span>
+                        <span style="color: var(--text-dark); font-weight: 500;">${formatNumber(vehicle.mileage)} km</span>
                     </div>
 
                     ${vehicle.fuel_type ? `
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <div class="vehicle-detail">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <line x1="3" y1="22" x2="15" y2="22"></line>
                                 <line x1="4" y1="9" x2="14" y2="9"></line>
                                 <path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path>
                                 <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path>
                             </svg>
-                            <span style="color: var(--text-dark); font-size: 0.875rem; font-weight: 500;">${vehicle.fuel_type}</span>
+                            <span style="color: var(--text-dark); font-weight: 500;">${vehicle.fuel_type}</span>
                         </div>
                     ` : ''}
 
                     ${vehicle.transmission ? `
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <div class="vehicle-detail">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <circle cx="12" cy="12" r="3"></circle>
                                 <path d="M12 1v6m0 6v6"></path>
                                 <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
                                 <path d="m19.07 4.93-4.24 4.24m-5.66 5.66-4.24 4.24"></path>
                             </svg>
-                            <span style="color: var(--text-dark); font-size: 0.875rem; font-weight: 500;">${vehicle.transmission}</span>
+                            <span style="color: var(--text-dark); font-weight: 500;">${vehicle.transmission}</span>
                         </div>
                     ` : ''}
 
                     <div class="vehicle-pricing">
-                        <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
-                            Proposta Inicial
-                        </div>
+                        <div class="price-label">Proposta Inicial</div>
                         <div class="main-price">R$ ${formatPrice(vehicle.price)}</div>
                     </div>
 
@@ -1340,77 +1576,90 @@ function populateEventFilter() {
             document.getElementById('totalVehicles').textContent = APP_STATE.vehicles.length
         }
 
-       document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput')
-    const categoryFilter = document.getElementById('categoryFilter')
-    const stateFilter = document.getElementById('stateFilter')  // ✅ JÁ EXISTE
-    const eventFilter = document.getElementById('eventFilter')
-    
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase()
-            const allCards = document.querySelectorAll('.vehicle-card')
-            let count = 0
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput')
+            const categoryFilter = document.getElementById('categoryFilter')
+            const stateFilter = document.getElementById('stateFilter')
+            const eventFilter = document.getElementById('eventFilter')
             
-            allCards.forEach((card) => {
-                const index = parseInt(card.getAttribute('data-index'))
-                const vehicle = APP_STATE.vehicles[index]
-                const text = `${vehicle.brand} ${vehicle.model} ${vehicle.description || ''} ${vehicle.color || ''}`.toLowerCase()
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase()
+                    const allCards = document.querySelectorAll('.vehicle-card')
+                    let count = 0
+                    
+                    allCards.forEach((card) => {
+                        const index = parseInt(card.getAttribute('data-index'))
+                        const vehicle = APP_STATE.vehicles[index]
+                        const text = `${vehicle.brand} ${vehicle.model} ${vehicle.description || ''} ${vehicle.color || ''}`.toLowerCase()
+                        
+                        if (text.includes(query)) {
+                            card.style.display = ''
+                            count++
+                        } else {
+                            card.style.display = 'none'
+                        }
+                    })
+                    
+                    document.getElementById('visibleCount').textContent = count
+                })
+            }
+            
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', renderVehicles)
+            }
+            
+            if (stateFilter) {
+                stateFilter.addEventListener('change', renderVehicles)
+            }
+            
+            if (eventFilter) {
+                eventFilter.addEventListener('change', renderVehicles)
+            }
+
+            // Close menu when clicking outside on mobile
+            document.addEventListener('click', (e) => {
+                const navMenu = document.getElementById('navMenu')
+                const menuToggle = document.querySelector('.menu-toggle')
                 
-                if (text.includes(query)) {
-                    card.style.display = ''
-                    count++
-                } else {
-                    card.style.display = 'none'
+                if (window.innerWidth < 768 && 
+                    navMenu.classList.contains('active') && 
+                    !navMenu.contains(e.target) && 
+                    !menuToggle.contains(e.target)) {
+                    navMenu.classList.remove('active')
                 }
             })
-            
-            document.getElementById('visibleCount').textContent = count
         })
-    }
-    
-    if (categoryFilter) {
-        categoryFilter.addEventListener('change', renderVehicles)
-    }
-    
-    if (stateFilter) {  // 👈 ADICIONE ESTE BLOCO AQUI
-        stateFilter.addEventListener('change', renderVehicles)
-    }
-    
-    if (eventFilter) {
-        eventFilter.addEventListener('change', renderVehicles)
-    }
-})
 
-async function handleProposal(index) {
-    const vehicle = APP_STATE.vehicles[index]
-    
-    if (!APP_STATE.isLoggedIn) {
-        showToast('Você precisa fazer login para fazer uma proposta', 'error')
-        setTimeout(() => {
-            window.location.href = 'login'
-        }, 1500)
-        return
-    }
-    
-    if (!APP_STATE.currentUser.cpf) {
-        showToast('Complete seu cadastro para fazer propostas', 'error')
-        setTimeout(() => {
-            window.location.href = 'perfil'
-        }, 1500)
-        return
-    }
-    
-    if (APP_STATE.currentUser.credits < 1) {
-        showToast('Créditos insuficientes', 'error')
-        setTimeout(() => {
-            window.location.href = 'recarga'
-        }, 1500)
-        return
-    }
-    
-    openProposalModal(vehicle)
-}
+        async function handleProposal(index) {
+            const vehicle = APP_STATE.vehicles[index]
+            
+            if (!APP_STATE.isLoggedIn) {
+                showToast('Você precisa fazer login para fazer uma proposta', 'error')
+                setTimeout(() => {
+                    window.location.href = 'login'
+                }, 1500)
+                return
+            }
+            
+            if (!APP_STATE.currentUser.cpf) {
+                showToast('Complete seu cadastro para fazer propostas', 'error')
+                setTimeout(() => {
+                    window.location.href = 'perfil'
+                }, 1500)
+                return
+            }
+            
+            if (APP_STATE.currentUser.credits < 1) {
+                showToast('Créditos insuficientes', 'error')
+                setTimeout(() => {
+                    window.location.href = 'recarga'
+                }, 1500)
+                return
+            }
+            
+            openProposalModal(vehicle)
+        }
         
         function openProposalModal(vehicle) {
             createModal('Fazer Proposta', `
@@ -1472,16 +1721,16 @@ async function handleProposal(index) {
             }
             
             try {
-                const token = localStorage.getItem('token') // 🔥 PEGAR TOKEN
+                const token = localStorage.getItem('token')
 
-const response = await fetch(`${API_BASE}/proposals`, {
-    method: 'POST',
-    headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
-    },
-    body: JSON.stringify(proposalData)
-})
+                const response = await fetch(`${API_BASE}/proposals`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(proposalData)
+                })
                 
                 const data = await response.json()
                 
@@ -1510,19 +1759,19 @@ const response = await fetch(`${API_BASE}/proposals`, {
                 <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 10px;">
                     <h4 style="margin-bottom: 1rem; color: var(--primary);">Informações do Veículo</h4>
                     
-                    <p><strong>Marca/Modelo:</strong> ${vehicle.brand} ${vehicle.model}</p>
-                    <p><strong>Ano:</strong> ${vehicle.year}</p>
-                    <p><strong>Quilometragem:</strong> ${formatNumber(vehicle.mileage)} km</p>
-                    <p><strong>Combustível:</strong> ${vehicle.fuel_type || 'N/A'}</p>
-                    <p><strong>Transmissão:</strong> ${vehicle.transmission || 'Manual'}</p>
-                    <p><strong>Cor:</strong> ${vehicle.color || 'N/A'}</p>
-                    <p><strong>Preço:</strong> R$ ${formatPrice(vehicle.price)}</p>
-                    <p><strong>Localização:</strong> ${vehicle.location || 'N/A'}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Marca/Modelo:</strong> ${vehicle.brand} ${vehicle.model}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Ano:</strong> ${vehicle.year}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Quilometragem:</strong> ${formatNumber(vehicle.mileage)} km</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Combustível:</strong> ${vehicle.fuel_type || 'N/A'}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Transmissão:</strong> ${vehicle.transmission || 'Manual'}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Cor:</strong> ${vehicle.color || 'N/A'}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Preço:</strong> R$ ${formatPrice(vehicle.price)}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Localização:</strong> ${vehicle.location || 'N/A'}</p>
                     
                     ${vehicle.description ? `
                         <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
                             <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Descrição</h4>
-                            <p style="color: var(--text-secondary);">${vehicle.description}</p>
+                            <p style="color: var(--text-secondary); line-height: 1.6;">${vehicle.description}</p>
                         </div>
                     ` : ''}
                 </div>
@@ -1543,14 +1792,15 @@ const response = await fetch(`${API_BASE}/proposals`, {
             createModal(`${vehicle.brand} ${vehicle.model} - Galeria`, `
                 <div id="galleryContent" style="text-align: center;">
                     <img id="galleryImage" src="${images[currentImage].url}" 
-                          style="max-width: 100%; max-height: 60vh; border-radius: 10px;">
+                          style="max-width: 100%; max-height: 60vh; border-radius: 10px; display: block; margin: 0 auto;"
+                          alt="Foto ${currentImage + 1} de ${images.length}">
                     <p style="margin-top: 1rem; color: var(--text-secondary);">
                         Foto ${currentImage + 1} de ${images.length}
                     </p>
                     ${images.length > 1 ? `
-                        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
-                            <button class="btn-secondary" onclick="changeGalleryImage(-1)">← Anterior</button>
-                            <button class="btn-secondary" onclick="changeGalleryImage(1)">Próxima →</button>
+                        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+                            <button class="btn-secondary" onclick="changeGalleryImage(-1)" style="flex: 1; min-width: 120px;">← Anterior</button>
+                            <button class="btn-secondary" onclick="changeGalleryImage(1)" style="flex: 1; min-width: 120px;">Próxima →</button>
                         </div>
                     ` : ''}
                 </div>
@@ -1561,19 +1811,46 @@ const response = await fetch(`${API_BASE}/proposals`, {
                 if (currentImage < 0) currentImage = images.length - 1
                 if (currentImage >= images.length) currentImage = 0
                 
-                document.getElementById('galleryImage').src = images[currentImage].url
+                const imgElement = document.getElementById('galleryImage')
+                imgElement.src = images[currentImage].url
+                imgElement.alt = `Foto ${currentImage + 1} de ${images.length}`
                 document.querySelector('#galleryContent p').textContent = `Foto ${currentImage + 1} de ${images.length}`
             }
+
+            // Keyboard navigation for gallery
+            const handleKeyPress = (e) => {
+                if (e.key === 'ArrowLeft') {
+                    window.changeGalleryImage(-1)
+                } else if (e.key === 'ArrowRight') {
+                    window.changeGalleryImage(1)
+                }
+            }
+            
+            document.addEventListener('keydown', handleKeyPress)
+            
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.removedNodes.length > 0) {
+                        document.removeEventListener('keydown', handleKeyPress)
+                    }
+                })
+            })
+            
+            observer.observe(document.body, { childList: true })
         }
 
         function createModal(title, content, canCloseOutside = true) {
             const overlay = document.createElement('div')
             overlay.className = 'modal-overlay'
+            overlay.setAttribute('role', 'dialog')
+            overlay.setAttribute('aria-modal', 'true')
+            overlay.setAttribute('aria-labelledby', 'modalTitle')
+            
             overlay.innerHTML = `
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="modal-title">${title}</h2>
-                        <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                        <h2 class="modal-title" id="modalTitle">${title}</h2>
+                        <button class="modal-close" onclick="closeModal(this)" aria-label="Fechar modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         ${content}
@@ -1582,6 +1859,8 @@ const response = await fetch(`${API_BASE}/proposals`, {
             `
             
             document.body.appendChild(overlay)
+            document.body.style.overflow = 'hidden'
+            
             setTimeout(() => overlay.classList.add('active'), 10)
             
             if (canCloseOutside) {
@@ -1589,6 +1868,16 @@ const response = await fetch(`${API_BASE}/proposals`, {
                     if (e.target === overlay) closeModal(overlay.querySelector('.modal-close'))
                 })
             }
+
+            // ESC key to close
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    closeModal(overlay.querySelector('.modal-close'))
+                }
+            }
+            document.addEventListener('keydown', handleEscape)
+            
+            overlay._escapeHandler = handleEscape
             
             return overlay
         }
@@ -1596,38 +1885,61 @@ const response = await fetch(`${API_BASE}/proposals`, {
         function closeModal(closeBtn) {
             const overlay = closeBtn.closest('.modal-overlay')
             overlay.classList.remove('active')
-            setTimeout(() => overlay.remove(), 300)
+            
+            if (overlay._escapeHandler) {
+                document.removeEventListener('keydown', overlay._escapeHandler)
+            }
+            
+            setTimeout(() => {
+                overlay.remove()
+                document.body.style.overflow = ''
+            }, 300)
         }
 
         function closeAllModals() {
             document.querySelectorAll('.modal-overlay').forEach(modal => {
                 modal.classList.remove('active')
+                if (modal._escapeHandler) {
+                    document.removeEventListener('keydown', modal._escapeHandler)
+                }
                 setTimeout(() => modal.remove(), 300)
             })
+            document.body.style.overflow = ''
         }
 
         async function logout() {
-    localStorage.removeItem('token') // 🔥 REMOVER TOKEN
-    
-    APP_STATE.currentUser = null
-    APP_STATE.isLoggedIn = false
-    updateUserUI()
-    showToast('Logout realizado com sucesso', 'success')
-}
+            localStorage.removeItem('token')
+            
+            APP_STATE.currentUser = null
+            APP_STATE.isLoggedIn = false
+            updateUserUI()
+            showToast('Logout realizado com sucesso', 'success')
+        }
        
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer')
             const toast = document.createElement('div')
             toast.className = `toast toast-${type}`
+            toast.setAttribute('role', 'alert')
+            toast.setAttribute('aria-live', 'polite')
             toast.textContent = message
             container.appendChild(toast)
             
             setTimeout(() => {
                 toast.style.opacity = '0'
-                toast.style.transform = 'translateX(400px)';
+                toast.style.transform = window.innerWidth >= 640 ? 'translateX(400px)' : 'translateY(100px)'
                 setTimeout(() => toast.remove(), 300)
             }, 3000)
         }
+
+        // Handle window resize for responsive behavior
+        let resizeTimer
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer)
+            resizeTimer = setTimeout(() => {
+                updateUserUI()
+            }, 250)
+        })
 
         window.addEventListener('DOMContentLoaded', () => {
             console.log('Iniciando aplicação...')
