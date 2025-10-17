@@ -1699,9 +1699,9 @@
         }
 
         function onlyNumbers(e) {
-            // Permite apenas números
-            const char = String.fromCharCode(e.which)
-            if (!/[0-9]/.test(char)) {
+            // Permite apenas números, backspace, delete, setas
+            const char = String.fromCharCode(e.which || e.keyCode)
+            if (!/[0-9]/.test(char) && e.which !== 0 && e.which !== 8) {
                 e.preventDefault()
             }
         }
@@ -1713,13 +1713,23 @@
             value = value.replace(/\D/g, '')
             
             // Se vazio, limpa
-            if (value === '') {
+            if (value === '' || value === '0') {
                 e.target.value = ''
-                document.getElementById('proposalValueHidden').value = ''
+                document.getElementById('proposalValueHidden').value = '0'
                 return
             }
             
-            // Converte para número
+            // Remove zeros à esquerda
+            value = value.replace(/^0+/, '')
+            
+            // Se ficou vazio após remover zeros, reseta
+            if (value === '') {
+                e.target.value = ''
+                document.getElementById('proposalValueHidden').value = '0'
+                return
+            }
+            
+            // Converte para número (divide por 100 para ter os centavos)
             const numberValue = parseInt(value) / 100
             
             // Guarda o valor numérico no campo hidden
@@ -1739,9 +1749,19 @@
             btn.disabled = true
             btn.textContent = 'Enviando...'
             
+            // Pega o valor do campo hidden (valor numérico real)
+            const proposalAmount = parseFloat(document.getElementById('proposalValueHidden').value)
+            
+            if (!proposalAmount || proposalAmount < 1) {
+                showToast('Insira um valor válido para a proposta', 'error')
+                btn.disabled = false
+                btn.textContent = 'Enviar Proposta (1 crédito)'
+                return
+            }
+            
             const proposalData = {
                 vehicle_external_id: vehicleExternalId,
-                proposal_amount: parseFloat(document.getElementById('proposalValue').value),
+                proposal_amount: proposalAmount,
                 customer_name: document.getElementById('clientName').value,
                 customer_phone: document.getElementById('clientPhone').value,
                 customer_email: document.getElementById('clientEmail').value || null
