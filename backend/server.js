@@ -103,7 +103,7 @@ app.use((err, req, res, next) => {
 })
 
 // Cron Job 1 - Desativar veículos sem propostas vencedoras (17:00 todo dia)
-cron.schedule('0 17 * * *', async () => {
+cron.schedule('0 20 * * *', async () => {
     try {
         console.log(`[${new Date().toISOString()}] Executando desativação automática de veículos...`)
 
@@ -133,7 +133,7 @@ cron.schedule('0 17 * * *', async () => {
 })
 
 // Cron Job 2 - Buscar veículos do DealersClub (20:00 todo dia)
-cron.schedule('0 20 * * *', async () => {
+cron.schedule('0 23 * * *', async () => {
     try {
         console.log(`[${new Date().toISOString()}] Iniciando busca de veículos do DealersClub...`)
         
