@@ -7,7 +7,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
     <style>
         :root {
             --primary: #3b82f6;
@@ -26,9 +25,7 @@
             --shadow: 0 10px 40px rgba(0,0,0,0.3);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body { 
             font-family: 'Inter', -apple-system, system-ui, sans-serif;
             background: var(--bg-dark);
@@ -41,17 +38,14 @@
             justify-content: center;
             padding: 1.5rem;
         }
-
         .login-container {
             width: 100%;
             max-width: 450px;
         }
-
         .logo-section {
             text-align: center;
             margin-bottom: 3rem;
         }
-
         .logo-icon {
             width: 80px;
             height: 80px;
@@ -66,7 +60,6 @@
             box-shadow: 0 12px 24px rgba(59, 130, 246, 0.4);
             margin-bottom: 1rem;
         }
-
         .logo-text {
             font-size: 2rem;
             font-weight: 800;
@@ -75,12 +68,10 @@
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
-
         .logo-subtitle {
             color: var(--text-muted);
             font-size: 0.95rem;
         }
-
         .card {
             background: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(20px);
@@ -89,51 +80,9 @@
             padding: 2.5rem;
             box-shadow: var(--shadow);
         }
-
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            background: rgba(15, 23, 42, 0.5);
-            padding: 0.5rem;
-            border-radius: 12px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 0.75rem;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: var(--transition);
-            font-family: inherit;
-        }
-
-        .tab.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .tab:hover:not(.active) {
-            background: rgba(100, 116, 139, 0.1);
-        }
-
-        .form-content {
-            display: none;
-        }
-
-        .form-content.active {
-            display: block;
-        }
-
         .form-group {
             margin-bottom: 1.5rem;
         }
-
         .form-label {
             display: block;
             font-weight: 600;
@@ -141,7 +90,6 @@
             margin-bottom: 0.5rem;
             font-size: 0.9rem;
         }
-
         .form-input {
             width: 100%;
             padding: 0.875rem 1rem;
@@ -153,25 +101,21 @@
             font-family: inherit;
             transition: var(--transition);
         }
-
         .form-input:focus {
             outline: none;
             border-color: var(--primary);
             background: rgba(15, 23, 42, 0.8);
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
         }
-
         .form-input::placeholder {
             color: var(--text-muted);
         }
-
         .form-hint {
             color: var(--text-muted);
             font-size: 0.8rem;
             margin-top: 0.5rem;
             display: block;
         }
-
         .btn-submit {
             width: 100%;
             padding: 1rem;
@@ -185,26 +129,22 @@
             transition: var(--transition);
             font-family: inherit;
         }
-
         .btn-submit:hover:not(:disabled) {
             background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
         }
-
         .btn-submit:disabled {
             background: rgba(100, 116, 139, 0.2);
             color: var(--text-muted);
             cursor: not-allowed;
             transform: none;
         }
-
         .divider {
             text-align: center;
             margin: 2rem 0;
             position: relative;
         }
-
         .divider::before {
             content: '';
             position: absolute;
@@ -214,7 +154,6 @@
             height: 1px;
             background: rgba(148, 163, 184, 0.1);
         }
-
         .divider span {
             background: var(--bg-card);
             padding: 0 1rem;
@@ -222,26 +161,21 @@
             color: var(--text-muted);
             font-size: 0.85rem;
         }
-
         .link-text {
             text-align: center;
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-
         .link-text a {
             color: var(--primary);
             text-decoration: none;
             font-weight: 600;
             transition: var(--transition);
         }
-
         .link-text a:hover {
             color: var(--primary-dark);
             text-decoration: underline;
         }
-
-        /* Terms Modal */
         .terms-modal {
             display: none;
             position: fixed;
@@ -255,12 +189,10 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-
         .terms-modal.active {
             display: flex;
             opacity: 1;
         }
-
         .terms-content {
             background: var(--bg-card);
             border: 1px solid rgba(59, 130, 246, 0.3);
@@ -273,11 +205,9 @@
             transform: scale(0.9);
             transition: transform 0.3s ease;
         }
-
         .terms-modal.active .terms-content {
             transform: scale(1);
         }
-
         .terms-header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             padding: 1.5rem;
@@ -286,17 +216,14 @@
             align-items: center;
             gap: 0.75rem;
         }
-
         .terms-header-icon {
             font-size: 1.75rem;
         }
-
         .terms-header-title {
             font-size: 1.25rem;
             font-weight: 700;
             color: white;
         }
-
         .terms-scroll-alert {
             background: rgba(245, 158, 11, 0.1);
             padding: 0.75rem;
@@ -310,34 +237,28 @@
             justify-content: center;
             gap: 0.5rem;
         }
-
         .terms-scroll-alert.hidden {
             display: none;
         }
-
         .terms-body {
             padding: 1.5rem;
             overflow-y: auto;
             flex: 1;
         }
-
         .terms-section {
             margin-bottom: 1.5rem;
         }
-
         .terms-section-title {
             color: var(--primary);
             font-size: 0.9375rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
         }
-
         .terms-section-content {
             color: var(--text-secondary);
             font-size: 0.8125rem;
             line-height: 1.6;
         }
-
         .terms-accept-box {
             padding: 1rem;
             background: rgba(16, 185, 129, 0.1);
@@ -349,13 +270,11 @@
             line-height: 1.5;
             margin-top: 1.5rem;
         }
-
         .terms-footer {
             background: var(--bg-dark);
             padding: 1.5rem;
             border-radius: 0 0 20px 20px;
         }
-
         .btn-accept-terms {
             width: 100%;
             padding: 1rem;
@@ -369,26 +288,21 @@
             transition: var(--transition);
             font-family: inherit;
         }
-
         .btn-accept-terms:hover:not(:disabled) {
             background: #059669;
             transform: translateY(-1px);
         }
-
         .btn-accept-terms:disabled {
             background: var(--bg-elevated);
             color: var(--text-muted);
             cursor: not-allowed;
         }
-
-        /* Toast */
         #toastContainer {
             position: fixed;
             top: 1.25rem;
             right: 1.25rem;
             z-index: 10000;
         }
-
         .toast {
             background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(20px);
@@ -401,123 +315,84 @@
             min-width: 300px;
             color: var(--text-primary);
         }
-
         @keyframes slideIn {
             from { transform: translateX(400px); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-
         .toast-success { border-left: 4px solid var(--success); }
         .toast-error { border-left: 4px solid var(--danger); }
-
         @media (max-width: 768px) {
             body { padding: 1rem; }
-            
-            .card {
-                padding: 2rem 1.5rem;
-            }
-
-            .logo-icon {
-                width: 64px;
-                height: 64px;
-                font-size: 2rem;
-            }
-
-            .logo-text {
-                font-size: 1.5rem;
-            }
-
-            .terms-content {
-                max-height: 85vh;
-            }
-
-            .terms-body {
-                padding: 1rem;
-            }
-
-            #toastContainer {
-                top: auto;
-                bottom: 1rem;
-                left: 1rem;
-                right: 1rem;
-            }
-
-            .toast {
-                min-width: auto;
-            }
+            .card { padding: 2rem 1.5rem; }
+            .logo-icon { width: 64px; height: 64px; font-size: 2rem; }
+            .logo-text { font-size: 1.5rem; }
+            .terms-content { max-height: 85vh; }
+            .terms-body { padding: 1rem; }
+            #toastContainer { top: auto; bottom: 1rem; left: 1rem; right: 1rem; }
+            .toast { min-width: auto; }
         }
     </style>
 </head>
 <body>
     <div id="toastContainer"></div>
-
-    <!-- Terms Modal -->
     <div id="termsModal" class="terms-modal">
         <div class="terms-content">
             <div class="terms-header">
                 <span class="terms-header-icon">📋</span>
                 <h2 class="terms-header-title">Termos de Uso</h2>
             </div>
-
             <div id="termsScrollAlert" class="terms-scroll-alert">
                 <span>⬇</span>
                 <span>Role até o final para aceitar</span>
             </div>
-
             <div class="terms-body" id="termsBody">
                 <div class="terms-section">
                     <h3 class="terms-section-title">1. ACEITE E VINCULAÇÃO</h3>
                     <p class="terms-section-content">
-                        Ao acessar e utilizar o aplicativo AutoGiro, o usuário declara estar ciente e de acordo com os presentes Termos, sendo a utilização do App considerada como aceite integral e irrevogável das condições aqui previstas.
+                        Ao acessar e utilizar o aplicativo AutoGiro, o usuário declara estar ciente e de acordo com os presentes Termos, sendo a utilização do App ou plataforma considerada como aceite integral e irrevogável das condições aqui previstas.
                     </p>
                 </div>
-
                 <div class="terms-section">
                     <h3 class="terms-section-title">2. EVENTOS E PARTICIPAÇÃO</h3>
                     <p class="terms-section-content">
-                        • Os eventos com ofertas de veículos acontecem de terça a sexta-feira.<br><br>
+                        • Os eventos acontecem normalmente de segunda a sábado conforme disponibilidade dos eventos disponíveis pelos bancos.<br><br>
                         • Para habilitar a participação e realizar lances, o usuário deverá efetuar um PIX de R$ 1.000,00 (mil reais) por veículo, a título de sinal:<br><br>
-                        &nbsp;&nbsp;✓ O valor do sinal será abatido do preço final caso o veículo seja arrematado.<br>
-                        &nbsp;&nbsp;♻ Caso o veículo não seja arrematado, o valor do sinal será devolvido automaticamente à conta do usuário no App AutoGiro, podendo ser reaproveitado em novos lances.
+                        &nbsp;&nbsp;✓ O valor do sinal será abatido do preço final caso o veículo seja arrematado.<br><br>
+                        &nbsp;&nbsp;♻ Caso o veículo não seja arrematado, o valor do sinal será devolvido automaticamente à conta do usuário no App AutoGiro, podendo ser reaproveitado em novos lances. O sinal ficará de crédito para o usuário utilizar dentro da plataforma não sendo possível o reembolso, apenas sua utilização.
                     </p>
                 </div>
-
                 <div class="terms-section">
                     <h3 class="terms-section-title">3. PAGAMENTO</h3>
                     <p class="terms-section-content">
                         • O valor final do veículo corresponderá ao preço arrematado acrescido da comissão de 4% (quatro por cento) da AutoGiro.<br><br>
-                        • O pagamento poderá ocorrer:<br>
-                        &nbsp;&nbsp;- Diretamente ao banco e comissão à parte para a AutoGiro; ou<br>
-                        &nbsp;&nbsp;- Integralmente à AutoGiro, com o recibo (ATPV-e) sendo emitido em nome da AutoGiro.<br><br>
+                        • O pagamento poderá ocorrer de duas formas, sendo elas de acordo com a política da instituição financeira do veículo arrematado:<br><br>
+                        &nbsp;&nbsp;- Diretamente à empresa gestora de pagamentos do banco e comissão à parte para a AutoGiro<br><br>
+                        &nbsp;&nbsp;- Integralmente à AutoGiro<br><br>
                         • O pagamento somente será exigido após a aprovação do lance pelo banco/financeira.
                     </p>
                 </div>
-
                 <div class="terms-section">
                     <h3 class="terms-section-title">4. RETIRADA E TRANSFERÊNCIA</h3>
                     <p class="terms-section-content">
-                        • Após o pagamento, o banco libera o veículo em até 48 horas.<br><br>
-                        • O prazo de entrega do recibo (ATPV-e) será de acordo com o banco responsável.<br><br>
+                        • Após o pagamento, o banco tem um prazo para realizar a baixa do pagamento.<br><br>
+                        • Após dada baixa o veículo fica liberado para agendar a retirada, sendo esse processo de responsabilidade da Autogiro, devendo o comprador indicar quem irá retirar o veículo, fornecendo os documentos necessários.<br><br>
+                        • O prazo de entrega do recibo (ATPV-e) será de acordo com a instituição responsável.<br><br>
                         • A AutoGiro acompanha o processo até a emissão do ATPV-e e entrega final ao comprador.<br><br>
                         <strong>4.1 Exceções de Transferência:</strong><br>
                         • Pátio 1: Todos veículos devem ser transferidos para a AutoGiro antes da transferência ao comprador.<br><br>
                         • Pátio 2:<br>
                         &nbsp;&nbsp;- Bradesco: veículos só podem ser transferidos para a AutoGiro e somente depois ao comprador.<br>
-                        &nbsp;&nbsp;- Banco C6: transferência direta para CNPJ ou via AutoGiro.<br>
-                        &nbsp;&nbsp;- Demais bancos: transferência direta do banco para o comprador.<br><br>
+                        &nbsp;&nbsp;- Banco C6: transferência direta para CNPJ do comprador ou para AutoGiro.<br>
+                        &nbsp;&nbsp;- Demais bancos: transferência direta para o comprador.<br><br>
                         • Custos de deslocamento, transporte e vistorias são de responsabilidade do comprador.
                     </p>
                 </div>
-
                 <div class="terms-section">
                     <h3 class="terms-section-title">5. RESPONSABILIDADES SOBRE MULTAS</h3>
                     <p class="terms-section-content">
-                        • Multas até R$ 300,00: responsabilidade do comprador.<br>
-                        • Multas acima de R$ 300,00: responsabilidade da financeira.<br>
-                        • Despesas de transferência, vistorias e transporte são de responsabilidade exclusiva do comprador.
+                        • Verificar na descrição de cada veículo a política da instituição financeira em relação à cobertura de multas.
                     </p>
                 </div>
-
                 <div class="terms-section">
                     <h3 class="terms-section-title">6. LIMITAÇÃO DE RESPONSABILIDADE</h3>
                     <p class="terms-section-content">
@@ -526,7 +401,6 @@
                         • A AutoGiro não se responsabiliza por eventuais atrasos na emissão de documentos.
                     </p>
                 </div>
-
                 <div class="terms-section">
                     <h3 class="terms-section-title">7. PLANOS E ASSINATURA</h3>
                     <p class="terms-section-content">
@@ -535,90 +409,84 @@
                         • Valores pagos não são reembolsáveis, salvo nos casos previstos pelo CDC.
                     </p>
                 </div>
-
                 <div class="terms-section">
-                    <h3 class="terms-section-title">8. CONFIDENCIALIDADE</h3>
+                    <h3 class="terms-section-title">8. POLÍTICA DE CANCELAMENTO DE COMPRA DE VEÍCULO</h3>
+                    <p class="terms-section-content">
+                        <strong>8.1 Disposições Gerais</strong><br>
+                        A presente Política de Cancelamento aplica-se a todas as compras de veículos realizadas pelos usuários da AutoGiro, sejam pessoas físicas ou jurídicas, por meio do site, aplicativo ou canais oficiais de atendimento da plataforma.<br><br>
+                        <strong>8.2 Confirmação da Compra</strong><br>
+                        A compra é considerada confirmada a partir do momento em que o usuário realiza o lance no veículo e/ou arremate o veículo, seja digitalmente ou por meio dos canais oficiais da AutoGiro. A partir dessa confirmação, o veículo passa a ser reservado ao comprador e inicia-se o processo de aprovação do banco, pagamento, retirada e entrega de documentação com prazo estipulado de acordo com a política de cada instituição financeira.<br><br>
+                        <strong>8.3 Cancelamento por Iniciativa do Comprador</strong><br>
+                        Em caso de pedido de cancelamento por parte do comprador após a confirmação da compra, será aplicada multa compensatória no valor de 30% (trinta por cento) sobre o valor total do veículo arrematado.<br><br>
+                        Essa multa tem por finalidade ressarcir custos administrativos, operacionais e perdas comerciais ocasionadas pela desistência, incluindo:<br>
+                        &nbsp;&nbsp;• Reserva indevida do veículo;<br>
+                        &nbsp;&nbsp;• Custos de intermediação e processamento;<br>
+                        &nbsp;&nbsp;• Impactos de reputação e prejuízos à cadeia de negociação com a fonte vendedora.<br><br>
+                        <strong>8.4 Casos de Força Maior</strong><br>
+                        Em situações comprovadas de força maior, devidamente documentadas (como óbito, invalidez ou catástrofes naturais), a AutoGiro poderá, a seu critério, avaliar a redução parcial ou isenção da multa, mediante análise do setor responsável.<br><br>
+                        <strong>8.5 Aceite da Política</strong><br>
+                        Ao efetuar a compra de qualquer veículo pela AutoGiro, o usuário declara estar ciente e de acordo com esta Política de Cancelamento, reconhecendo a legitimidade da multa de 30% e das condições aqui descritas.
+                    </p>
+                </div>
+                <div class="terms-section">
+                    <h3 class="terms-section-title">9. CONFIDENCIALIDADE</h3>
                     <p class="terms-section-content">
                         É vedado ao usuário compartilhar, reproduzir ou divulgar informações da plataforma a terceiros não autorizados. O descumprimento implicará exclusão imediata, sem reembolso.
                     </p>
                 </div>
-
                 <div class="terms-section">
-                    <h3 class="terms-section-title">9. PROPRIEDADE INTELECTUAL</h3>
+                    <h3 class="terms-section-title">10. PROPRIEDADE INTELECTUAL</h3>
                     <p class="terms-section-content">
                         Todos os conteúdos do AutoGiro são de propriedade exclusiva da AutoGiro e protegidos por direitos autorais.
                     </p>
                 </div>
-
                 <div class="terms-section">
-                    <h3 class="terms-section-title">10. PRIVACIDADE E DADOS</h3>
+                    <h3 class="terms-section-title">11. PRIVACIDADE E DADOS</h3>
                     <p class="terms-section-content">
                         Os dados fornecidos serão utilizados exclusivamente para cadastro, cobrança, comunicações e intermediação de ofertas.
                     </p>
                 </div>
-
                 <div class="terms-section">
-                    <h3 class="terms-section-title">11. FORO</h3>
+                    <h3 class="terms-section-title">12. FORO</h3>
                     <p class="terms-section-content">
                         Fica eleito o foro da comarca de São José dos Campos/SP para dirimir eventuais conflitos.
                     </p>
                 </div>
-
                 <div class="terms-accept-box">
                     ✓ Ao clicar em "ACEITAR", você confirma que leu, entendeu e concorda com todas as cláusulas deste Termo.
                 </div>
             </div>
-
             <div class="terms-footer">
-                <button id="btnAcceptTerms" class="btn-accept-terms" disabled>
-                    ACEITAR TERMOS
-                </button>
+                <button id="btnAcceptTerms" class="btn-accept-terms" disabled>ACEITAR TERMOS</button>
             </div>
         </div>
     </div>
-
-    <!-- Login Container -->
     <div class="login-container">
         <div class="logo-section">
             <div class="logo-icon">AG</div>
             <div class="logo-text">Autogiro</div>
             <p class="logo-subtitle">Catálogo Digital de Veículos</p>
         </div>
-
         <div class="card">
-            <!-- Login Form -->
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label class="form-label" for="loginPhone">Telefone</label>
-                    <input type="tel" id="loginPhone" class="form-input" 
-                           placeholder="11999999999" required autofocus>
+                    <input type="tel" id="loginPhone" class="form-input" placeholder="11999999999" required autofocus>
                     <small class="form-hint">Digite apenas números</small>
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label" for="loginPassword">Senha</label>
-                    <input type="password" id="loginPassword" class="form-input" 
-                           placeholder="Sua senha" required>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="Sua senha" required>
                 </div>
-                
                 <button type="submit" class="btn-submit">Entrar</button>
             </form>
-
-            <div class="divider">
-                <span>ou</span>
-            </div>
-
-            <p class="link-text">
-                <a href="index">Voltar ao Catálogo</a>
-            </p>
+            <div class="divider"><span>ou</span></div>
+            <p class="link-text"><a href="index">Voltar ao Catálogo</a></p>
         </div>
     </div>
-
     <script>
         const API_BASE = 'https://autogiro.onrender.com/api';
         let currentUserId = null;
-
-        // Terms Modal Management
         const termsBody = document.getElementById('termsBody');
         const termsScrollAlert = document.getElementById('termsScrollAlert');
         const btnAcceptTerms = document.getElementById('btnAcceptTerms');
@@ -648,13 +516,10 @@
 
         btnAcceptTerms.addEventListener('click', async () => {
             if (!currentUserId) return;
-
             btnAcceptTerms.disabled = true;
             btnAcceptTerms.textContent = 'Aceitando...';
-
             try {
                 const token = localStorage.getItem('token');
-                
                 const response = await fetch(`${API_BASE}/auth/accept-terms`, {
                     method: 'POST',
                     headers: {
@@ -662,15 +527,11 @@
                         'Content-Type': 'application/json'
                     }
                 });
-
                 const data = await response.json();
-
                 if (data.success) {
                     showToast('Termos aceitos com sucesso!', 'success');
                     closeTermsModal();
-                    setTimeout(() => {
-                        window.location.href = 'index';
-                    }, 1000);
+                    setTimeout(() => { window.location.href = 'index'; }, 1000);
                 } else {
                     throw new Error(data.error || 'Erro ao aceitar termos');
                 }
@@ -682,56 +543,29 @@
             }
         });
 
-        // Tab Switching
-        function switchTab(tab) {
-            const tabs = document.querySelectorAll('.tab');
-            const forms = document.querySelectorAll('.form-content');
-            
-            tabs.forEach(t => t.classList.remove('active'));
-            forms.forEach(f => f.classList.remove('active'));
-            
-            if (tab === 'login') {
-                tabs[0].classList.add('active');
-                document.getElementById('loginForm').classList.add('active');
-            } else {
-                tabs[1].classList.add('active');
-                document.getElementById('registerForm').classList.add('active');
-            }
-        }
-
-        // Login Handler
         async function handleLogin(event) {
             event.preventDefault();
-            
             const phone = document.getElementById('loginPhone').value;
             const password = document.getElementById('loginPassword').value;
             const btn = event.target.querySelector('.btn-submit');
-            
             btn.disabled = true;
             btn.textContent = 'Entrando...';
-            
             try {
                 const response = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ phone, password })
                 });
-                
                 const data = await response.json();
-                
                 if (data.success) {
                     localStorage.setItem('token', data.token);
                     currentUserId = data.user.id;
-                    
-                    // Verificar se precisa aceitar termos
                     if (!data.user.terms_accepted) {
                         showToast('Login realizado! Aceite os termos para continuar.', 'success');
                         showTermsModal();
                     } else {
                         showToast('Login realizado com sucesso!', 'success');
-                        setTimeout(() => {
-                            window.location.href = 'index';
-                        }, 1000);
+                        setTimeout(() => { window.location.href = 'index'; }, 1000);
                     }
                 } else {
                     showToast(data.error || 'Erro ao fazer login', 'error');
@@ -746,62 +580,12 @@
             }
         }
 
-        // Register Handler
-        async function handleRegister(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('registerName').value;
-            const phone = document.getElementById('registerPhone').value;
-            const email = document.getElementById('registerEmail').value || null;
-            const password = document.getElementById('registerPassword').value;
-            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
-            const btn = event.target.querySelector('.btn-submit');
-            
-            if (password !== passwordConfirm) {
-                showToast('As senhas não coincidem', 'error');
-                return;
-            }
-            
-            btn.disabled = true;
-            btn.textContent = 'Criando conta...';
-            
-            try {
-                const response = await fetch(`${API_BASE}/auth/register`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, email, password })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    localStorage.setItem('token', data.token);
-                    currentUserId = data.user.id;
-                    
-                    // Após registro, sempre mostrar termos
-                    showToast('Conta criada! Aceite os termos para continuar.', 'success');
-                    showTermsModal();
-                } else {
-                    showToast(data.error || 'Erro ao criar conta', 'error');
-                    btn.disabled = false;
-                    btn.textContent = 'Criar Conta';
-                }
-            } catch (error) {
-                console.error('Erro no registro:', error);
-                showToast('Erro ao conectar com o servidor', 'error');
-                btn.disabled = false;
-                btn.textContent = 'Criar Conta';
-            }
-        }
-
-        // Toast Notification
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast toast-${type}`;
             toast.textContent = message;
             container.appendChild(toast);
-            
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateX(400px)';
@@ -809,29 +593,19 @@
             }, 3000);
         }
 
-        // Check Auth on Load
         async function checkAuth() {
             try {
                 const token = localStorage.getItem('token');
-                
                 if (!token) return;
-                
                 const response = await fetch(`${API_BASE}/auth/me`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
                 const data = await response.json();
-                
                 if (data.success && data.user) {
                     currentUserId = data.user.id;
-                    
-                    // Verificar se precisa aceitar termos
                     if (!data.user.terms_accepted) {
                         showTermsModal();
                     } else {
-                        // Se já está logado e aceitou os termos, redireciona
                         window.location.href = 'index';
                     }
                 } else {
