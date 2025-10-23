@@ -586,68 +586,23 @@
         </div>
 
         <div class="card">
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('login')">Entrar</button>
-                <button class="tab" onclick="switchTab('register')">Criar Conta</button>
-            </div>
-
             <!-- Login Form -->
-            <div id="loginForm" class="form-content active">
-                <form onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label class="form-label" for="loginPhone">Telefone</label>
-                        <input type="tel" id="loginPhone" class="form-input" 
-                               placeholder="11999999999" required>
-                        <small class="form-hint">Digite apenas números</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="loginPassword">Senha</label>
-                        <input type="password" id="loginPassword" class="form-input" 
-                               placeholder="Sua senha" required>
-                    </div>
-                    
-                    <button type="submit" class="btn-submit">Entrar</button>
-                </form>
-            </div>
-
-            <!-- Register Form -->
-            <div id="registerForm" class="form-content">
-                <form onsubmit="handleRegister(event)">
-                    <div class="form-group">
-                        <label class="form-label" for="registerName">Nome Completo</label>
-                        <input type="text" id="registerName" class="form-input" 
-                               placeholder="Seu nome completo" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="registerPhone">Telefone</label>
-                        <input type="tel" id="registerPhone" class="form-input" 
-                               placeholder="11999999999" required>
-                        <small class="form-hint">Digite apenas números</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="registerEmail">E-mail (opcional)</label>
-                        <input type="email" id="registerEmail" class="form-input" 
-                               placeholder="seu@email.com">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="registerPassword">Senha</label>
-                        <input type="password" id="registerPassword" class="form-input" 
-                               placeholder="Mínimo 6 caracteres" required minlength="6">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="registerPasswordConfirm">Confirmar Senha</label>
-                        <input type="password" id="registerPasswordConfirm" class="form-input" 
-                               placeholder="Digite a senha novamente" required minlength="6">
-                    </div>
-                    
-                    <button type="submit" class="btn-submit">Criar Conta</button>
-                </form>
-            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="loginPhone">Telefone</label>
+                    <input type="tel" id="loginPhone" class="form-input" 
+                           placeholder="11999999999" required autofocus>
+                    <small class="form-hint">Digite apenas números</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Senha</label>
+                    <input type="password" id="loginPassword" class="form-input" 
+                           placeholder="Sua senha" required>
+                </div>
+                
+                <button type="submit" class="btn-submit">Entrar</button>
+            </form>
 
             <div class="divider">
                 <span>ou</span>
