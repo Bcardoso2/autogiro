@@ -13,6 +13,7 @@
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
             --secondary: #8b5cf6;
             --success: #10b981;
             --danger: #ef4444;
@@ -24,39 +25,48 @@
             --text-primary: #f8fafc;
             --text-secondary: #cbd5e1;
             --text-muted: #64748b;
-            --radius: 16px;
-            --shadow: 0 10px 40px rgba(0,0,0,0.3);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border: rgba(148, 163, 184, 0.1);
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
         body { 
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: var(--bg-dark);
             color: var(--text-primary);
             line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .hidden { display: none !important; }
 
-        /* Login Screen */
+        /* ===== LOGIN SCREEN ===== */
         .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1e293b 100%);
         }
 
         .login-box {
             background: var(--bg-card);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 3rem;
-            max-width: 450px;
+            padding: 2rem;
             width: 100%;
-            box-shadow: var(--shadow);
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
         }
 
         .login-logo {
@@ -65,39 +75,41 @@
         }
 
         .login-logo-icon {
-            width: 80px;
-            height: 80px;
+            width: 64px;
+            height: 64px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 20px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: 800;
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin: 0 auto 1rem;
             box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
         }
 
         .login-title {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 800;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .login-subtitle {
             color: var(--text-secondary);
-            margin-top: 0.5rem;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
         }
 
         .login-form {
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
         .form-label {
@@ -105,45 +117,51 @@
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--text-primary);
+            font-size: 0.875rem;
         }
 
-        .form-input {
+        .form-input, .form-textarea {
             width: 100%;
-            padding: 0.875rem 1rem;
+            padding: 0.75rem 1rem;
             background: rgba(30, 41, 59, 0.5);
-            border: 2px solid rgba(148, 163, 184, 0.1);
-            border-radius: 10px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
             color: var(--text-primary);
             font-size: 1rem;
             font-family: inherit;
             transition: var(--transition);
         }
 
-        .form-input:focus {
+        .form-input:focus, .form-textarea:focus {
             outline: none;
             border-color: var(--primary);
             background: rgba(30, 41, 59, 0.8);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
         }
 
         .btn-login {
             width: 100%;
-            padding: 1rem;
+            padding: 0.875rem;
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-weight: 700;
+            border-radius: 8px;
+            font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
             transition: var(--transition);
-            margin-top: 1rem;
+            margin-top: 0.5rem;
         }
 
-        .btn-login:hover {
+        .btn-login:hover:not(:disabled) {
             background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
         .btn-login:disabled {
@@ -153,23 +171,62 @@
             transform: none;
         }
 
-        /* Admin Container */
+        /* ===== MOBILE HEADER ===== */
+        .mobile-header {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-logo {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== ADMIN CONTAINER ===== */
         .admin-container {
-            display: grid;
-            grid-template-columns: 250px 1fr;
+            display: flex;
             min-height: 100vh;
         }
 
-        /* Sidebar */
+        /* ===== SIDEBAR ===== */
         .sidebar {
+            width: 280px;
             background: var(--bg-card);
-            border-right: 1px solid rgba(148, 163, 184, 0.1);
-            padding: 2rem 0;
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
         }
 
         .logo {
-            padding: 0 1.5rem 2rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border);
             margin-bottom: 1.5rem;
         }
 
@@ -179,16 +236,26 @@
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
         }
 
         .nav-item {
-            padding: 0.75rem 1.5rem;
+            padding: 0.875rem 1.5rem;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 0.75rem;
             color: var(--text-secondary);
+            font-weight: 500;
+            margin: 0 0.75rem;
+            border-radius: 8px;
         }
 
         .nav-item:hover {
@@ -197,55 +264,75 @@
         }
 
         .nav-item.active {
-            background: rgba(59, 130, 246, 0.2);
+            background: rgba(59, 130, 246, 0.15);
             color: var(--primary);
-            border-left: 3px solid var(--primary);
         }
 
-        /* Main Content */
+        .nav-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 1rem 1.5rem;
+        }
+
+        /* ===== MAIN CONTENT ===== */
         .main-content {
-            padding: 2rem;
+            flex: 1;
+            padding: 1.5rem;
             overflow-y: auto;
+            max-width: 100%;
         }
 
         .page-header {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .page-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 800;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
         .page-subtitle {
             color: var(--text-secondary);
+            font-size: 0.875rem;
         }
 
-        /* Stats Cards */
+        /* ===== STATS GRID ===== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .stat-card {
             background: var(--bg-card);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 1.5rem;
+            padding: 1.25rem;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
         .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .stat-label {
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -253,57 +340,72 @@
         }
 
         .stat-value {
-            font-size: 2rem;
+            font-size: 1.875rem;
             font-weight: 800;
-            color: var(--primary);
+            color: var(--text-primary);
+            line-height: 1;
         }
 
-        /* Table */
+        /* ===== TABLE ===== */
         .table-container {
             background: var(--bg-card);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
             overflow: hidden;
         }
 
         .table-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .table-title {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 700;
         }
 
         .table-filters {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .filter-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.875rem;
             background: rgba(100, 116, 139, 0.1);
-            border: 1px solid rgba(100, 116, 139, 0.2);
-            border-radius: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             color: var(--text-secondary);
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             font-weight: 500;
             transition: var(--transition);
+            white-space: nowrap;
         }
 
-        .filter-btn:hover, .filter-btn.active {
+        .filter-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .filter-btn.active {
             background: var(--primary);
             color: white;
+            border-color: var(--primary);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         thead {
@@ -311,18 +413,20 @@
         }
 
         th {
-            padding: 1rem 1.5rem;
+            padding: 0.875rem 1rem;
             text-align: left;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            white-space: nowrap;
         }
 
         td {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.875rem;
         }
 
         tbody tr {
@@ -333,72 +437,81 @@
             background: rgba(59, 130, 246, 0.05);
         }
 
-        /* Badges */
+        /* ===== BADGES ===== */
         .badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.625rem;
             border-radius: 999px;
-            font-size: 0.75rem;
+            font-size: 0.6875rem;
             font-weight: 600;
+            white-space: nowrap;
         }
 
-        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
-        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
-        .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
-        .badge-primary { background: rgba(59, 130, 246, 0.2); color: var(--primary); }
-        .badge-info { background: rgba(6, 182, 212, 0.2); color: var(--info); }
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+        .badge-primary { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
+        .badge-info { background: rgba(6, 182, 212, 0.15); color: var(--info); }
 
-        /* Buttons */
+        /* ===== BUTTONS ===== */
         .btn {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.875rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            font-size: 0.875rem;
+            font-size: 0.8125rem;
             transition: var(--transition);
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
+        .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
         }
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+        
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover:not(:disabled) { background: #059669; }
+        
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover:not(:disabled) { background: #dc2626; }
+        
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-warning:hover:not(:disabled) { background: #d97706; }
 
         .btn-sm {
-            padding: 0.375rem 0.75rem;
+            padding: 0.375rem 0.625rem;
             font-size: 0.75rem;
         }
 
-        /* Modal */
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* ===== MODAL ===== */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.75);
             backdrop-filter: blur(4px);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem;
+            padding: 1rem;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
@@ -411,24 +524,30 @@
 
         .modal-content {
             background: var(--bg-card);
-            border: 1px solid rgba(148, 163, 184, 0.1);
+            border: 1px solid var(--border);
             border-radius: var(--radius);
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
         }
 
         .modal-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .modal-title {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
         }
 
@@ -438,10 +557,13 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: var(--text-secondary);
-            padding: 0.5rem;
-            border-radius: 8px;
-            width: 40px;
-            height: 40px;
+            padding: 0.375rem;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: var(--transition);
         }
 
@@ -450,45 +572,29 @@
         }
 
         .modal-body {
-            padding: 1.5rem;
+            padding: 1.25rem;
         }
 
-        .form-textarea {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: rgba(30, 41, 59, 0.5);
-            border: 2px solid rgba(148, 163, 184, 0.1);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-family: inherit;
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        /* Toast */
+        /* ===== TOAST ===== */
         #toastContainer {
             position: fixed;
-            top: 1.25rem;
-            right: 1.25rem;
+            top: 1rem;
+            right: 1rem;
             z-index: 9999;
+            max-width: calc(100% - 2rem);
         }
 
         .toast {
             background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 0.75rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.875rem 1rem;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-lg);
             animation: slideIn 0.3s ease;
-            min-width: 300px;
+            min-width: 280px;
+            max-width: 400px;
         }
 
         @keyframes slideIn {
@@ -496,8 +602,127 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .toast-success { border-left: 4px solid var(--success); }
-        .toast-error { border-left: 4px solid var(--danger); }
+        .toast-success { border-left: 3px solid var(--success); }
+        .toast-error { border-left: 3px solid var(--danger); }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* ===== MOBILE RESPONSIVENESS ===== */
+        @media (max-width: 768px) {
+            .mobile-header {
+                display: flex;
+            }
+
+            .admin-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                height: 100vh;
+                z-index: 999;
+                transition: left 0.3s ease;
+                width: 280px;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 998;
+            }
+
+            .sidebar-overlay.active {
+                display: block;
+            }
+
+            .main-content {
+                padding: 1rem;
+                margin-top: 0;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-header {
+                padding: 1rem;
+            }
+
+            .table-title {
+                font-size: 1rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.625rem;
+                font-size: 0.8125rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            table {
+                min-width: 600px;
+            }
+
+            #toastContainer {
+                top: auto;
+                bottom: 1rem;
+                left: 1rem;
+                right: 1rem;
+            }
+
+            .toast {
+                min-width: auto;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                gap: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -514,15 +739,15 @@
             
             <form class="login-form" onsubmit="handleAdminLogin(event)">
                 <div class="form-group">
-                    <label class="form-label" for="adminPhone">Telefone:</label>
+                    <label class="form-label" for="adminPhone">Telefone</label>
                     <input type="tel" id="adminPhone" class="form-input" 
                            placeholder="11999999999" required autofocus>
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="adminPassword">Senha:</label>
+                    <label class="form-label" for="adminPassword">Senha</label>
                     <input type="password" id="adminPassword" class="form-input" 
-                           placeholder="Sua senha" required>
+                           placeholder="••••••••" required>
                 </div>
                 
                 <button type="submit" class="btn-login" id="btnAdminLogin">
@@ -533,133 +758,179 @@
     </div>
 
     <!-- Admin Panel -->
-    <div id="adminPanel" class="admin-container hidden">
-        <aside class="sidebar">
-            <div class="logo">
-                <div class="logo-text">Autogiro Admin</div>
-            </div>
-            <nav>
-                <div class="nav-item active" onclick="showPage('dashboard')">📊 Dashboard</div>
-                <div class="nav-item" onclick="showPage('proposals')">💰 Propostas</div>
-                <div class="nav-item" onclick="showPage('users')">👥 Usuários</div>
-                <div class="nav-item" onclick="showPage('transactions')">💳 Transações</div>
-                <div class="nav-item" onclick="adminLogout()">🚪 Sair</div>
-                <div class="nav-item" onclick="window.location.href='/'">🏠 Voltar ao Site</div>
-            </nav>
-        </aside>
+    <div id="adminPanel" class="hidden">
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+            <div class="mobile-logo">Autogiro Admin</div>
+            <div style="width: 40px;"></div>
+        </header>
 
-        <main class="main-content">
-            <!-- Dashboard -->
-            <div id="dashboardPage">
-                <div class="page-header">
-                    <h1 class="page-title">Dashboard</h1>
-                    <p class="page-subtitle">Visão geral do sistema</p>
+        <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+        <div class="admin-container">
+            <aside class="sidebar" id="sidebar">
+                <div class="logo">
+                    <div class="logo-text">Autogiro Admin</div>
+                    <div class="logo-subtitle">Painel Administrativo</div>
+                </div>
+                <nav>
+                    <div class="nav-item active" onclick="showPage('dashboard')">
+                        📊 Dashboard
+                    </div>
+                    <div class="nav-item" onclick="showPage('proposals')">
+                        💰 Propostas
+                    </div>
+                    <div class="nav-item" onclick="showPage('users')">
+                        👥 Usuários
+                    </div>
+                    <div class="nav-item" onclick="showPage('transactions')">
+                        💳 Transações
+                    </div>
+                    <div class="nav-divider"></div>
+                    <div class="nav-item" onclick="window.location.href='/'">
+                        🏠 Voltar ao Site
+                    </div>
+                    <div class="nav-item" onclick="adminLogout()">
+                        🚪 Sair
+                    </div>
+                </nav>
+            </aside>
+
+            <main class="main-content">
+                <!-- Dashboard -->
+                <div id="dashboardPage">
+                    <div class="page-header">
+                        <h1 class="page-title">Dashboard</h1>
+                        <p class="page-subtitle">Visão geral do sistema</p>
+                    </div>
+
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- Stats serão inseridos aqui -->
+                    </div>
                 </div>
 
-                <div class="stats-grid" id="statsGrid">
-                    <!-- Stats serão inseridos aqui -->
-                </div>
-            </div>
+                <!-- Propostas -->
+                <div id="proposalsPage" class="hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Propostas</h1>
+                        <p class="page-subtitle">Gerenciar propostas de compra</p>
+                    </div>
 
-            <!-- Propostas -->
-            <div id="proposalsPage" class="hidden">
-                <div class="page-header">
-                    <h1 class="page-title">Propostas</h1>
-                    <p class="page-subtitle">Gerenciar propostas de compra</p>
-                </div>
-
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3 class="table-title">Todas as Propostas</h3>
-                        <div class="table-filters" style="flex-wrap: wrap; gap: 0.5rem;">
-                            <button class="filter-btn active" onclick="filterProposals('all')">Todas</button>
-                            <button class="filter-btn" onclick="filterProposals('pending')">Pendentes</button>
-                            <button class="filter-btn" onclick="filterProposals('accepted')">Aceitas</button>
-                            <button class="filter-btn" onclick="filterProposals('won')">Arrematadas</button>
-                            <button class="filter-btn" onclick="filterProposals('awaiting_bank')">Aguard. Banco</button>
-                            <button class="filter-btn" onclick="filterProposals('in_withdrawal')">Em Retirada</button>
-                            <button class="filter-btn" onclick="filterProposals('completed')">Concluídas</button>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Todas as Propostas</h3>
+                            <div class="table-filters">
+                                <button class="filter-btn active" onclick="filterProposals('all')">Todas</button>
+                                <button class="filter-btn" onclick="filterProposals('pending')">Pendentes</button>
+                                <button class="filter-btn" onclick="filterProposals('accepted')">Aceitas</button>
+                                <button class="filter-btn" onclick="filterProposals('won')">Arrematadas</button>
+                                <button class="filter-btn" onclick="filterProposals('awaiting_bank')">Aguard. Banco</button>
+                                <button class="filter-btn" onclick="filterProposals('in_withdrawal')">Em Retirada</button>
+                                <button class="filter-btn" onclick="filterProposals('completed')">Concluídas</button>
+                            </div>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Veículo</th>
+                                        <th>Valor</th>
+                                        <th>Status</th>
+                                        <th>Data</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="proposalsTable">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Veículo</th>
-                                <th>Valor Proposta</th>
-                                <th>Status</th>
-                                <th>Data</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="proposalsTable">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Usuários -->
-            <div id="usersPage" class="hidden">
-                <div class="page-header">
-                    <h1 class="page-title">Usuários</h1>
-                    <p class="page-subtitle">Gerenciar usuários do sistema</p>
                 </div>
 
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3 class="table-title">Todos os Usuários</h3>
+                <!-- Usuários -->
+                <div id="usersPage" class="hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Usuários</h1>
+                        <p class="page-subtitle">Gerenciar usuários do sistema</p>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Telefone</th>
-                                <th>Email</th>
-                                <th>Créditos</th>
-                                <th>Total Comprado</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTable">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <!-- Transações -->
-            <div id="transactionsPage" class="hidden">
-                <div class="page-header">
-                    <h1 class="page-title">Transações</h1>
-                    <p class="page-subtitle">Histórico de transações de créditos</p>
-                </div>
-
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3 class="table-title">Últimas Transações</h3>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Todos os Usuários</h3>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Telefone</th>
+                                        <th>Email</th>
+                                        <th>Créditos</th>
+                                        <th>Total</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTable">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Usuário</th>
-                                <th>Tipo</th>
-                                <th>Valor</th>
-                                <th>Saldo Anterior</th>
-                                <th>Saldo Novo</th>
-                                <th>Data</th>
-                            </tr>
-                        </thead>
-                        <tbody id="transactionsTable">
-                        </tbody>
-                    </table>
                 </div>
-            </div>
-        </main>
+
+                <!-- Transações -->
+                <div id="transactionsPage" class="hidden">
+                    <div class="page-header">
+                        <h1 class="page-title">Transações</h1>
+                        <p class="page-subtitle">Histórico de transações de créditos</p>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3 class="table-title">Últimas Transações</h3>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Usuário</th>
+                                        <th>Tipo</th>
+                                        <th>Valor</th>
+                                        <th>Saldo Ant.</th>
+                                        <th>Saldo Novo</th>
+                                        <th>Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionsTable">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
     </div>
 
     <script>
         const API_BASE = 'https://autogiro.onrender.com/api'
         let currentFilter = 'all'
         let isAdmin = false
+
+        // Mobile Sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar')
+            const overlay = document.querySelector('.sidebar-overlay')
+            sidebar.classList.toggle('open')
+            overlay.classList.toggle('active')
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar')
+            const overlay = document.querySelector('.sidebar-overlay')
+            sidebar.classList.remove('open')
+            overlay.classList.remove('active')
+        }
 
         // Login Admin
         async function handleAdminLogin(event) {
@@ -673,23 +944,21 @@
             btn.textContent = 'Verificando...'
             
             try {
-    const response = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, password })
-    })
-    
-    const data = await response.json()
-    
-    if (data.success && data.user.role === 'admin') {
-        // 🔥 SALVAR O TOKEN
-        localStorage.setItem('token', data.token)
-        
-        isAdmin = true
-        document.getElementById('loginScreen').classList.add('hidden')
-        document.getElementById('adminPanel').classList.remove('hidden')
-        loadDashboard()
-        showToast('Login admin realizado com sucesso!', 'success')
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
+                })
+                
+                const data = await response.json()
+                
+                if (data.success && data.user.role === 'admin') {
+                    localStorage.setItem('token', data.token)
+                    isAdmin = true
+                    document.getElementById('loginScreen').classList.add('hidden')
+                    document.getElementById('adminPanel').classList.remove('hidden')
+                    loadDashboard()
+                    showToast('Login realizado com sucesso!', 'success')
                 } else if (data.success && data.user.role !== 'admin') {
                     showToast('Acesso negado. Você não é administrador.', 'error')
                     btn.disabled = false
@@ -709,44 +978,43 @@
 
         // Logout Admin
         async function adminLogout() {
-    localStorage.removeItem('token'); // 🔥 REMOVER TOKEN
-    
-    isAdmin = false
-    document.getElementById('loginScreen').classList.remove('hidden')
-    document.getElementById('adminPanel').classList.add('hidden')
-    document.getElementById('adminPhone').value = ''
-    document.getElementById('adminPassword').value = ''
-    showToast('Logout realizado com sucesso', 'success')
-}
+            localStorage.removeItem('token')
+            isAdmin = false
+            document.getElementById('loginScreen').classList.remove('hidden')
+            document.getElementById('adminPanel').classList.add('hidden')
+            document.getElementById('adminPhone').value = ''
+            document.getElementById('adminPassword').value = ''
+            showToast('Logout realizado com sucesso', 'success')
+        }
 
         // Verificar auth ao carregar
         async function checkAdminAuth() {
-    try {
-        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
-        
-        if (!token) return;
-        
-        const response = await fetch(`${API_BASE}/auth/me`, {
-            headers: {
-                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
+            try {
+                const token = localStorage.getItem('token')
+                
+                if (!token) return
+                
+                const response = await fetch(`${API_BASE}/auth/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                
+                const data = await response.json()
+                
+                if (data.success && data.user.role === 'admin') {
+                    isAdmin = true
+                    document.getElementById('loginScreen').classList.add('hidden')
+                    document.getElementById('adminPanel').classList.remove('hidden')
+                    loadDashboard()
+                } else {
+                    localStorage.removeItem('token')
+                }
+            } catch (error) {
+                console.log('Não autenticado')
+                localStorage.removeItem('token')
             }
-        })
-        
-        const data = await response.json()
-        
-        if (data.success && data.user.role === 'admin') {
-            isAdmin = true
-            document.getElementById('loginScreen').classList.add('hidden')
-            document.getElementById('adminPanel').classList.remove('hidden')
-            loadDashboard()
-        } else {
-            localStorage.removeItem('token'); // 🔥 REMOVER TOKEN INVÁLIDO
         }
-    } catch (error) {
-        console.log('Não autenticado')
-        localStorage.removeItem('token');
-    }
-}
 
         // Navegação
         function showPage(page) {
@@ -756,6 +1024,8 @@
             document.getElementById(`${page}Page`).classList.remove('hidden')
             event.target.classList.add('active')
             
+            closeSidebar()
+            
             if (page === 'dashboard') loadDashboard()
             if (page === 'proposals') loadProposals()
             if (page === 'users') loadUsers()
@@ -764,14 +1034,14 @@
 
         // Dashboard
         async function loadDashboard() {
-    try {
-        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
-        
-        const response = await fetch(`${API_BASE}/admin/dashboard`, {
-            headers: {
-                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
-            }
-        })
+            try {
+                const token = localStorage.getItem('token')
+                
+                const response = await fetch(`${API_BASE}/admin/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
                 const data = await response.json()
                 
                 if (data.success) {
@@ -811,17 +1081,17 @@
 
         // Propostas
         async function loadProposals(status = null) {
-    try {
-        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
-        
-        let url = `${API_BASE}/admin/proposals`
-        if (status) url += `?status=${status}`
-        
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
-            }
-        })
+            try {
+                const token = localStorage.getItem('token')
+                
+                let url = `${API_BASE}/admin/proposals`
+                if (status) url += `?status=${status}`
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
                 const data = await response.json()
                 
                 if (data.success) {
@@ -837,7 +1107,7 @@
             const tbody = document.getElementById('proposalsTable')
             
             if (proposals.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Nenhuma proposta encontrada</td></tr>'
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">📋</div><div>Nenhuma proposta encontrada</div></div></td></tr>'
                 return
             }
             
@@ -848,14 +1118,16 @@
                         <small style="color: var(--text-muted)">${p.customer_phone}</small>
                     </td>
                     <td>
-                        ${p.vehicle_brand || 'N/A'} ${p.vehicle_model || ''} ${p.vehicle_year || ''}<br>
-                        <small style="color: var(--text-muted)">Preço: R$ ${parseFloat(p.vehicle_price || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</small>
+                        ${p.vehicle_brand || 'N/A'} ${p.vehicle_model || ''}<br>
+                        <small style="color: var(--text-muted)">${p.vehicle_year || ''}</small>
                     </td>
                     <td><strong>R$ ${parseFloat(p.proposal_amount).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></td>
                     <td><span class="badge badge-${getStatusColor(p.status)}">${getStatusText(p.status)}</span></td>
-                    <td>${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
-                    <td style="white-space: nowrap;">
-                        ${getActionButtons(p)}
+                    <td style="white-space: nowrap;">${new Date(p.created_at).toLocaleDateString('pt-BR')}</td>
+                    <td>
+                        <div class="btn-group">
+                            ${getActionButtons(p)}
+                        </div>
                     </td>
                 </tr>
             `).join('')
@@ -864,38 +1136,30 @@
         function getActionButtons(p) {
             const buttons = {
                 pending: `
-                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'accepted')">Aceitar</button>
-                    <button class="btn btn-danger btn-sm" onclick="updateProposalStatus('${p.id}', 'rejected')">Rejeitar</button>
+                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'accepted')">✓ Aceitar</button>
+                    <button class="btn btn-danger btn-sm" onclick="updateProposalStatus('${p.id}', 'rejected')">✗ Rejeitar</button>
                 `,
                 accepted: `
-                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'won')">Arrematado</button>
-                    <button class="btn btn-warning btn-sm" onclick="updateProposalStatus('${p.id}', 'outbid')">Superada</button>
+                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'won')">🏆 Arrematado</button>
+                    <button class="btn btn-warning btn-sm" onclick="updateProposalStatus('${p.id}', 'outbid')">↑ Superada</button>
                 `,
                 won: `
-                    <button class="btn btn-primary btn-sm" onclick="updateProposalStatus('${p.id}', 'awaiting_bank')">Enviar p/ Banco</button>
+                    <button class="btn btn-primary btn-sm" onclick="updateProposalStatus('${p.id}', 'awaiting_bank')">🏦 Enviar p/ Banco</button>
                 `,
                 awaiting_bank: `
-                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'bank_approved')">Banco Aprovou</button>
-                    <button class="btn btn-danger btn-sm" onclick="updateProposalStatus('${p.id}', 'bank_rejected')">Banco Recusou</button>
+                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'bank_approved')">✓ Banco Aprovou</button>
+                    <button class="btn btn-danger btn-sm" onclick="updateProposalStatus('${p.id}', 'bank_rejected')">✗ Banco Recusou</button>
                 `,
                 bank_approved: `
-                    <button class="btn btn-primary btn-sm" onclick="updateProposalStatus('${p.id}', 'in_withdrawal')">Em Retirada</button>
+                    <button class="btn btn-primary btn-sm" onclick="updateProposalStatus('${p.id}', 'in_withdrawal')">🚗 Em Retirada</button>
                 `,
                 in_withdrawal: `
-                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'completed')">Concluído</button>
+                    <button class="btn btn-success btn-sm" onclick="updateProposalStatus('${p.id}', 'completed')">✓ Concluído</button>
                 `,
-                completed: `
-                    <span class="badge badge-success">✓ Finalizado</span>
-                `,
-                rejected: `
-                    <span class="badge badge-danger">✗ Rejeitada</span>
-                `,
-                outbid: `
-                    <span class="badge badge-info">Superada</span>
-                `,
-                bank_rejected: `
-                    <span class="badge badge-danger">✗ Banco Recusou</span>
-                `
+                completed: `<span class="badge badge-success">✓ Finalizado</span>`,
+                rejected: `<span class="badge badge-danger">✗ Rejeitada</span>`,
+                outbid: `<span class="badge badge-info">Superada</span>`,
+                bank_rejected: `<span class="badge badge-danger">✗ Banco Recusou</span>`
             }
             
             return buttons[p.status] || `<span class="badge badge-primary">${p.status}</span>`
@@ -942,22 +1206,21 @@
 
         async function updateProposalStatus(proposalId, status) {
             const confirmMessages = {
-                accepted: 'Tem certeza que deseja aceitar esta proposta?',
-                rejected: 'Tem certeza que deseja rejeitar esta proposta? O crédito será reembolsado.',
-                outbid: 'Tem certeza que esta proposta foi superada? O crédito será reembolsado.',
-                won: null, // Será tratado especialmente
+                accepted: 'Aceitar esta proposta?',
+                rejected: 'Rejeitar esta proposta? O crédito será reembolsado.',
+                outbid: 'Marcar como superada? O crédito será reembolsado.',
+                won: null,
                 awaiting_bank: 'Enviar para análise do banco?',
-                bank_approved: 'Confirmar que o banco APROVOU?',
-                bank_rejected: 'Confirmar que o banco RECUSOU? O crédito será reembolsado.',
-                in_withdrawal: 'Marcar como em processo de RETIRADA?',
-                completed: 'Confirmar que o veículo foi RETIRADO e o processo está CONCLUÍDO?'
+                bank_approved: 'Confirmar aprovação do banco?',
+                bank_rejected: 'Confirmar recusa do banco? O crédito será reembolsado.',
+                in_withdrawal: 'Marcar como em processo de retirada?',
+                completed: 'Confirmar conclusão do processo?'
             }
             
             let final_amount = null
             
-            // Se está marcando como arrematado, pedir o valor final
             if (status === 'won') {
-                final_amount = prompt('Qual foi o valor FINAL de arrematação? (apenas números, ex: 50000)')
+                final_amount = prompt('Valor final de arrematação? (ex: 50000)')
                 
                 if (!final_amount || isNaN(final_amount) || parseFloat(final_amount) <= 0) {
                     showToast('Valor inválido. Operação cancelada.', 'error')
@@ -970,7 +1233,7 @@
                     return
                 }
             } else {
-                const confirmMsg = confirmMessages[status] || 'Tem certeza que deseja alterar o status?'
+                const confirmMsg = confirmMessages[status] || 'Alterar o status?'
                 if (!confirm(confirmMsg)) return
             }
             
@@ -980,16 +1243,16 @@
                     body.final_amount = final_amount
                 }
                 
-                const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+                const token = localStorage.getItem('token')
 
-const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
-    method: 'PATCH',
-    headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
-    },
-    body: JSON.stringify(body)
-})
+                const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
+                    method: 'PATCH',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body)
+                })
                 
                 const data = await response.json()
                 
@@ -1011,20 +1274,16 @@ const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
             }
         }
 
-        function viewProposalDetails(proposalId) {
-            showToast('Funcionalidade em desenvolvimento', 'error')
-        }
-
         // Usuários
         async function loadUsers() {
-    try {
-        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
-        
-        const response = await fetch(`${API_BASE}/admin/users`, {
-            headers: {
-                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
-            }
-        })
+            try {
+                const token = localStorage.getItem('token')
+                
+                const response = await fetch(`${API_BASE}/admin/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
                 const data = await response.json()
                 
                 if (data.success) {
@@ -1040,7 +1299,7 @@ const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
             const tbody = document.getElementById('usersTable')
             
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Nenhum usuário encontrado</td></tr>'
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">👥</div><div>Nenhum usuário encontrado</div></div></td></tr>'
                 return
             }
             
@@ -1056,7 +1315,7 @@ const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
                     <td>${parseFloat(u.total_credits_purchased || 0).toFixed(1)}</td>
                     <td>
                         <button class="btn btn-primary btn-sm" onclick="openAddCreditsModal('${u.id}', '${u.name}')">
-                            Adicionar Créditos
+                            + Créditos
                         </button>
                     </td>
                 </tr>
@@ -1067,13 +1326,13 @@ const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
             const modal = createModal(`Adicionar Créditos - ${userName}`, `
                 <form id="addCreditsForm" onsubmit="addCredits(event, '${userId}')">
                     <div class="form-group">
-                        <label class="form-label">Quantidade de Créditos:</label>
+                        <label class="form-label">Quantidade de Créditos</label>
                         <input type="number" id="creditsAmount" class="form-input" 
                                step="0.1" min="0.1" required placeholder="Ex: 10">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Descrição:</label>
+                        <label class="form-label">Descrição</label>
                         <textarea id="creditsDescription" class="form-textarea" 
                                   placeholder="Motivo do ajuste..."></textarea>
                     </div>
@@ -1092,16 +1351,16 @@ const response = await fetch(`${API_BASE}/proposals/${proposalId}/status`, {
             const description = document.getElementById('creditsDescription').value
             
             try {
-                const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
+                const token = localStorage.getItem('token')
 
-const response = await fetch(`${API_BASE}/admin/users/${userId}/credits`, {
-    method: 'POST',
-    headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
-    },
-    body: JSON.stringify({ amount, description })
-})
+                const response = await fetch(`${API_BASE}/admin/users/${userId}/credits`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ amount, description })
+                })
                 
                 const data = await response.json()
                 
@@ -1120,14 +1379,14 @@ const response = await fetch(`${API_BASE}/admin/users/${userId}/credits`, {
 
         // Transações
         async function loadTransactions() {
-    try {
-        const token = localStorage.getItem('token'); // 🔥 PEGAR TOKEN
-        
-        const response = await fetch(`${API_BASE}/admin/transactions`, {
-            headers: {
-                'Authorization': `Bearer ${token}` // 🔥 ENVIAR TOKEN
-            }
-        })
+            try {
+                const token = localStorage.getItem('token')
+                
+                const response = await fetch(`${API_BASE}/admin/transactions`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
                 const data = await response.json()
                 
                 if (data.success) {
@@ -1143,7 +1402,7 @@ const response = await fetch(`${API_BASE}/admin/users/${userId}/credits`, {
             const tbody = document.getElementById('transactionsTable')
             
             if (transactions.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">Nenhuma transação encontrada</td></tr>'
+                tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">💳</div><div>Nenhuma transação encontrada</div></div></td></tr>'
                 return
             }
             
@@ -1157,7 +1416,7 @@ const response = await fetch(`${API_BASE}/admin/users/${userId}/credits`, {
                     <td><strong>${parseFloat(t.amount).toFixed(1)}</strong></td>
                     <td>${parseFloat(t.balance_before).toFixed(1)}</td>
                     <td>${parseFloat(t.balance_after).toFixed(1)}</td>
-                    <td>${new Date(t.created_at).toLocaleString('pt-BR')}</td>
+                    <td style="white-space: nowrap;">${new Date(t.created_at).toLocaleString('pt-BR', {dateStyle: 'short', timeStyle: 'short'})}</td>
                 </tr>
             `).join('')
         }
@@ -1176,7 +1435,7 @@ const response = await fetch(`${API_BASE}/admin/users/${userId}/credits`, {
             const texts = {
                 purchase: 'Compra',
                 proposal_debit: 'Proposta',
-                admin_adjustment: 'Ajuste Admin',
+                admin_adjustment: 'Ajuste',
                 refund: 'Reembolso'
             }
             return texts[type] || type
