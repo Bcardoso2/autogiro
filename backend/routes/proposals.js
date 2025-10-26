@@ -35,11 +35,12 @@ router.post('/', requireJWT, checkCredits(1), async (req, res) => {
     
     // Buscar saldo atual do usuário
     const userResult = await client.query(
-      'SELECT credits FROM users WHERE id = $1',
+      'SELECT credits, name FROM users WHERE id = $1',
       [req.userId]
     )
     
     const currentCredits = parseFloat(userResult.rows[0].credits)
+    const userName = userResult.rows[0].name
     
     if (currentCredits < 1) {
       await client.query('ROLLBACK')
@@ -96,6 +97,76 @@ router.post('/', requireJWT, checkCredits(1), async (req, res) => {
     ])
     
     await client.query('COMMIT')
+    
+    // 🔔 NOTIFICAÇÃO PUSH - ENVIAR PARA TODOS OS ADMINS
+    try {
+      console.log('📤 Buscando tokens FCM dos admins...')
+      
+      // Buscar TODOS os tokens FCM dos admins ativos
+      const adminTokensResult = await client.query(`
+        SELECT DISTINCT dt.fcm_token, dt.platform, u.name as admin_name
+        FROM device_tokens dt
+        INNER JOIN users u ON dt.user_id = u.id
+        WHERE u.role = 'admin' 
+        AND u.is_active = true
+      `)
+      
+      if (adminTokensResult.rows.length > 0) {
+        console.log(`📲 ${adminTokensResult.rows.length} dispositivo(s) de admin encontrado(s)`)
+        
+        const title = '🔔 Nova Proposta Recebida!'
+        const body = `${userName} enviou proposta de R$ ${parseFloat(proposal_amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} para ${vehicle.title}`
+        
+        const notificationData = {
+          type: 'new_proposal',
+          proposal_id: proposalResult.rows[0].id.toString(),
+          vehicle_id: vehicle.id.toString(),
+          vehicle_external_id: vehicle_external_id,
+          user_name: userName,
+          customer_name: customer_name,
+          proposal_amount: proposal_amount.toString(),
+          vehicle_name: vehicle.title,
+          screen: 'ProposalDetails'
+        }
+        
+        let successCount = 0
+        let failCount = 0
+        
+        // Enviar notificação para cada dispositivo admin
+        for (const device of adminTokensResult.rows) {
+          try {
+            await sendPushNotification(
+              device.fcm_token,
+              title,
+              body,
+              notificationData
+            )
+            successCount++
+            console.log(`✅ Notificação enviada para admin "${device.admin_name}" (${device.platform})`)
+          } catch (notifError) {
+            failCount++
+            console.error(`❌ Erro ao enviar para ${device.platform}:`, notifError.message)
+            
+            // Se token inválido, remover do banco
+            if (notifError.code === 'messaging/invalid-registration-token' || 
+                notifError.code === 'messaging/registration-token-not-registered') {
+              await client.query(
+                'DELETE FROM device_tokens WHERE fcm_token = $1',
+                [device.fcm_token]
+              )
+              console.log(`🗑️ Token inválido removido`)
+            }
+          }
+        }
+        
+        console.log(`📊 Notificações para admins: ${successCount} enviadas, ${failCount} falharam`)
+      } else {
+        console.log('⚠️ Nenhum admin com token FCM encontrado')
+      }
+    } catch (notifError) {
+      // Não quebra a requisição se a notificação falhar
+      console.error('❌ Erro ao enviar notificações para admins:', notifError)
+    }
     
     res.json({ 
       success: true,
