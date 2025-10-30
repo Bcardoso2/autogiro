@@ -50,9 +50,7 @@
 
         .hidden { display: none !important; }
         
-        /* ======================
-           HEADER - MOBILE FIRST
-           ====================== */
+        /* HEADER */
         .header {
             background: var(--bg-white);
             border-bottom: 1px solid var(--border);
@@ -74,7 +72,6 @@
             gap: 0.5rem;
         }
 
-        /* Logo Row */
         .header-top {
             display: flex;
             justify-content: space-between;
@@ -108,7 +105,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* Menu Toggle Button */
         .menu-toggle {
             background: var(--bg-light);
             border: 1px solid var(--border);
@@ -132,7 +128,6 @@
             transform-origin: center;
         }
 
-        /* Animate hamburger -> X when open */
         .header.open .menu-toggle span:nth-child(1) {
             transform: translateY(6px) rotate(45deg);
         }
@@ -143,7 +138,6 @@
             transform: translateY(-6px) rotate(-45deg);
         }
 
-        /* Navigation */
         .nav-menu {
             display: none;
         }
@@ -181,7 +175,6 @@
             color: var(--primary);
         }
 
-        /* Mobile dropdown nav links */
         .header.open .nav-link {
             color: white;
             background: rgba(255, 255, 255, 0.1);
@@ -193,7 +186,6 @@
             color: white;
         }
         
-        /* Header - Simplified for mobile */
         .header-stats {
             display: none;
         }
@@ -225,7 +217,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* User Info */
         #userInfoContainer {
             width: 100%;
             display: flex;
@@ -296,14 +287,12 @@
             background: var(--primary-light);
         }
 
-        /* Mobile: show stats and user info only when menu is open */
         @media (max-width: 767px) {
             .header:not(.open) #userInfoContainer { display: none; }
             .header.open #userInfoContainer { display: flex; margin-top: 0.5rem; }
             .header:not(.open) .header-stats { display: none; }
             .header.open .header-stats { display: flex; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; }
 
-            /* Card look for user info inside dropdown */
             .header.open #userInfoContainer .user-info {
                 background: var(--bg-white);
                 border: 1px solid var(--border);
@@ -311,7 +300,6 @@
                 border-radius: 10px;
             }
 
-            /* Improve stat items layout */
             .header.open .header-stats .stat-item {
                 max-width: none;
                 flex: 1;
@@ -327,16 +315,12 @@
             .header.open #userInfoContainer { margin-top: 0.5rem; }
         }
 
-        /* ======================
-           CONTAINER
-           ====================== */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 1rem;
         }
 
-        /* Loading */
         .loading {
             text-align: center;
             padding: 3rem 1rem;
@@ -356,9 +340,7 @@
             to { transform: rotate(360deg); }
         }
         
-        /* ======================
-           FILTERS - MOBILE FIRST
-           ====================== */
+        /* FILTERS */
         .filters-section {
             background: var(--bg-white);
             border: 1px solid var(--border);
@@ -405,7 +387,6 @@
             pointer-events: none;
         }
 
-        /* Filters - Stack on mobile */
         .filters-row {
             display: flex;
             flex-direction: column;
@@ -436,7 +417,6 @@
             box-shadow: 0 0 0 3px rgba(0, 28, 73, 0.1);
         }
 
-        /* Results Summary */
         .results-summary {
             background: var(--bg-light);
             border-radius: 8px;
@@ -452,9 +432,56 @@
             font-weight: 600;
         }
 
-        /* ======================
-           EVENT GROUPS
-           ====================== */
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 0.625rem 1rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-info {
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* EVENT GROUPS */
         .event-group {
             margin-bottom: 2rem;
         }
@@ -487,9 +514,7 @@
             border-radius: 20px;
         }
 
-        /* ======================
-           VEHICLES GRID - MOBILE FIRST
-           ====================== */
+        /* VEHICLES GRID */
         .vehicles-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -509,7 +534,6 @@
             transform: scale(0.98);
         }
 
-        /* Gallery */
         .vehicle-gallery {
             position: relative;
             background: var(--bg-light);
@@ -610,7 +634,6 @@
             margin-top: 0.5rem;
         }
 
-        /* Vehicle Info */
         .vehicle-info {
             padding: 1rem;
         }
@@ -656,7 +679,6 @@
             border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
-        /* Vehicle Details */
         .vehicle-detail {
             display: flex;
             align-items: center;
@@ -694,7 +716,6 @@
             margin-bottom: 0.25rem;
         }
 
-        /* Actions */
         .vehicle-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -765,9 +786,7 @@
             transform: scale(0.98);
         }
 
-        /* ======================
-           MODAL - MOBILE OPTIMIZED
-           ====================== */
+        /* MODAL */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -849,7 +868,6 @@
             padding: 1rem;
         }
 
-        /* Form Styles */
         .form-group {
             margin-bottom: 1rem;
         }
@@ -917,7 +935,6 @@
             border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
-        /* Toast Notifications */
         #toastContainer {
             position: fixed;
             bottom: 1rem;
@@ -948,11 +965,7 @@
         .toast-success { border-left: 4px solid var(--success); }
         .toast-error { border-left: 4px solid var(--danger); }
         
-        /* ======================
-           RESPONSIVE - TABLET & DESKTOP
-           ====================== */
-        
-        /* Tablet (640px+) */
+        /* RESPONSIVE */
         @media (min-width: 640px) {
             .vehicles-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -971,6 +984,14 @@
             .user-info {
                 flex-direction: row;
                 width: auto;
+            }
+
+            .pagination {
+                gap: 0.75rem;
+            }
+
+            .pagination-btn {
+                min-width: 100px;
             }
 
             .modal-overlay {
@@ -1006,7 +1027,6 @@
             }
         }
 
-        /* Desktop (768px+) */
         @media (min-width: 768px) {
             body {
                 padding-top: var(--header-height-desktop);
@@ -1128,7 +1148,6 @@
             }
         }
 
-        /* Large Desktop (1024px+) */
         @media (min-width: 1024px) {
             .vehicles-grid {
                 grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
@@ -1147,14 +1166,12 @@
             }
         }
 
-        /* Extra Large Desktop (1400px+) */
         @media (min-width: 1400px) {
             .vehicles-grid {
                 grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             }
         }
 
-        /* Accessibility & Touch Improvements */
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation-duration: 0.01ms !important;
@@ -1163,7 +1180,6 @@
             }
         }
 
-        /* High contrast mode support */
         @media (prefers-contrast: high) {
             .vehicle-card {
                 border-width: 2px;
@@ -1174,7 +1190,6 @@
             }
         }
 
-        /* Focus visible for keyboard navigation */
         *:focus-visible {
             outline: 3px solid var(--primary);
             outline-offset: 2px;
@@ -1191,11 +1206,11 @@
                     <div class="logo-icon">AG</div>
                     <div class="logo-text">Autogiro</div>
                 </a>
-                    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-controls="navMenu" aria-expanded="false" onclick="toggleMenu()">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-controls="navMenu" aria-expanded="false" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
 
             <nav class="nav-menu" id="navMenu" role="navigation">
@@ -1280,7 +1295,23 @@
         const APP_STATE = {
             vehicles: [],
             currentUser: null,
-            isLoggedIn: false
+            isLoggedIn: false,
+            pagination: {
+                currentPage: 1,
+                totalPages: 1,
+                totalVehicles: 0,
+                limit: 20
+            },
+            filters: {
+                category: 'all',
+                state: 'all',
+                eventDate: 'all',
+                search: ''
+            },
+            availableFilters: {
+                states: [],
+                eventDates: []
+            }
         }
 
         const API_BASE = 'https://autogiro.onrender.com/api'
@@ -1295,15 +1326,41 @@
         async function loadVehicles() {
             try {
                 console.log('Carregando veículos...')
-                const response = await fetch(`${API_BASE}/vehicles`, { credentials: 'include' })
-                const data = await response.json()
                 
-                if (data.success) {
-                    APP_STATE.vehicles = data.vehicles
+                const params = new URLSearchParams({
+                    page: APP_STATE.pagination.currentPage,
+                    limit: APP_STATE.pagination.limit,
+                    category: APP_STATE.filters.category,
+                    state: APP_STATE.filters.state,
+                    event_date: APP_STATE.filters.eventDate,
+                    search: APP_STATE.filters.search
+                })
+                
+                const response = await fetch(`${API_BASE}/vehicles?${params}`, { 
+                    credentials: 'include' 
+                })
+                const result = await response.json()
+                
+                if (result.success) {
+                    APP_STATE.vehicles = result.data.vehicles
+                    APP_STATE.pagination = {
+                        currentPage: result.data.pagination.currentPage,
+                        totalPages: result.data.pagination.totalPages,
+                        totalVehicles: result.data.pagination.totalVehicles,
+                        limit: result.data.pagination.limit,
+                        hasNextPage: result.data.pagination.hasNextPage,
+                        hasPrevPage: result.data.pagination.hasPrevPage
+                    }
+                    
+                    if (result.data.filters) {
+                        APP_STATE.availableFilters.states = result.data.filters.states
+                        APP_STATE.availableFilters.eventDates = result.data.filters.eventDates
+                        populateFilters()
+                    }
+                    
                     console.log('Veículos carregados:', APP_STATE.vehicles.length)
-                    populateStateFilter()
-                    populateEventFilter()
                     renderVehicles()
+                    renderPagination()
                     updateStats()
                 } else {
                     showToast('Erro ao carregar veículos', 'error')
@@ -1361,7 +1418,6 @@
             const btnLogin = document.getElementById('btnLogin')
             const userName = document.getElementById('userName')
             const userCredits = document.getElementById('userCredits')
-            const navMenu = document.getElementById('navMenu')
             
             if (APP_STATE.isLoggedIn && APP_STATE.currentUser) {
                 userInfo.classList.remove('hidden')
@@ -1378,21 +1434,24 @@
             const grid = document.getElementById('vehiclesGrid')
             grid.innerHTML = ''
             
-            const categoryFilter = document.getElementById('categoryFilter').value
-            const stateFilter = document.getElementById('stateFilter').value
-            const eventFilter = document.getElementById('eventFilter').value
-            
-            let filteredVehicles = APP_STATE.vehicles.filter(vehicle => {
-                const matchCategory = categoryFilter === 'all' || vehicle.category === categoryFilter
-                const vehicleState = extractStateFromLocation(vehicle.location)
-                const matchState = stateFilter === 'all' || vehicleState === stateFilter
-                const vehicleEventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : null
-                const matchEvent = eventFilter === 'all' || vehicleEventDate === eventFilter
-                return matchCategory && matchState && matchEvent
-            })
+            if (APP_STATE.vehicles.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem 1rem;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3" style="margin: 0 auto 1rem;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <h3 style="color: var(--text-secondary); margin-bottom: 0.5rem;">Nenhum veículo encontrado</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Tente ajustar os filtros ou fazer uma nova busca</p>
+                    </div>
+                `
+                updateVisibleCount(0)
+                return
+            }
             
             const groupedByEvent = {}
-            filteredVehicles.forEach(vehicle => {
+            APP_STATE.vehicles.forEach(vehicle => {
                 const eventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : 'sem-data'
                 if (!groupedByEvent[eventDate]) {
                     groupedByEvent[eventDate] = []
@@ -1436,56 +1495,29 @@
                 
                 const groupGrid = eventGroup.querySelector('.vehicles-grid')
                 vehicles.forEach((vehicle) => {
-                    const globalIndex = APP_STATE.vehicles.indexOf(vehicle)
-                    const card = createVehicleCard(vehicle, globalIndex)
+                    const card = createVehicleCard(vehicle)
                     groupGrid.appendChild(card)
                 })
             })
             
-            updateVisibleCount(filteredVehicles.length)
+            updateVisibleCount(APP_STATE.vehicles.length)
         }
 
-        function extractStateFromLocation(location) {
-            if (!location) return null
-            const parts = location.split(',')
-            if (parts.length >= 2) {
-                const state = parts[parts.length - 1].trim()
-                if (state.length === 2) {
-                    return state.toUpperCase()
-                }
-            }
-            return null
-        }
-
-        function populateStateFilter() {
+        function populateFilters() {
             const stateFilter = document.getElementById('stateFilter')
+            const eventFilter = document.getElementById('eventFilter')
             
-            const states = [...new Set(
-                APP_STATE.vehicles
-                    .map(v => extractStateFromLocation(v.location))
-                    .filter(Boolean)
-            )]
+            stateFilter.innerHTML = '<option value="all">Todos os Estados</option>'
+            eventFilter.innerHTML = '<option value="all">Todos os Eventos</option>'
             
-            states.sort()
-            
-            states.forEach(state => {
+            APP_STATE.availableFilters.states.forEach(state => {
                 const option = document.createElement('option')
                 option.value = state
                 option.textContent = state
                 stateFilter.appendChild(option)
             })
-        }
-
-        function populateEventFilter() {
-            const eventFilter = document.getElementById('eventFilter')
-            const events = [...new Set(
-                APP_STATE.vehicles
-                    .map(v => v.event_date ? v.event_date.split('T')[0] : null)
-                    .filter(Boolean)
-            )]
-            events.sort((a, b) => new Date(b) - new Date(a))
             
-            events.forEach(eventDate => {
+            APP_STATE.availableFilters.eventDates.forEach(eventDate => {
                 const option = document.createElement('option')
                 option.value = eventDate
                 
@@ -1498,17 +1530,90 @@
                 
                 eventFilter.appendChild(option)
             })
+            
+            stateFilter.value = APP_STATE.filters.state
+            eventFilter.value = APP_STATE.filters.eventDate
+            document.getElementById('categoryFilter').value = APP_STATE.filters.category
+        }
+
+        function renderPagination() {
+            const container = document.createElement('div')
+            container.className = 'pagination'
+            
+            const firstBtn = document.createElement('button')
+            firstBtn.className = 'pagination-btn'
+            firstBtn.innerHTML = '<span>« Primeira</span>'
+            firstBtn.disabled = !APP_STATE.pagination.hasPrevPage
+            firstBtn.onclick = () => goToPage(1)
+            container.appendChild(firstBtn)
+            
+            const prevBtn = document.createElement('button')
+            prevBtn.className = 'pagination-btn'
+            prevBtn.innerHTML = '<span>‹ Anterior</span>'
+            prevBtn.disabled = !APP_STATE.pagination.hasPrevPage
+            prevBtn.onclick = () => goToPage(APP_STATE.pagination.currentPage - 1)
+            container.appendChild(prevBtn)
+            
+            const info = document.createElement('div')
+            info.className = 'pagination-info'
+            info.textContent = `Página ${APP_STATE.pagination.currentPage} de ${APP_STATE.pagination.totalPages}`
+            container.appendChild(info)
+            
+            const nextBtn = document.createElement('button')
+            nextBtn.className = 'pagination-btn'
+            nextBtn.innerHTML = '<span>Próxima ›</span>'
+            nextBtn.disabled = !APP_STATE.pagination.hasNextPage
+            nextBtn.onclick = () => goToPage(APP_STATE.pagination.currentPage + 1)
+            container.appendChild(nextBtn)
+            
+            const lastBtn = document.createElement('button')
+            lastBtn.className = 'pagination-btn'
+            lastBtn.innerHTML = '<span>Última »</span>'
+            lastBtn.disabled = !APP_STATE.pagination.hasNextPage
+            lastBtn.onclick = () => goToPage(APP_STATE.pagination.totalPages)
+            container.appendChild(lastBtn)
+            
+            const oldPagination = document.querySelector('.pagination')
+            if (oldPagination) {
+                oldPagination.remove()
+            }
+            
+            document.querySelector('.container').appendChild(container)
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > APP_STATE.pagination.totalPages) return
+            
+            APP_STATE.pagination.currentPage = page
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            
+            document.getElementById('catalogContent').style.opacity = '0.5'
+            
+            loadVehicles().then(() => {
+                document.getElementById('catalogContent').style.opacity = '1'
+            })
+        }
+
+        function applyFilters() {
+            APP_STATE.pagination.currentPage = 1
+            
+            APP_STATE.filters.category = document.getElementById('categoryFilter').value
+            APP_STATE.filters.state = document.getElementById('stateFilter').value
+            APP_STATE.filters.eventDate = document.getElementById('eventFilter').value
+            
+            loadVehicles()
         }
 
         function updateVisibleCount(count) {
             document.getElementById('visibleCount').textContent = count
-            document.getElementById('totalCount').textContent = APP_STATE.vehicles.length
+            document.getElementById('totalCount').textContent = APP_STATE.pagination.totalVehicles
         }
 
-        function createVehicleCard(vehicle, index) {
+        function createVehicleCard(vehicle) {
             const div = document.createElement('div')
             div.className = 'vehicle-card'
-            div.setAttribute('data-index', index)
+            div.setAttribute('data-external-id', vehicle.external_id)
             
             const images = vehicle.images || []
             const hasImages = images.length > 0
@@ -1516,7 +1621,7 @@
             div.innerHTML = `
                 <div class="vehicle-gallery">
                     ${hasImages ? `
-                        <div class="main-image-container" onclick="openGallery(${index})" role="button" tabindex="0" aria-label="Ver galeria de fotos">
+                        <div class="main-image-container" onclick="openGallery('${vehicle.external_id}')" role="button" tabindex="0" aria-label="Ver galeria de fotos">
                             <img src="${images[0].url}" alt="${vehicle.brand} ${vehicle.model}" loading="lazy">
                             <div class="image-overlay">
                                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -1530,10 +1635,10 @@
                             <div class="thumbnail-strip">
                                 ${images.slice(1, 4).map((img, idx) => `
                                     <img src="${img.thumb || img.url}" alt="Foto ${idx + 2}" loading="lazy"
-                                         onclick="openGallery(${index}, ${idx + 1})">
+                                         onclick="openGallery('${vehicle.external_id}', ${idx + 1})">
                                 `).join('')}
                                 ${images.length > 4 ? `
-                                    <div class="more-photos" onclick="openGallery(${index})">+${images.length - 4}</div>
+                                    <div class="more-photos" onclick="openGallery('${vehicle.external_id}')">+${images.length - 4}</div>
                                 ` : ''}
                             </div>
                         ` : ''}
@@ -1617,12 +1722,12 @@
                     </div>
 
                     <div class="vehicle-actions">
-                        <button class="btn-primary" onclick="openDetails(${index})">Ver Detalhes</button>
-                        <button class="btn-secondary" onclick="openGallery(${index})">Fotos (${images.length})</button>
+                        <button class="btn-primary" onclick="openDetails('${vehicle.external_id}')">Ver Detalhes</button>
+                        <button class="btn-secondary" onclick="openGallery('${vehicle.external_id}')">Fotos (${images.length})</button>
                         ${vehicle.laudo_file_url ? `
                             <button class="btn-laudo" onclick="window.open('${vehicle.laudo_file_url}', '_blank')">Ver Laudo</button>
                         ` : ''}
-                        <button class="btn-proposal" onclick="handleProposal(${index})">Fazer Proposta</button>
+                        <button class="btn-proposal" onclick="handleProposal('${vehicle.external_id}')">Fazer Proposta</button>
                     </div>
                 </div>
             `
@@ -1639,7 +1744,7 @@
         }
 
         function updateStats() {
-            document.getElementById('totalVehicles').textContent = APP_STATE.vehicles.length
+            document.getElementById('totalVehicles').textContent = APP_STATE.pagination.totalVehicles
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1648,44 +1753,32 @@
             const stateFilter = document.getElementById('stateFilter')
             const eventFilter = document.getElementById('eventFilter')
             
+            let searchTimeout
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
-                    const query = e.target.value.toLowerCase()
-                    const allCards = document.querySelectorAll('.vehicle-card')
-                    let count = 0
-                    
-                    allCards.forEach((card) => {
-                        const index = parseInt(card.getAttribute('data-index'))
-                        const vehicle = APP_STATE.vehicles[index]
-                        const text = `${vehicle.brand} ${vehicle.model} ${vehicle.description || ''} ${vehicle.color || ''}`.toLowerCase()
-                        
-                        if (text.includes(query)) {
-                            card.style.display = ''
-                            count++
-                        } else {
-                            card.style.display = 'none'
-                        }
-                    })
-                    
-                    document.getElementById('visibleCount').textContent = count
+                    clearTimeout(searchTimeout)
+                    searchTimeout = setTimeout(() => {
+                        APP_STATE.filters.search = e.target.value
+                        applyFilters()
+                    }, 500)
                 })
             }
             
             if (categoryFilter) {
-                categoryFilter.addEventListener('change', renderVehicles)
+                categoryFilter.addEventListener('change', applyFilters)
             }
             
             if (stateFilter) {
-                stateFilter.addEventListener('change', renderVehicles)
+                stateFilter.addEventListener('change', applyFilters)
             }
             
             if (eventFilter) {
-                eventFilter.addEventListener('change', renderVehicles)
+                eventFilter.addEventListener('change', applyFilters)
             }
         })
 
-        async function handleProposal(index) {
-            const vehicle = APP_STATE.vehicles[index]
+        async function handleProposal(externalId) {
+            const vehicle = APP_STATE.vehicles.find(v => v.external_id === externalId)
             
             if (!APP_STATE.isLoggedIn) {
                 showToast('Você precisa fazer login para fazer uma proposta', 'error')
@@ -1763,7 +1856,6 @@
                 </div>
             `)
             
-            // Adicionar formatação de moeda após o modal ser criado
             setTimeout(() => {
                 const input = document.getElementById('proposalValue')
                 if (input) {
@@ -1774,7 +1866,6 @@
         }
 
         function onlyNumbers(e) {
-            // Permite apenas números, backspace, delete, setas
             const char = String.fromCharCode(e.which || e.keyCode)
             if (!/[0-9]/.test(char) && e.which !== 0 && e.which !== 8) {
                 e.preventDefault()
@@ -1784,33 +1875,26 @@
         function formatCurrencyInput(e) {
             let value = e.target.value
             
-            // Remove tudo que não é número
             value = value.replace(/\D/g, '')
             
-            // Se vazio, limpa
             if (value === '' || value === '0') {
                 e.target.value = ''
                 document.getElementById('proposalValueHidden').value = '0'
                 return
             }
             
-            // Remove zeros à esquerda
             value = value.replace(/^0+/, '')
             
-            // Se ficou vazio após remover zeros, reseta
             if (value === '') {
                 e.target.value = ''
                 document.getElementById('proposalValueHidden').value = '0'
                 return
             }
             
-            // Converte para número (divide por 100 para ter os centavos)
             const numberValue = parseInt(value) / 100
             
-            // Guarda o valor numérico no campo hidden
             document.getElementById('proposalValueHidden').value = numberValue.toFixed(2)
             
-            // Formata para exibição
             e.target.value = 'R$ ' + numberValue.toLocaleString('pt-BR', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
@@ -1824,7 +1908,6 @@
             btn.disabled = true
             btn.textContent = 'Enviando...'
             
-            // Pega o valor do campo hidden (valor numérico real)
             const proposalAmount = parseFloat(document.getElementById('proposalValueHidden').value)
             
             if (!proposalAmount || proposalAmount < 1) {
@@ -1874,8 +1957,8 @@
             }
         }
 
-        function openDetails(index) {
-            const vehicle = APP_STATE.vehicles[index]
+        function openDetails(externalId) {
+            const vehicle = APP_STATE.vehicles.find(v => v.external_id === externalId)
             
             createModal(`${vehicle.brand} ${vehicle.model}`, `
                 <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 10px;">
@@ -1900,8 +1983,8 @@
             `)
         }
 
-        function openGallery(index, startImage = 0) {
-            const vehicle = APP_STATE.vehicles[index]
+        function openGallery(externalId, startImage = 0) {
+            const vehicle = APP_STATE.vehicles.find(v => v.external_id === externalId)
             const images = vehicle.images || []
             
             if (images.length === 0) {
@@ -1939,7 +2022,6 @@
                 document.querySelector('#galleryContent p').textContent = `Foto ${currentImage + 1} de ${images.length}`
             }
 
-            // Keyboard navigation for gallery
             const handleKeyPress = (e) => {
                 if (e.key === 'ArrowLeft') {
                     window.changeGalleryImage(-1)
@@ -1991,7 +2073,6 @@
                 })
             }
 
-            // ESC key to close
             const handleEscape = (e) => {
                 if (e.key === 'Escape') {
                     closeModal(overlay.querySelector('.modal-close'))
@@ -2054,7 +2135,6 @@
             }, 3000)
         }
 
-        // Handle window resize for responsive behavior
         let resizeTimer
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer)
