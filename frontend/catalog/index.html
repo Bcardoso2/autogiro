@@ -1504,37 +1504,42 @@
         }
 
         function populateFilters() {
-            const stateFilter = document.getElementById('stateFilter')
-            const eventFilter = document.getElementById('eventFilter')
-            
-            stateFilter.innerHTML = '<option value="all">Todos os Estados</option>'
-            eventFilter.innerHTML = '<option value="all">Todos os Eventos</option>'
-            
-            APP_STATE.availableFilters.states.forEach(state => {
-                const option = document.createElement('option')
-                option.value = state
-                option.textContent = state
-                stateFilter.appendChild(option)
-            })
-            
-            APP_STATE.availableFilters.eventDates.forEach(eventDate => {
-                const option = document.createElement('option')
-                option.value = eventDate
-                
-                const date = new Date(eventDate + 'T12:00:00')
-                option.textContent = date.toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                })
-                
-                eventFilter.appendChild(option)
-            })
-            
-            stateFilter.value = APP_STATE.filters.state
-            eventFilter.value = APP_STATE.filters.eventDate
-            document.getElementById('categoryFilter').value = APP_STATE.filters.category
-        }
+    const stateFilter = document.getElementById('stateFilter')
+    const eventFilter = document.getElementById('eventFilter')
+    
+    stateFilter.innerHTML = '<option value="all">Todos os Estados</option>'
+    eventFilter.innerHTML = '<option value="all">Todos os Eventos</option>'
+    
+    APP_STATE.availableFilters.states.forEach(state => {
+        const option = document.createElement('option')
+        option.value = state
+        option.textContent = state
+        stateFilter.appendChild(option)
+    })
+    
+    APP_STATE.availableFilters.eventDates.forEach(eventDate => {
+        const option = document.createElement('option')
+        // Extrai apenas a data (YYYY-MM-DD) se vier no formato ISO completo
+        const dateOnly = eventDate.split('T')[0]
+        option.value = dateOnly
+        
+        // Cria a data corretamente
+        const [year, month, day] = dateOnly.split('-')
+        const date = new Date(year, month - 1, day)
+        
+        option.textContent = date.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
+        
+        eventFilter.appendChild(option)
+    })
+    
+    stateFilter.value = APP_STATE.filters.state
+    eventFilter.value = APP_STATE.filters.eventDate
+    document.getElementById('categoryFilter').value = APP_STATE.filters.category
+}
 
         function renderPagination() {
             const container = document.createElement('div')
