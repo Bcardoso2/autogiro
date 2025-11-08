@@ -152,6 +152,34 @@ router.get('/', async (req, res) => {
 })
 
 // =============================================================================
+// 👇 NOVO ENDPOINT - GET /api/vehicles/event-dates
+// =============================================================================
+router.get('/event-dates', async (req, res) => {
+  try {
+    const eventsQuery = `
+      SELECT DISTINCT DATE(event_date) as event_date
+      FROM vehicles
+      WHERE is_active = true AND event_date IS NOT NULL
+      ORDER BY event_date DESC
+    `
+    
+    const result = await query(eventsQuery)
+    
+    res.json({
+      success: true,
+      eventDates: result.rows.map(r => r.event_date)
+    })
+  } catch (error) {
+    console.error('Erro ao buscar datas de eventos:', error)
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erro ao buscar datas de eventos',
+      message: error.message 
+    })
+  }
+})
+
+// =============================================================================
 // GET /api/vehicles/by-external-id/:external_id
 // =============================================================================
 router.get('/by-external-id/:external_id', async (req, res) => {
