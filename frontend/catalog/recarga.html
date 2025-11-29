@@ -336,6 +336,66 @@
             line-height: 1.4;
         }
 
+        .pix-key-box {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .pix-label {
+            display: block;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pix-copy-container {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .pix-input {
+            flex: 1;
+            padding: 0.875rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+
+        .btn-copy {
+            padding: 0.875rem 1.5rem;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-copy.copied {
+            background: #059669;
+        }
+
         .btn-submit {
             width: 100%;
             padding: 0.875rem;
@@ -477,16 +537,27 @@
                 <div class="info-box">
                     <h4>Como funciona o pagamento via PIX</h4>
                     <ul>
-                        <li>Clique em "Solicitar PIX via WhatsApp"</li>
+                        <li>Copie a chave PIX abaixo</li>
+                        <li>Clique em "Enviar Solicitação via WhatsApp"</li>
                         <li>Será aberta uma conversa no WhatsApp</li>
                         <li>Envie a mensagem com sua solicitação</li>
-                        <li>Aguarde o envio do PIX pelo atendente</li>
-                        <li>Realize o pagamento</li>
+                        <li>Realize o pagamento usando a chave PIX copiada</li>
                         <li>Seus créditos serão adicionados em até 5 minutos</li>
                     </ul>
                 </div>
 
-                <button type="submit" class="btn-submit">Solicitar PIX via WhatsApp</button>
+                <div class="pix-key-box">
+                    <label class="pix-label">Chave PIX (CNPJ)</label>
+                    <div class="pix-copy-container">
+                        <input type="text" id="pixKey" class="pix-input" value="62.629.900/0001-50" readonly>
+                        <button type="button" class="btn-copy" onclick="copyPixKey()">
+                            <span id="copyText">Copiar</span>
+                        </button>
+                    </div>
+                    <small class="form-hint">PIX Master Deals - Copie esta chave para realizar o pagamento</small>
+                </div>
+
+                <button type="submit" class="btn-submit">Enviar Solicitação via WhatsApp</button>
             </form>
         </div>
     </div>
@@ -592,6 +663,33 @@
             document.getElementById('rechargeAmount').value = amount;
         }
 
+        function copyPixKey() {
+            const pixKey = document.getElementById('pixKey');
+            const copyBtn = document.querySelector('.btn-copy');
+            const copyText = document.getElementById('copyText');
+            
+            // Selecionar e copiar o texto
+            pixKey.select();
+            pixKey.setSelectionRange(0, 99999); // Para mobile
+            
+            navigator.clipboard.writeText(pixKey.value).then(() => {
+                // Feedback visual
+                copyBtn.classList.add('copied');
+                copyText.textContent = '✓ Copiado!';
+                
+                showToast('Chave PIX copiada!', 'success');
+                
+                // Resetar após 2 segundos
+                setTimeout(() => {
+                    copyBtn.classList.remove('copied');
+                    copyText.textContent = 'Copiar';
+                }, 2000);
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                showToast('Erro ao copiar chave PIX', 'error');
+            });
+        }
+
         async function handleRecharge(event) {
             event.preventDefault();
             
@@ -624,7 +722,9 @@
                           `📄 *CPF:* ${userCpf}\n\n` +
                           `💰 *Valor:* R$ ${amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n` +
                           `🎯 *Créditos:* ${credits}\n\n` +
-                          `Aguardo o envio da chave PIX para realizar o pagamento.\n\n` +
+                          `📋 *Chave PIX:* 62.629.900/0001-50\n` +
+                          `🏢 *PIX Master Deals*\n\n` +
+                          `Realizarei o pagamento via PIX e aguardo a confirmação dos créditos.\n\n` +
                           `Obrigado! 🙏`;
             
             const whatsappNumber = '559193718097';
@@ -634,11 +734,11 @@
             // Abrir WhatsApp em nova aba
             window.open(whatsappUrl, '_blank');
             
-            showToast('Abrindo WhatsApp para solicitar PIX...', 'success');
+            showToast('Abrindo WhatsApp...', 'success');
             
             setTimeout(() => {
                 btn.disabled = false;
-                btn.textContent = 'Solicitar PIX via WhatsApp';
+                btn.textContent = 'Enviar Solicitação via WhatsApp';
             }, 2000);
         }
 
