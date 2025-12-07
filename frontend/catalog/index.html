@@ -1686,8 +1686,7 @@
                         <span style="color: var(--text-dark); font-weight: 500;">${formatNumber(vehicle.mileage)} km</span>
                     </div>
                     <div class="vehicle-pricing ${isDirect ? 'direct-sale-pricing' : ''}">
-                        ${isDirect ? `<div class="original-price">De: R$ ${formatPrice(originalPrice)}</div>` : ''}
-                        <div class="price-label">${isDirect ? 'Compra Direta' : 'Proposta Inicial'}</div>
+                        <div class="price-label">${isDirect ? 'Compra Direta (+3%)' : 'Proposta Inicial'}</div>
                         <div class="main-price">R$ ${formatPrice(displayPrice)}</div>
                     </div>
                     <div class="vehicle-actions">
@@ -1825,10 +1824,6 @@
                 <div style="text-align: center;">
                     <h3 style="margin-bottom: 1rem;">${vehicle.brand} ${vehicle.model} ${vehicle.year}</h3>
                     <div style="background: rgba(245, 158, 11, 0.1); border: 2px solid var(--warning); border-radius: 10px; padding: 1.5rem; margin: 1.5rem 0;">
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Preço Original</div>
-                        <div style="font-size: 1.2rem; color: var(--text-muted); text-decoration: line-through; margin-bottom: 1rem;">
-                            R$ ${formatPrice(originalPrice)}
-                        </div>
                         <div style="font-size: 0.9rem; color: var(--warning); font-weight: 600; margin-bottom: 0.5rem;">
                             PREÇO VENDA DIRETA (+3%)
                         </div>
@@ -2039,12 +2034,23 @@
             createModal(`${vehicle.brand} ${vehicle.model}`, `
                 <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 10px;">
                     ${isDirect ? '<div style="background: var(--warning); color: white; padding: 0.5rem 1rem; border-radius: 6px; text-align: center; font-weight: 700; margin-bottom: 1rem;">VENDA DIRETA</div>' : ''}
+                    
                     <h4 style="margin-bottom: 1rem; color: var(--primary);">Informações do Veículo</h4>
                     <p style="margin-bottom: 0.75rem;"><strong>Marca/Modelo:</strong> ${vehicle.brand} ${vehicle.model}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Ano:</strong> ${vehicle.year}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Quilometragem:</strong> ${formatNumber(vehicle.mileage)} km</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Combustível:</strong> ${vehicle.fuel_type || 'N/A'}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Transmissão:</strong> ${vehicle.transmission || 'Manual'}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Cor:</strong> ${vehicle.color || 'N/A'}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Preço:</strong> R$ ${formatPrice(displayPrice)} ${isDirect ? '(+3%)' : ''}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Localização:</strong> ${vehicle.location || 'N/A'}</p>
+                    
+                    ${vehicle.description ? `
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                            <h4 style="margin-bottom: 0.75rem; color: var(--primary);">Sobre este Veículo</h4>
+                            <div style="color: var(--text-secondary); line-height: 1.8; font-size: 0.9rem; white-space: pre-wrap; text-align: justify;">${vehicle.description}</div>
+                        </div>
+                    ` : ''}
                 </div>
             `)
         }
