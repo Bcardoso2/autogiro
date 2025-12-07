@@ -770,13 +770,8 @@
 
         .vehicle-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 0.5rem;
-        }
-        
-        .vehicle-actions .btn-proposal,
-        .vehicle-actions .btn-buy-now {
-            grid-column: 1 / -1;
         }
         
         .btn-primary, 
@@ -1036,6 +1031,15 @@
         @media (min-width: 640px) {
             .vehicles-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .vehicle-actions {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .vehicle-actions .btn-proposal,
+            .vehicle-actions .btn-buy-now {
+                grid-column: 1 / -1;
             }
 
             .filters-row {
