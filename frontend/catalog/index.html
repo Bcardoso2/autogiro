@@ -1462,8 +1462,8 @@
                 
                 const tabData = APP_STATE[tab]
                 const params = new URLSearchParams({
-                    page: tabData.pagination.currentPage,
-                    limit: tabData.pagination.limit,
+                    page: 1,
+                    limit: 1000,
                     category: tabData.filters.category,
                     state: tabData.filters.state,
                     event_date: tabData.filters.eventDate,
