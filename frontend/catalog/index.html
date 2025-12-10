@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#001C49">
     <title>Autogiro - Catálogo de Veículos</title>
     
@@ -50,7 +50,7 @@
 
         .hidden { display: none !important; }
         
-        /* HEADER - mantém todo CSS igual */
+        /* HEADER */
         .header {
             background: var(--bg-white);
             border-bottom: 1px solid var(--border);
@@ -339,69 +339,6 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        /* NOVO: TABS SYSTEM */
-        .tabs-container {
-            background: var(--bg-white);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            box-shadow: var(--shadow);
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 0.875rem 1rem;
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-weight: 600;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: var(--transition);
-            font-family: inherit;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .tab-btn:hover {
-            background: rgba(0, 28, 73, 0.05);
-            color: var(--primary);
-        }
-
-        .tab-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .tab-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.125rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .tab-btn:not(.active) .tab-badge {
-            background: rgba(0, 28, 73, 0.1);
-            color: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
         
         /* FILTERS */
         .filters-section {
@@ -495,6 +432,55 @@
             font-weight: 600;
         }
 
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            padding: 0.625rem 1rem;
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-dark);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination-info {
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
         /* EVENT GROUPS */
         .event-group {
             margin-bottom: 2rem;
@@ -542,27 +528,6 @@
             overflow: hidden;
             transition: var(--transition);
             box-shadow: var(--shadow);
-        }
-
-        /* NOVO: Direct Sale Styling */
-        .vehicle-card.direct-sale {
-            border: 2px solid #32D74B;
-            position: relative;
-        }
-
-        .direct-sale-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #32D74B;
-            color: white;
-            padding: 0.375rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            z-index: 10;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
         
         .vehicle-card:active {
@@ -734,16 +699,6 @@
             border: 1px solid rgba(16, 185, 129, 0.1);
             border-radius: 10px;
         }
-
-        /* NOVO: Direct Sale Pricing */
-        .vehicle-pricing.direct-sale-pricing {
-            background: rgba(50, 215, 75, 0.05);
-            border: 1px solid rgba(50, 215, 75, 0.2);
-        }
-
-        .vehicle-pricing.direct-sale-pricing .main-price {
-            color: #32D74B;
-        }
         
         .main-price {
             font-size: 1.5rem;
@@ -761,23 +716,19 @@
             margin-bottom: 0.25rem;
         }
 
-        .original-price {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-decoration: line-through;
-            margin-bottom: 0.25rem;
-        }
-
         .vehicle-actions {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 0.5rem;
+        }
+        
+        .vehicle-actions .btn-proposal {
+            grid-column: 1 / -1;
         }
         
         .btn-primary, 
         .btn-secondary, 
-        .btn-proposal,
-        .btn-buy-now,
+        .btn-proposal, 
         .btn-laudo {
             padding: 0.75rem;
             border: none;
@@ -822,19 +773,6 @@
         
         .btn-proposal:active {
             background: #059669;
-            transform: scale(0.98);
-        }
-
-        /* NOVO: Buy Now Button */
-        .btn-buy-now {
-            background: #32D74B;
-            color: white;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
-        .btn-buy-now:active {
-            background: #28B83F;
             transform: scale(0.98);
         }
         
@@ -1033,15 +971,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .vehicle-actions {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .vehicle-actions .btn-proposal,
-            .vehicle-actions .btn-buy-now {
-                grid-column: 1 / -1;
-            }
-
             .filters-row {
                 flex-direction: row;
                 flex-wrap: wrap;
@@ -1055,6 +984,14 @@
             .user-info {
                 flex-direction: row;
                 width: auto;
+            }
+
+            .pagination {
+                gap: 0.75rem;
+            }
+
+            .pagination-btn {
+                min-width: 100px;
             }
 
             .modal-overlay {
@@ -1189,10 +1126,6 @@
                 background: #059669;
             }
 
-            .btn-buy-now:hover {
-                background: #28B83F;
-            }
-
             .btn-laudo:hover {
                 background: #d97706;
             }
@@ -1232,6 +1165,35 @@
                 height: 250px;
             }
         }
+
+        @media (min-width: 1400px) {
+            .vehicles-grid {
+                grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        @media (prefers-contrast: high) {
+            .vehicle-card {
+                border-width: 2px;
+            }
+
+            .btn-primary, .btn-proposal, .btn-laudo {
+                border: 2px solid currentColor;
+            }
+        }
+
+        *:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
     </style>
 </head>
 <body>
@@ -1244,14 +1206,14 @@
                     <div class="logo-icon">AG</div>
                     <div class="logo-text">Autogiro</div>
                 </a>
-                <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" onclick="toggleMenu()">
+                <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-controls="navMenu" aria-expanded="false" onclick="toggleMenu()">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
             </div>
 
-            <nav class="nav-menu" id="navMenu">
+            <nav class="nav-menu" id="navMenu" role="navigation">
                 <a href="/" class="nav-link active">Catálogo</a>
                 <a href="propostas" class="nav-link">Propostas</a>
                 <a href="recarga" class="nav-link">Recarregar</a>
@@ -1285,142 +1247,70 @@
         </div>
 
         <div id="catalogContent" class="hidden">
-            <!-- NOVO: TABS -->
-            <div class="tabs-container">
-                <button class="tab-btn active" onclick="switchTab('propostas')" id="tabPropostas">
-                    Venda com Propostas
-                    <span class="tab-badge" id="badgePropostas">0</span>
-                </button>
-                <button class="tab-btn" onclick="switchTab('direta')" id="tabDireta">
-                    Venda Direta
-                    <span class="tab-badge" id="badgeDireta">0</span>
-                </button>
+            <div class="filters-section">
+                <div class="search-bar">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input 
+                        type="search" 
+                        class="search-input" 
+                        id="searchInput" 
+                        placeholder="Buscar por marca, modelo..."
+                        aria-label="Buscar veículos">
+                </div>
+                
+                <div class="filters-row">
+                    <div class="filter-group">
+                        <select class="filter-select" id="categoryFilter" aria-label="Filtrar por categoria">
+                            <option value="all">Todas as Categorias</option>
+                            <option value="Carro">Carros</option>
+                            <option value="Caminhão">Caminhões</option>
+                            <option value="Moto">Motos</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select class="filter-select" id="stateFilter" aria-label="Filtrar por estado">
+                            <option value="all">Todos os Estados</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <select class="filter-select" id="eventFilter" aria-label="Filtrar por evento">
+                            <option value="all">Todos os Eventos</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
-            <!-- TAB: Venda com Propostas -->
-            <div id="contentPropostas" class="tab-content active">
-                <div class="filters-section">
-                    <div class="search-bar">
-                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        <input type="search" class="search-input" id="searchInputPropostas" placeholder="Buscar por marca, modelo...">
-                    </div>
-                    <div class="filters-row">
-                        <div class="filter-group">
-                            <select class="filter-select" id="categoryFilterPropostas">
-                                <option value="all">Todas as Categorias</option>
-                                <option value="Carro">Carros</option>
-                                <option value="Caminhão">Caminhões</option>
-                                <option value="Moto">Motos</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <select class="filter-select" id="stateFilterPropostas">
-                                <option value="all">Todos os Estados</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <select class="filter-select" id="eventFilterPropostas">
-                                <option value="all">Todos os Eventos</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="results-summary">
-                    Mostrando <strong id="visibleCountPropostas">0</strong> de <strong id="totalCountPropostas">0</strong> veículos
-                </div>
-                <div class="vehicles-grid" id="vehiclesGridPropostas"></div>
+            <div class="results-summary" role="status" aria-live="polite">
+                Mostrando <strong id="visibleCount">0</strong> de <strong id="totalCount">0</strong> veículos
             </div>
 
-            <!-- TAB: Venda Direta -->
-            <div id="contentDireta" class="tab-content">
-                <div class="filters-section">
-                    <div class="search-bar">
-                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <path d="m21 21-4.35-4.35"></path>
-                        </svg>
-                        <input type="search" class="search-input" id="searchInputDireta" placeholder="Buscar por marca, modelo...">
-                    </div>
-                    <div class="filters-row">
-                        <div class="filter-group">
-                            <select class="filter-select" id="categoryFilterDireta">
-                                <option value="all">Todas as Categorias</option>
-                                <option value="Carro">Carros</option>
-                                <option value="Caminhão">Caminhões</option>
-                                <option value="Moto">Motos</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <select class="filter-select" id="stateFilterDireta">
-                                <option value="all">Todos os Estados</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <select class="filter-select" id="eventFilterDireta">
-                                <option value="all">Todos os Eventos</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="results-summary">
-                    Mostrando <strong id="visibleCountDireta">0</strong> de <strong id="totalCountDireta">0</strong> veículos
-                </div>
-                <div class="vehicles-grid" id="vehiclesGridDireta"></div>
-            </div>
+            <div class="vehicles-grid" id="vehiclesGrid"></div>
         </div>
     </div>
 
     <script>
-        // NOVO: Lista de IDs de Venda Direta
-        const DIRECT_SALE_IDS = [
-            '385454', // Renault Kwid - R$ 20.600,00
-            '385453', // Fiat Grand Siena - R$ 25.750,00
-            '385450', // VW Voyage - R$ 31.930,00
-            '385449', // Citroen C3 - R$ 23.690,00
-            '385446', // VW Nivus - R$ 60.770,00
-            '385445', // Jeep Commander - R$ 105.060,00
-            '385444', // Jeep Renegade - R$ 62.830,00
-            '385443', // Toyota Etios - R$ 26.780,00
-            '385442', // Ford Ka - R$ 21.630,00
-            '385441', // Chevrolet Spin - R$ 21.630,00
-            '385440', // Jeep Renegade - R$ 59.740,00
-            '385439', // Honda Civic - R$ 42.230,00
-            '385438', // Audi Q5 - R$ 89.610,00
-            '385283', // VW T-Cross - R$ 97.232,00
-            '385282', // Chevrolet S10 - R$ 95.069,00
-            '385281', // VW T-Cross - R$ 79.928,00
-            '385280', // VW T-Cross - R$ 98.365,00
-            '385279', // VW T-Cross - R$ 77.868,00
-            '385278', // VW Saveiro - R$ 51.500,00
-            '385277', // Chevrolet Onix - R$ 52.221,00
-            '385276', // VW Taos - R$ 108.047,00
-            '385275', // VW T-Cross - R$ 87.344,00
-            '385274', // VW Saveiro - R$ 47.586,00
-            '385273', // VW Saveiro - R$ 48.616,00
-            '385272', // VW Saveiro - R$ 49.131,00
-            '385271', // VW Saveiro - R$ 54.796,00
-            '385270'  // VW Nivus - R$ 76.838,00
-        ];
-
         const APP_STATE = {
             vehicles: [],
             currentUser: null,
             isLoggedIn: false,
-            currentTab: 'propostas',
-            propostas: {
-                vehicles: [],
-                pagination: { currentPage: 1, totalPages: 1, totalVehicles: 0, limit: 20 },
-                filters: { category: 'all', state: 'all', eventDate: 'all', search: '' },
-                availableFilters: { states: [], eventDates: [] }
+            pagination: {
+                currentPage: 1,
+                totalPages: 1,
+                totalVehicles: 0,
+                limit: 20
             },
-            direta: {
-                vehicles: [],
-                pagination: { currentPage: 1, totalPages: 1, totalVehicles: 0, limit: 20 },
-                filters: { category: 'all', state: 'all', eventDate: 'all', search: '' },
-                availableFilters: { states: [], eventDates: [] }
+            filters: {
+                category: 'all',
+                state: 'all',
+                eventDate: 'all',
+                search: ''
+            },
+            availableFilters: {
+                states: [],
+                eventDates: []
             }
         }
 
@@ -1433,77 +1323,44 @@
             if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false')
         }
 
-        // NOVO: Função para trocar de aba
-        function switchTab(tab) {
-            APP_STATE.currentTab = tab
-            document.getElementById('tabPropostas').classList.toggle('active', tab === 'propostas')
-            document.getElementById('tabDireta').classList.toggle('active', tab === 'direta')
-            document.getElementById('contentPropostas').classList.toggle('active', tab === 'propostas')
-            document.getElementById('contentDireta').classList.toggle('active', tab === 'direta')
-            
-            if (tab === 'direta' && APP_STATE.direta.vehicles.length === 0) {
-                loadVehicles('direta')
-            }
-        }
-
-        // NOVO: Verifica se é venda direta
-        function isDirectSale(externalId) {
-            return DIRECT_SALE_IDS.includes(externalId)
-        }
-
-        // NOVO: Calcula preço com 3%
-        function calculateDirectSalePrice(price) {
-            return parseFloat(price) * 1.03
-        }
-
-        async function loadVehicles(tab = 'propostas') {
+        async function loadVehicles() {
             try {
-                console.log(`Carregando veículos para aba: ${tab}`)
+                console.log('Carregando veículos...')
                 
-                const tabData = APP_STATE[tab]
                 const params = new URLSearchParams({
-                    page: 1,
-                    limit: 1000,
-                    category: tabData.filters.category,
-                    state: tabData.filters.state,
-                    event_date: tabData.filters.eventDate,
-                    search: tabData.filters.search
+                    page: APP_STATE.pagination.currentPage,
+                    limit: APP_STATE.pagination.limit,
+                    category: APP_STATE.filters.category,
+                    state: APP_STATE.filters.state,
+                    event_date: APP_STATE.filters.eventDate,
+                    search: APP_STATE.filters.search
                 })
                 
-                const response = await fetch(`${API_BASE}/vehicles?${params}`, { credentials: 'include' })
+                const response = await fetch(`${API_BASE}/vehicles?${params}`, { 
+                    credentials: 'include' 
+                })
                 const result = await response.json()
                 
                 if (result.success) {
-                    const allVehicles = result.data.vehicles
-                    const propostasVehicles = allVehicles.filter(v => !isDirectSale(v.external_id))
-                    const diretaVehicles = allVehicles.filter(v => isDirectSale(v.external_id))
-
-                    if (tab === 'propostas') {
-                        APP_STATE.propostas.vehicles = propostasVehicles
-                        APP_STATE.propostas.pagination = {
-                            ...result.data.pagination,
-                            totalVehicles: propostasVehicles.length
-                        }
-                        if (result.data.filters) {
-                            APP_STATE.propostas.availableFilters = result.data.filters
-                            populateFilters('propostas')
-                        }
-                    } else {
-                        APP_STATE.direta.vehicles = diretaVehicles
-                        APP_STATE.direta.pagination = {
-                            ...result.data.pagination,
-                            totalVehicles: diretaVehicles.length
-                        }
-                        if (result.data.filters) {
-                            APP_STATE.direta.availableFilters = result.data.filters
-                            populateFilters('direta')
-                        }
+                    APP_STATE.vehicles = result.data.vehicles
+                    APP_STATE.pagination = {
+                        currentPage: result.data.pagination.currentPage,
+                        totalPages: result.data.pagination.totalPages,
+                        totalVehicles: result.data.pagination.totalVehicles,
+                        limit: result.data.pagination.limit,
+                        hasNextPage: result.data.pagination.hasNextPage,
+                        hasPrevPage: result.data.pagination.hasPrevPage
                     }
-
-                    document.getElementById('badgePropostas').textContent = propostasVehicles.length
-                    document.getElementById('badgeDireta').textContent = diretaVehicles.length
                     
-                    renderVehicles(tab)
+                    if (result.data.filters) {
+                        APP_STATE.availableFilters.states = result.data.filters.states
+                        APP_STATE.availableFilters.eventDates = result.data.filters.eventDates
+                        populateFilters()
+                    }
+                    
+                    console.log('Veículos carregados:', APP_STATE.vehicles.length)
+                    renderVehicles()
+                    renderPagination()
                     updateStats()
                 } else {
                     showToast('Erro ao carregar veículos', 'error')
@@ -1519,7 +1376,9 @@
 
         async function checkAuth() {
             try {
+                console.log('Verificando autenticação...')
                 const token = localStorage.getItem('token')
+                
                 if (!token) {
                     APP_STATE.isLoggedIn = false
                     APP_STATE.currentUser = null
@@ -1528,7 +1387,9 @@
                 }
                 
                 const response = await fetch(`${API_BASE}/auth/me`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 })
                 
                 const data = await response.json()
@@ -1569,28 +1430,32 @@
             }
         }
 
-        function renderVehicles(tab = 'propostas') {
-            const suffix = tab.charAt(0).toUpperCase() + tab.slice(1)
-            const grid = document.getElementById(`vehiclesGrid${suffix}`)
-            const tabData = APP_STATE[tab]
-            
+        function renderVehicles() {
+            const grid = document.getElementById('vehiclesGrid')
             grid.innerHTML = ''
             
-            if (tabData.vehicles.length === 0) {
+            if (APP_STATE.vehicles.length === 0) {
                 grid.innerHTML = `
                     <div style="grid-column: 1/-1; text-align: center; padding: 3rem 1rem;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3" style="margin: 0 auto 1rem;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
                         <h3 style="color: var(--text-secondary); margin-bottom: 0.5rem;">Nenhum veículo encontrado</h3>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">Tente ajustar os filtros</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Tente ajustar os filtros ou fazer uma nova busca</p>
                     </div>
                 `
-                updateVisibleCount(0, tab)
+                updateVisibleCount(0)
                 return
             }
             
             const groupedByEvent = {}
-            tabData.vehicles.forEach(vehicle => {
+            APP_STATE.vehicles.forEach(vehicle => {
                 const eventDate = vehicle.event_date ? vehicle.event_date.split('T')[0] : 'sem-data'
-                if (!groupedByEvent[eventDate]) groupedByEvent[eventDate] = []
+                if (!groupedByEvent[eventDate]) {
+                    groupedByEvent[eventDate] = []
+                }
                 groupedByEvent[eventDate].push(vehicle)
             })
             
@@ -1602,14 +1467,19 @@
             
             sortedDates.forEach(eventDate => {
                 const vehicles = groupedByEvent[eventDate]
+                
                 const eventGroup = document.createElement('div')
                 eventGroup.className = 'event-group'
                 
-                let formattedDate = 'Sem data definida'
-                if (eventDate !== 'sem-data') {
+                let formattedDate
+                if (eventDate === 'sem-data') {
+                    formattedDate = 'Sem data definida'
+                } else {
                     const date = new Date(eventDate + 'T12:00:00')
                     formattedDate = date.toLocaleDateString('pt-BR', {
-                        day: '2-digit', month: '2-digit', year: 'numeric'
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
                     })
                 }
                 
@@ -1618,39 +1488,148 @@
                         <h2 class="event-title">Evento: ${formattedDate}</h2>
                         <span class="event-count">${vehicles.length}</span>
                     </div>
-                    <div class="vehicles-grid"></div>
+                    <div class="vehicles-grid" id="grid-${eventDate.replace(/[^a-zA-Z0-9]/g, '-')}"></div>
                 `
                 
                 grid.appendChild(eventGroup)
+                
                 const groupGrid = eventGroup.querySelector('.vehicles-grid')
-                vehicles.forEach(vehicle => {
-                    groupGrid.appendChild(createVehicleCard(vehicle, tab))
+                vehicles.forEach((vehicle) => {
+                    const card = createVehicleCard(vehicle)
+                    groupGrid.appendChild(card)
                 })
             })
             
-            updateVisibleCount(tabData.vehicles.length, tab)
+            updateVisibleCount(APP_STATE.vehicles.length)
         }
 
-        function createVehicleCard(vehicle, tab = 'propostas') {
+        function populateFilters() {
+    const stateFilter = document.getElementById('stateFilter')
+    const eventFilter = document.getElementById('eventFilter')
+    
+    stateFilter.innerHTML = '<option value="all">Todos os Estados</option>'
+    eventFilter.innerHTML = '<option value="all">Todos os Eventos</option>'
+    
+    APP_STATE.availableFilters.states.forEach(state => {
+        const option = document.createElement('option')
+        option.value = state
+        option.textContent = state
+        stateFilter.appendChild(option)
+    })
+    
+    APP_STATE.availableFilters.eventDates.forEach(eventDate => {
+        const option = document.createElement('option')
+        // Extrai apenas a data (YYYY-MM-DD) se vier no formato ISO completo
+        const dateOnly = eventDate.split('T')[0]
+        option.value = dateOnly
+        
+        // Cria a data corretamente
+        const [year, month, day] = dateOnly.split('-')
+        const date = new Date(year, month - 1, day)
+        
+        option.textContent = date.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
+        
+        eventFilter.appendChild(option)
+    })
+    
+    stateFilter.value = APP_STATE.filters.state
+    eventFilter.value = APP_STATE.filters.eventDate
+    document.getElementById('categoryFilter').value = APP_STATE.filters.category
+}
+
+        function renderPagination() {
+            const container = document.createElement('div')
+            container.className = 'pagination'
+            
+            const firstBtn = document.createElement('button')
+            firstBtn.className = 'pagination-btn'
+            firstBtn.innerHTML = '<span>« Primeira</span>'
+            firstBtn.disabled = !APP_STATE.pagination.hasPrevPage
+            firstBtn.onclick = () => goToPage(1)
+            container.appendChild(firstBtn)
+            
+            const prevBtn = document.createElement('button')
+            prevBtn.className = 'pagination-btn'
+            prevBtn.innerHTML = '<span>‹ Anterior</span>'
+            prevBtn.disabled = !APP_STATE.pagination.hasPrevPage
+            prevBtn.onclick = () => goToPage(APP_STATE.pagination.currentPage - 1)
+            container.appendChild(prevBtn)
+            
+            const info = document.createElement('div')
+            info.className = 'pagination-info'
+            info.textContent = `Página ${APP_STATE.pagination.currentPage} de ${APP_STATE.pagination.totalPages}`
+            container.appendChild(info)
+            
+            const nextBtn = document.createElement('button')
+            nextBtn.className = 'pagination-btn'
+            nextBtn.innerHTML = '<span>Próxima ›</span>'
+            nextBtn.disabled = !APP_STATE.pagination.hasNextPage
+            nextBtn.onclick = () => goToPage(APP_STATE.pagination.currentPage + 1)
+            container.appendChild(nextBtn)
+            
+            const lastBtn = document.createElement('button')
+            lastBtn.className = 'pagination-btn'
+            lastBtn.innerHTML = '<span>Última »</span>'
+            lastBtn.disabled = !APP_STATE.pagination.hasNextPage
+            lastBtn.onclick = () => goToPage(APP_STATE.pagination.totalPages)
+            container.appendChild(lastBtn)
+            
+            const oldPagination = document.querySelector('.pagination')
+            if (oldPagination) {
+                oldPagination.remove()
+            }
+            
+            document.querySelector('.container').appendChild(container)
+        }
+
+        function goToPage(page) {
+            if (page < 1 || page > APP_STATE.pagination.totalPages) return
+            
+            APP_STATE.pagination.currentPage = page
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            
+            document.getElementById('catalogContent').style.opacity = '0.5'
+            
+            loadVehicles().then(() => {
+                document.getElementById('catalogContent').style.opacity = '1'
+            })
+        }
+
+        function applyFilters() {
+            APP_STATE.pagination.currentPage = 1
+            
+            APP_STATE.filters.category = document.getElementById('categoryFilter').value
+            APP_STATE.filters.state = document.getElementById('stateFilter').value
+            APP_STATE.filters.eventDate = document.getElementById('eventFilter').value
+            
+            loadVehicles()
+        }
+
+        function updateVisibleCount(count) {
+            document.getElementById('visibleCount').textContent = count
+            document.getElementById('totalCount').textContent = APP_STATE.pagination.totalVehicles
+        }
+
+        function createVehicleCard(vehicle) {
             const div = document.createElement('div')
-            const isDirect = isDirectSale(vehicle.external_id)
-            div.className = isDirect ? 'vehicle-card direct-sale' : 'vehicle-card'
+            div.className = 'vehicle-card'
             div.setAttribute('data-external-id', vehicle.external_id)
             
             const images = vehicle.images || []
             const hasImages = images.length > 0
-            const originalPrice = parseFloat(vehicle.price)
-            const directPrice = calculateDirectSalePrice(originalPrice)
-            const displayPrice = isDirect ? directPrice : originalPrice
             
             div.innerHTML = `
-                ${isDirect ? '<div class="direct-sale-badge">VENDA DIRETA</div>' : ''}
                 <div class="vehicle-gallery">
                     ${hasImages ? `
-                        <div class="main-image-container" onclick="openGallery('${vehicle.external_id}')">
+                        <div class="main-image-container" onclick="openGallery('${vehicle.external_id}')" role="button" tabindex="0" aria-label="Ver galeria de fotos">
                             <img src="${images[0].url}" alt="${vehicle.brand} ${vehicle.model}" loading="lazy">
                             <div class="image-overlay">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                     <circle cx="11" cy="11" r="8"></circle>
                                     <path d="m21 21-4.35-4.35"></path>
                                 </svg>
@@ -1670,7 +1649,7 @@
                         ` : ''}
                     ` : `
                         <div class="no-image">
-                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3" aria-hidden="true">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                 <circle cx="8.5" cy="8.5" r="1.5"></circle>
                                 <polyline points="21 15 16 10 5 21"></polyline>
@@ -1679,6 +1658,7 @@
                         </div>
                     `}
                 </div>
+
                 <div class="vehicle-info">
                     <div class="vehicle-header">
                         <div class="vehicle-title-section">
@@ -1688,17 +1668,19 @@
                             <span class="category-badge">${vehicle.category || 'N/A'}</span>
                         </div>
                     </div>
+
                     ${vehicle.location ? `
                         <div class="vehicle-detail">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
                             <span style="color: var(--text-secondary);">${vehicle.location}</span>
                         </div>
                     ` : ''}
+
                     <div class="vehicle-detail">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                             <line x1="16" y1="2" x2="16" y2="6"></line>
                             <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -1706,27 +1688,51 @@
                         </svg>
                         <span style="color: var(--text-dark); font-weight: 500;">Ano: ${vehicle.year}</span>
                     </div>
+
                     <div class="vehicle-detail">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <circle cx="12" cy="12" r="10"></circle>
                             <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
                         <span style="color: var(--text-dark); font-weight: 500;">${formatNumber(vehicle.mileage)} km</span>
                     </div>
-                    <div class="vehicle-pricing ${isDirect ? 'direct-sale-pricing' : ''}">
-                        <div class="main-price">R$ ${formatPrice(displayPrice)}</div>
+
+                    ${vehicle.fuel_type ? `
+                        <div class="vehicle-detail">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <line x1="3" y1="22" x2="15" y2="22"></line>
+                                <line x1="4" y1="9" x2="14" y2="9"></line>
+                                <path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path>
+                                <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path>
+                            </svg>
+                            <span style="color: var(--text-dark); font-weight: 500;">${vehicle.fuel_type}</span>
+                        </div>
+                    ` : ''}
+
+                    ${vehicle.transmission ? `
+                        <div class="vehicle-detail">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M12 1v6m0 6v6"></path>
+                                <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24"></path>
+                                <path d="m19.07 4.93-4.24 4.24m-5.66 5.66-4.24 4.24"></path>
+                            </svg>
+                            <span style="color: var(--text-dark); font-weight: 500;">${vehicle.transmission}</span>
+                        </div>
+                    ` : ''}
+
+                    <div class="vehicle-pricing">
+                        <div class="price-label">Proposta Inicial</div>
+                        <div class="main-price">R$ ${formatPrice(vehicle.price)}</div>
                     </div>
+
                     <div class="vehicle-actions">
                         <button class="btn-primary" onclick="openDetails('${vehicle.external_id}')">Ver Detalhes</button>
                         <button class="btn-secondary" onclick="openGallery('${vehicle.external_id}')">Fotos (${images.length})</button>
                         ${vehicle.laudo_file_url ? `
                             <button class="btn-laudo" onclick="window.open('${vehicle.laudo_file_url}', '_blank')">Ver Laudo</button>
                         ` : ''}
-                        ${isDirect ? `
-                            <button class="btn-buy-now" onclick="handleDirectSale('${vehicle.external_id}')">COMPRAR AGORA</button>
-                        ` : `
-                            <button class="btn-proposal" onclick="handleProposal('${vehicle.external_id}')">Fazer Proposta</button>
-                        `}
+                        <button class="btn-proposal" onclick="handleProposal('${vehicle.external_id}')">Fazer Proposta</button>
                     </div>
                 </div>
             `
@@ -1743,141 +1749,69 @@
         }
 
         function updateStats() {
-            const totalVehicles = APP_STATE.propostas.pagination.totalVehicles + APP_STATE.direta.pagination.totalVehicles
-            document.getElementById('totalVehicles').textContent = totalVehicles
+            document.getElementById('totalVehicles').textContent = APP_STATE.pagination.totalVehicles
         }
 
-        function populateFilters(tab = 'propostas') {
-            const tabData = APP_STATE[tab]
-            const suffix = tab.charAt(0).toUpperCase() + tab.slice(1)
-            const stateFilter = document.getElementById(`stateFilter${suffix}`)
-            const eventFilter = document.getElementById(`eventFilter${suffix}`)
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput')
+            const categoryFilter = document.getElementById('categoryFilter')
+            const stateFilter = document.getElementById('stateFilter')
+            const eventFilter = document.getElementById('eventFilter')
             
-            stateFilter.innerHTML = '<option value="all">Todos os Estados</option>'
-            eventFilter.innerHTML = '<option value="all">Todos os Eventos</option>'
-            
-            tabData.availableFilters.states.forEach(state => {
-                const option = document.createElement('option')
-                option.value = state
-                option.textContent = state
-                stateFilter.appendChild(option)
-            })
-            
-            tabData.availableFilters.eventDates.forEach(eventDate => {
-                const option = document.createElement('option')
-                const dateOnly = eventDate.split('T')[0]
-                option.value = dateOnly
-                const [year, month, day] = dateOnly.split('-')
-                const date = new Date(year, month - 1, day)
-                option.textContent = date.toLocaleDateString('pt-BR', {
-                    day: '2-digit', month: '2-digit', year: 'numeric'
+            let searchTimeout
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout)
+                    searchTimeout = setTimeout(() => {
+                        APP_STATE.filters.search = e.target.value
+                        applyFilters()
+                    }, 500)
                 })
-                eventFilter.appendChild(option)
-            })
-        }
-
-        function updateVisibleCount(count, tab = 'propostas') {
-            const suffix = tab.charAt(0).toUpperCase() + tab.slice(1)
-            document.getElementById(`visibleCount${suffix}`).textContent = count
-            document.getElementById(`totalCount${suffix}`).textContent = APP_STATE[tab].pagination.totalVehicles
-        }
-
-        function applyFilters(tab = 'propostas') {
-            const tabData = APP_STATE[tab]
-            const suffix = tab.charAt(0).toUpperCase() + tab.slice(1)
-            tabData.pagination.currentPage = 1
-            tabData.filters.category = document.getElementById(`categoryFilter${suffix}`).value
-            tabData.filters.state = document.getElementById(`stateFilter${suffix}`).value
-            tabData.filters.eventDate = document.getElementById(`eventFilter${suffix}`).value
-            loadVehicles(tab)
-        }
+            }
+            
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', applyFilters)
+            }
+            
+            if (stateFilter) {
+                stateFilter.addEventListener('change', applyFilters)
+            }
+            
+            if (eventFilter) {
+                eventFilter.addEventListener('change', applyFilters)
+            }
+        })
 
         async function handleProposal(externalId) {
-            const vehicle = [...APP_STATE.propostas.vehicles, ...APP_STATE.direta.vehicles]
-                .find(v => v.external_id === externalId)
+            const vehicle = APP_STATE.vehicles.find(v => v.external_id === externalId)
             
             if (!APP_STATE.isLoggedIn) {
                 showToast('Você precisa fazer login para fazer uma proposta', 'error')
-                setTimeout(() => window.location.href = 'login', 1500)
+                setTimeout(() => {
+                    window.location.href = 'login'
+                }, 1500)
                 return
             }
             
             if (!APP_STATE.currentUser.cpf) {
                 showToast('Complete seu cadastro para fazer propostas', 'error')
-                setTimeout(() => window.location.href = 'perfil', 1500)
+                setTimeout(() => {
+                    window.location.href = 'perfil'
+                }, 1500)
                 return
             }
             
             if (APP_STATE.currentUser.credits < 1) {
                 showToast('Créditos insuficientes', 'error')
-                setTimeout(() => window.location.href = 'recarga', 1500)
+                setTimeout(() => {
+                    window.location.href = 'recarga'
+                }, 1500)
                 return
             }
             
             openProposalModal(vehicle)
         }
-
-        // NOVO: Handle Direct Sale
-        async function handleDirectSale(externalId) {
-            const vehicle = APP_STATE.direta.vehicles.find(v => v.external_id === externalId)
-            
-            if (!APP_STATE.isLoggedIn) {
-                showToast('Você precisa fazer login para comprar', 'error')
-                setTimeout(() => window.location.href = 'login', 1500)
-                return
-            }
-            
-            if (!APP_STATE.currentUser.cpf) {
-                showToast('Complete seu cadastro para comprar', 'error')
-                setTimeout(() => window.location.href = 'perfil', 1500)
-                return
-            }
-            
-            if (APP_STATE.currentUser.credits < 1) {
-                showToast('Créditos insuficientes', 'error')
-                setTimeout(() => window.location.href = 'recarga', 1500)
-                return
-            }
-            
-            openDirectSaleModal(vehicle)
-        }
-
-        // NOVO: Modal de Venda Direta
-        function openDirectSaleModal(vehicle) {
-            const originalPrice = parseFloat(vehicle.price)
-            const finalPrice = calculateDirectSalePrice(originalPrice)
-            
-            createModal('Compra Direta', `
-                <div style="text-align: center;">
-                    <h3 style="margin-bottom: 1rem;">${vehicle.brand} ${vehicle.model} ${vehicle.year}</h3>
-                    <div style="background: rgba(50, 215, 75, 0.1); border: 2px solid #32D74B; border-radius: 10px; padding: 2rem; margin: 1.5rem 0;">
-                        <div style="font-size: 2.5rem; color: #32D74B; font-weight: 800;">
-                            R$ ${formatPrice(finalPrice)}
-                        </div>
-                    </div>
-                    <form id="directSaleForm" onsubmit="submitDirectSale(event, '${vehicle.external_id}', ${finalPrice})">
-                        <div class="form-group">
-                            <label class="form-label" for="clientName">Seu Nome *</label>
-                            <input type="text" id="clientName" class="form-input" value="${APP_STATE.currentUser.name}" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="clientPhone">Seu Telefone *</label>
-                            <input type="tel" id="clientPhone" class="form-input" value="${APP_STATE.currentUser.phone}" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="clientEmail">Seu Email (opcional)</label>
-                            <input type="email" id="clientEmail" class="form-input" value="${APP_STATE.currentUser.email || ''}" placeholder="seu@email.com">
-                        </div>
-                        <div class="info-box">
-                            <strong>Atenção:</strong> Esta compra consumirá <strong>1 crédito (R$ 1.000,00)</strong> do seu saldo.<br>
-                            Saldo atual: <strong>${parseFloat(APP_STATE.currentUser.credits).toFixed(1)} créditos</strong>
-                        </div>
-                        <button type="submit" class="btn-submit" style="background: #32D74B;">Confirmar Compra (1 crédito)</button>
-                    </form>
-                </div>
-            `)
-        }
-
+        
         function openProposalModal(vehicle) {
             createModal('Fazer Proposta', `
                 <div style="text-align: center;">
@@ -1885,29 +1819,43 @@
                     <p style="font-size: 1.2rem; color: var(--success); font-weight: 600; margin: 1.25rem 0;">
                         Preço Anunciado: R$ ${formatPrice(vehicle.price)}
                     </p>
+                    
                     <form id="proposalForm" onsubmit="submitProposal(event, '${vehicle.external_id}')">
                         <div class="form-group">
                             <label class="form-label" for="proposalValue">Valor da Proposta *</label>
-                            <input type="text" id="proposalValue" class="form-input" placeholder="R$ 0,00" required
-                                   style="font-size: 1.1rem; font-weight: 600; color: var(--success);">
+                            <input 
+                                type="text" 
+                                id="proposalValue" 
+                                class="form-input" 
+                                placeholder="R$ 0,00" 
+                                required
+                                style="font-size: 1.1rem; font-weight: 600; color: var(--success);">
                             <input type="hidden" id="proposalValueHidden">
                         </div>
+                        
                         <div class="form-group">
                             <label class="form-label" for="clientName">Seu Nome *</label>
-                            <input type="text" id="clientName" class="form-input" value="${APP_STATE.currentUser.name}" required>
+                            <input type="text" id="clientName" class="form-input" 
+                                   value="${APP_STATE.currentUser.name}" required>
                         </div>
+                        
                         <div class="form-group">
                             <label class="form-label" for="clientPhone">Seu Telefone *</label>
-                            <input type="tel" id="clientPhone" class="form-input" value="${APP_STATE.currentUser.phone}" required>
+                            <input type="tel" id="clientPhone" class="form-input" 
+                                   value="${APP_STATE.currentUser.phone}" required>
                         </div>
+                        
                         <div class="form-group">
                             <label class="form-label" for="clientEmail">Seu Email (opcional)</label>
-                            <input type="email" id="clientEmail" class="form-input" value="${APP_STATE.currentUser.email || ''}" placeholder="seu@email.com">
+                            <input type="email" id="clientEmail" class="form-input" 
+                                   value="${APP_STATE.currentUser.email || ''}" placeholder="seu@email.com">
                         </div>
+                        
                         <div class="info-box">
                             <strong>Atenção:</strong> Esta proposta consumirá <strong>1 crédito (R$ 1.000,00)</strong> do seu saldo.<br>
                             Saldo atual: <strong>${parseFloat(APP_STATE.currentUser.credits).toFixed(1)} créditos</strong>
                         </div>
+                        
                         <button type="submit" class="btn-submit">Enviar Proposta (1 crédito)</button>
                     </form>
                 </div>
@@ -1930,73 +1878,37 @@
         }
 
         function formatCurrencyInput(e) {
-            let value = e.target.value.replace(/\D/g, '')
+            let value = e.target.value
+            
+            value = value.replace(/\D/g, '')
+            
             if (value === '' || value === '0') {
                 e.target.value = ''
                 document.getElementById('proposalValueHidden').value = '0'
                 return
             }
+            
             value = value.replace(/^0+/, '')
+            
             if (value === '') {
                 e.target.value = ''
                 document.getElementById('proposalValueHidden').value = '0'
                 return
             }
+            
             const numberValue = parseInt(value) / 100
+            
             document.getElementById('proposalValueHidden').value = numberValue.toFixed(2)
+            
             e.target.value = 'R$ ' + numberValue.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2, maximumFractionDigits: 2
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             })
-        }
-
-        // NOVO: Submit Direct Sale
-        async function submitDirectSale(event, vehicleExternalId, finalPrice) {
-            event.preventDefault()
-            const btn = event.target.querySelector('.btn-submit')
-            btn.disabled = true
-            btn.textContent = 'Processando...'
-            
-            const proposalData = {
-                vehicle_external_id: vehicleExternalId,
-                proposal_amount: finalPrice,
-                customer_name: document.getElementById('clientName').value,
-                customer_phone: document.getElementById('clientPhone').value,
-                customer_email: document.getElementById('clientEmail').value || null
-            }
-            
-            try {
-                const token = localStorage.getItem('token')
-                const response = await fetch(`${API_BASE}/proposals`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify(proposalData)
-                })
-                
-                const data = await response.json()
-                
-                if (data.success) {
-                    APP_STATE.currentUser.credits = data.remaining_credits
-                    updateUserUI()
-                    closeAllModals()
-                    showToast('Compra confirmada com sucesso!', 'success')
-                } else {
-                    showToast(data.error || 'Erro ao processar compra', 'error')
-                    btn.disabled = false
-                    btn.textContent = 'Confirmar Compra (1 crédito)'
-                }
-            } catch (error) {
-                console.error('Erro ao processar compra:', error)
-                showToast('Erro ao conectar com o servidor', 'error')
-                btn.disabled = false
-                btn.textContent = 'Confirmar Compra (1 crédito)'
-            }
         }
 
         async function submitProposal(event, vehicleExternalId) {
             event.preventDefault()
+            
             const btn = event.target.querySelector('.btn-submit')
             btn.disabled = true
             btn.textContent = 'Enviando...'
@@ -2020,6 +1932,7 @@
             
             try {
                 const token = localStorage.getItem('token')
+
                 const response = await fetch(`${API_BASE}/proposals`, {
                     method: 'POST',
                     headers: { 
@@ -2050,29 +1963,25 @@
         }
 
         function openDetails(externalId) {
-            const vehicle = [...APP_STATE.propostas.vehicles, ...APP_STATE.direta.vehicles]
-                .find(v => v.external_id === externalId)
-            const isDirect = isDirectSale(externalId)
-            const displayPrice = isDirect ? calculateDirectSalePrice(vehicle.price) : vehicle.price
+            const vehicle = APP_STATE.vehicles.find(v => v.external_id === externalId)
             
             createModal(`${vehicle.brand} ${vehicle.model}`, `
                 <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 10px;">
-                    ${isDirect ? '<div style="background: #32D74B; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-align: center; font-weight: 700; margin-bottom: 1rem;">VENDA DIRETA</div>' : ''}
-                    
                     <h4 style="margin-bottom: 1rem; color: var(--primary);">Informações do Veículo</h4>
+                    
                     <p style="margin-bottom: 0.75rem;"><strong>Marca/Modelo:</strong> ${vehicle.brand} ${vehicle.model}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Ano:</strong> ${vehicle.year}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Quilometragem:</strong> ${formatNumber(vehicle.mileage)} km</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Combustível:</strong> ${vehicle.fuel_type || 'N/A'}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Transmissão:</strong> ${vehicle.transmission || 'Manual'}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Cor:</strong> ${vehicle.color || 'N/A'}</p>
-                    <p style="margin-bottom: 0.75rem;"><strong>Preço:</strong> R$ ${formatPrice(displayPrice)} ${isDirect ? '(+3%)' : ''}</p>
+                    <p style="margin-bottom: 0.75rem;"><strong>Preço:</strong> R$ ${formatPrice(vehicle.price)}</p>
                     <p style="margin-bottom: 0.75rem;"><strong>Localização:</strong> ${vehicle.location || 'N/A'}</p>
                     
                     ${vehicle.description ? `
                         <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
-                            <h4 style="margin-bottom: 0.75rem; color: var(--primary);">Sobre este Veículo</h4>
-                            <div style="color: var(--text-secondary); line-height: 1.8; font-size: 0.9rem; white-space: pre-wrap; text-align: justify;">${vehicle.description}</div>
+                            <h4 style="margin-bottom: 0.5rem; color: var(--primary);">Descrição</h4>
+                            <p style="color: var(--text-secondary); line-height: 1.6;">${vehicle.description}</p>
                         </div>
                     ` : ''}
                 </div>
@@ -2080,8 +1989,7 @@
         }
 
         function openGallery(externalId, startImage = 0) {
-            const vehicle = [...APP_STATE.propostas.vehicles, ...APP_STATE.direta.vehicles]
-                .find(v => v.external_id === externalId)
+            const vehicle = APP_STATE.vehicles.find(v => v.external_id === externalId)
             const images = vehicle.images || []
             
             if (images.length === 0) {
@@ -2094,12 +2002,15 @@
             createModal(`${vehicle.brand} ${vehicle.model} - Galeria`, `
                 <div id="galleryContent" style="text-align: center;">
                     <img id="galleryImage" src="${images[currentImage].url}" 
-                          style="max-width: 100%; max-height: 60vh; border-radius: 10px; display: block; margin: 0 auto;">
-                    <p style="margin-top: 1rem; color: var(--text-secondary);">Foto ${currentImage + 1} de ${images.length}</p>
+                          style="max-width: 100%; max-height: 60vh; border-radius: 10px; display: block; margin: 0 auto;"
+                          alt="Foto ${currentImage + 1} de ${images.length}">
+                    <p style="margin-top: 1rem; color: var(--text-secondary);">
+                        Foto ${currentImage + 1} de ${images.length}
+                    </p>
                     ${images.length > 1 ? `
-                        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem;">
-                            <button class="btn-secondary" onclick="changeGalleryImage(-1)">← Anterior</button>
-                            <button class="btn-secondary" onclick="changeGalleryImage(1)">Próxima →</button>
+                        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+                            <button class="btn-secondary" onclick="changeGalleryImage(-1)" style="flex: 1; min-width: 120px;">← Anterior</button>
+                            <button class="btn-secondary" onclick="changeGalleryImage(1)" style="flex: 1; min-width: 120px;">Próxima →</button>
                         </div>
                     ` : ''}
                 </div>
@@ -2109,35 +2020,84 @@
                 currentImage += direction
                 if (currentImage < 0) currentImage = images.length - 1
                 if (currentImage >= images.length) currentImage = 0
-                document.getElementById('galleryImage').src = images[currentImage].url
+                
+                const imgElement = document.getElementById('galleryImage')
+                imgElement.src = images[currentImage].url
+                imgElement.alt = `Foto ${currentImage + 1} de ${images.length}`
                 document.querySelector('#galleryContent p').textContent = `Foto ${currentImage + 1} de ${images.length}`
             }
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'ArrowLeft') {
+                    window.changeGalleryImage(-1)
+                } else if (e.key === 'ArrowRight') {
+                    window.changeGalleryImage(1)
+                }
+            }
+            
+            document.addEventListener('keydown', handleKeyPress)
+            
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.removedNodes.length > 0) {
+                        document.removeEventListener('keydown', handleKeyPress)
+                    }
+                })
+            })
+            
+            observer.observe(document.body, { childList: true })
         }
 
-        function createModal(title, content) {
+        function createModal(title, content, canCloseOutside = true) {
             const overlay = document.createElement('div')
             overlay.className = 'modal-overlay'
+            overlay.setAttribute('role', 'dialog')
+            overlay.setAttribute('aria-modal', 'true')
+            overlay.setAttribute('aria-labelledby', 'modalTitle')
+            
             overlay.innerHTML = `
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h2 class="modal-title">${title}</h2>
-                        <button class="modal-close" onclick="closeModal(this)">&times;</button>
+                        <h2 class="modal-title" id="modalTitle">${title}</h2>
+                        <button class="modal-close" onclick="closeModal(this)" aria-label="Fechar modal">&times;</button>
                     </div>
-                    <div class="modal-body">${content}</div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
                 </div>
             `
+            
             document.body.appendChild(overlay)
             document.body.style.overflow = 'hidden'
+            
             setTimeout(() => overlay.classList.add('active'), 10)
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) closeModal(overlay.querySelector('.modal-close'))
-            })
+            
+            if (canCloseOutside) {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) closeModal(overlay.querySelector('.modal-close'))
+                })
+            }
+
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    closeModal(overlay.querySelector('.modal-close'))
+                }
+            }
+            document.addEventListener('keydown', handleEscape)
+            
+            overlay._escapeHandler = handleEscape
+            
             return overlay
         }
         
         function closeModal(closeBtn) {
             const overlay = closeBtn.closest('.modal-overlay')
             overlay.classList.remove('active')
+            
+            if (overlay._escapeHandler) {
+                document.removeEventListener('keydown', overlay._escapeHandler)
+            }
+            
             setTimeout(() => {
                 overlay.remove()
                 document.body.style.overflow = ''
@@ -2147,6 +2107,9 @@
         function closeAllModals() {
             document.querySelectorAll('.modal-overlay').forEach(modal => {
                 modal.classList.remove('active')
+                if (modal._escapeHandler) {
+                    document.removeEventListener('keydown', modal._escapeHandler)
+                }
                 setTimeout(() => modal.remove(), 300)
             })
             document.body.style.overflow = ''
@@ -2154,6 +2117,7 @@
 
         async function logout() {
             localStorage.removeItem('token')
+            
             APP_STATE.currentUser = null
             APP_STATE.isLoggedIn = false
             updateUserUI()
@@ -2164,45 +2128,31 @@
             const container = document.getElementById('toastContainer')
             const toast = document.createElement('div')
             toast.className = `toast toast-${type}`
+            toast.setAttribute('role', 'alert')
+            toast.setAttribute('aria-live', 'polite')
             toast.textContent = message
             container.appendChild(toast)
+            
             setTimeout(() => {
                 toast.style.opacity = '0'
+                toast.style.transform = window.innerWidth >= 640 ? 'translateX(400px)' : 'translateY(100px)'
                 setTimeout(() => toast.remove(), 300)
             }, 3000)
         }
 
-        // Setup filters for both tabs
-        document.addEventListener('DOMContentLoaded', () => {
-            ['Propostas', 'Direta'].forEach(suffix => {
-                const searchInput = document.getElementById(`searchInput${suffix}`)
-                const categoryFilter = document.getElementById(`categoryFilter${suffix}`)
-                const stateFilter = document.getElementById(`stateFilter${suffix}`)
-                const eventFilter = document.getElementById(`eventFilter${suffix}`)
-                const tab = suffix.toLowerCase()
-                
-                let searchTimeout
-                if (searchInput) {
-                    searchInput.addEventListener('input', (e) => {
-                        clearTimeout(searchTimeout)
-                        searchTimeout = setTimeout(() => {
-                            APP_STATE[tab].filters.search = e.target.value
-                            applyFilters(tab)
-                        }, 500)
-                    })
-                }
-                if (categoryFilter) categoryFilter.addEventListener('change', () => applyFilters(tab))
-                if (stateFilter) stateFilter.addEventListener('change', () => applyFilters(tab))
-                if (eventFilter) eventFilter.addEventListener('change', () => applyFilters(tab))
-            })
+        let resizeTimer
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer)
+            resizeTimer = setTimeout(() => {
+                updateUserUI()
+            }, 250)
         })
 
         window.addEventListener('DOMContentLoaded', () => {
             console.log('Iniciando aplicação...')
             checkAuth().then(() => {
                 console.log('Auth checado, carregando veículos...')
-                loadVehicles('propostas')
-                loadVehicles('direta')
+                loadVehicles()
             })
         })
     </script>
