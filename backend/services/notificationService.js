@@ -8,18 +8,18 @@ function initializeFirebase() {
     try {
         // ✅ CREDENCIAIS HARDCODED
         const serviceAccount = {
-            "type": "service_account",
-            "project_id": "autogiro-e48fa",
-            "private_key_id": "c9237d396f2d57f730e75c9aad74cd28634d10e9",
-            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDF4c+HMghl7JOp\nFyBGTkwRYKcX+rCSc51cBRCOXhyD4Bf8AInvbc8Afp3i/+MWBBP2lBIT1zL8sYgF\nMUIr0Hqs8PZt0FEW8kiCiS0rVYWGXr1wOKj5EVr/WXJ6SLP3ZLSaAoUYHx2uBfK4\netHA8VfzWMcVwcyDwHY2ns75WEAZtlLK0hRIzQqLJd7/l2vOsROJ7YOsTNAQtlU7\nblOc6auBtykTUe10BrlveRqlLLxiwCgMOWmBKXQLwB04ivbKIOYKZ3Emtr8ge4et\nCvuq3O8k/PTYQLfZXM4zYREYe1Vpn6UhWBr7JU5rAWqiMjTemBpdP38Bk7/WSsag\nTwgbZzUNAgMBAAECggEAGsm+9mZnjKTCOJnQ3LOsyI11EWH2lVzhaJum6h8DbTbh\nCFRqV+ddpot9hEVv0IMs0Kyq5dS0KlE+QLWyZ4wJj2/vbF5PG/QgrMs1OjCRqucY\nbiC9fzpCP180iClfc5ZGfLLqoaFUu0JC4YZ+7se9SEw0Z1WdAhkD59EH4+l2hARV\nUDdUidYrs2Btdu+eYhVNEI5VBmkHY+c+qIG7vpgIdgcu3J4ZiNomdKsvTQuyakYq\npm30HQz235Wx8HZDJfIfvl454FfgXI91bx3zuBdfNUBlmfJwiWOnmfRtyYO9Tb+4\nY755tUd6+LtTdY769dWlXzXtK8xkM1HfZwFgJjLBAQKBgQD7hFyjTpuqiZmqTFDK\nkyq61rVTehTMMG0nhMW1xEVX3tJpvULN+pdyRTHs6xZe7nfsvK14fb9s7lzPSOd/\nwPjYey6u6jOCTsHjSHVfXFuHq13/vZO72nXeHheG/mnut/nT+lolCyh1EB1Ymtas\nlCcfM8lJvsAbB2ZXRlfhUu2I6QKBgQDJaLg/UDetwQZLklmizJ2vjqYjIeKrF37j\n2jJN93ccD2XgPIYO4lwja1PCnHQZ4IdW4PUhZxr3v4keNKdI+jsMZB0NEcHGRWFn\nfhwbjiCz+ublkgShoJlY8+4ig798z74b2BP2wKGpGok63JT/CKKE1RxJEDpd8vVw\nP9u0wtn0hQKBgDL+H+YAHvFRWnU7abnYYnZk53hYLPVE8Cxt78OtWj25cEF93Jh0\nMNY7DycwdmWixW+axTTDkdbc8LYZ2s186zbAqrNNykml/As/eoRt7iSwaqtZ3STd\n4r24rh5xYDrE1ALVJAeUnow1Sy3WnqV4mAHsdufbo4kXU/lnypNlQ8FZAoGAfXLQ\nb/8S7xKvTRrW4eP4w4RiTreoa1CzJFCfzJg6hCvDFKweA99R7G3JOgog9o03PxHX\nHPsPfQi76yh4mafiZ5Fj1uQcgdZtGP0fnLol/HRmpM8SO2nAmfs1dCIDf0YV71ni\n9Wp+RsnUd+k0lLVYJMxoVcnZ0PKnlUbxHeHPx9ECgYEAjGOwGvTPYK7o07REM9xr\nyo702M3xzjUdo4AzOb3xdWex7oOyh0j4PDoNxby8miB8U6gfFeC4nGSrnvYBn8Si\nTcha/ZPXq0EFE8f1a+Eq/h1Oe1rBHGE84+R0QTorOPFALEg2dQngrokXg4zcfPNB\nVG5tPCnnNxE9wtP1mMCN/UA=\n-----END PRIVATE KEY-----\n",
-            "client_email": "firebase-adminsdk-fbsvc@autogiro-e48fa.iam.gserviceaccount.com",
-            "client_id": "117530557454487622495",
-            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-            "token_uri": "https://oauth2.googleapis.com/token",
-            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40autogiro-e48fa.iam.gserviceaccount.com",
-            "universe_domain": "googleapis.com"
-        }
+  "type": "service_account",
+  "project_id": "autogiro-e48fa",
+  "private_key_id": "6503490a23db8dfb4f7f783eb39cee35ad619558",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDNCEiIOPCh/4ft\nxHTENjVukz0kjxj7QYNJnpWvUJBgoZfCkk6tF/U+Wy/3Ugqvk0cPLP86G1Up0EiC\npNfOsqYLDaH5yA7h8Og4EYXqhmSfK6XoBdN6GLG6vK7SXwmRRiDfz+/nVPCf4gxa\nmvZkqwI7Gg1uOd9RAKL185AxwyEProSkjdWNy/O1506H6xKRhMRXYgXt/aAerwqn\nneXCJDyMlI4yUx7+qt9cBdETim8tJJNFxuvTsRr/93wX0UmYuvp+sIMnmtmah/rQ\npu6+ydmqWuxVStuzcluo60emAo3uEgFSTv1qekjDjbOpnr+YH3MRZNQ5jsXx2NA8\njFjjRixnAgMBAAECggEACQLYhTwov0Xxcxlo9F1ZjdQ6IgreqImhkTEUwmbCYazY\ndFG6ftBdvpwtXdZPkpXgz/bvT14iKRChZIna05fLGmiX+i1jvLm6IF9iHljtFTMg\nOzP+WRBlcfVBowylk//xXpokoMB9RC71fLSbfaMnxEc0gz1XO5fRPF60XgDbHsro\nSMAECUVvNzePyX2nqys2iEq2dzJiY/FG59R00o06OCvKPk9KoW4zSctcYAskVeWY\nAsqM72YF7MvXveSdwAf1spY4viWav09euEMNs4poC8UiaMaSoEBi6qpQny/qmSUD\nhj61PGKQUIY5cz39hazcHAwAcF9UKTZeVC9+IsRucQKBgQDrkKemBCpIAQ4ss+A6\ny9BjakKRW3U2Hoyj+/+zuSEFm2Br2nF2oWf0nTjgCyLEmyklwerh/4NR9srthAk6\nxNx55FVdFLZy7XuLM5k7O3b4LcywrQHfyG7jLubg5cVWZq3QVQhs0BbDMeZyE5HF\nQGefkLHxYURMlIsdx/oXpEB3vwKBgQDe0ZGuXxsQtBkBgF5JI0ZQcFhb9gfuqs+U\nZ1tM/ozRrI8UUjwNcajEaNOuZa54BkVxNrjle2SQpMMKM4YVHC7QP7UBXSJb3rim\ng5DFUyRYXF2SJOyS6KRxxsmoHvcrhlv8FWZ9IWIvhtJOKlmVI7/YKY7oBp4IJO/h\nztuzBG41WQKBgEQxUBcDRaoqhAv01oiuz9i3viWOMFRGa7hdDxzcDu8sl7EhP490\nEkAB86EIGDyKHlNL288oxL9Jjl1Lx9A3hQvUSdH0WQzUKtuVSFqZUEtwFr1emBhM\nUa16umOIoKPufYq90v6NDsna/Dcx6xULG/RZUunpmngA2HT6my+U4QTJAoGBAI9l\nrezbdi6kyScHNya4ler0sljUmLxHn3nxnneJppTWCerZFZ7NVAC7OegVtle2KYC3\n5/yAEfNopcDt8c+qKJKLPXEYQCGBz7ISH9xuKojXQLzqGHpfUF2MwoD5FLclLBOq\nrh+/mVHe4X++j5KExFVYQYkfoRq6ssrO9uNZ6ZdZAoGAXO7fgIh185HIDvMTzS4H\nKp6VVPrI8AcdzVpSa9tRlOozvnFUUw1G6TxVtTf4pj8JXRfcyB7rfuSbVvevbSJb\nijgrl4ptJVbnsBr4yyC8oJn+S3aVY2gb+oQqhHJVX83JnphL6ew9I6JlvHfdh+wK\n33gvRBQArwh7+zM1Fxg2GiI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@autogiro-e48fa.iam.gserviceaccount.com",
+  "client_id": "117530557454487622495",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40autogiro-e48fa.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
         
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
