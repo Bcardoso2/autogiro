@@ -6,14 +6,14 @@ function initializeFirebase() {
     if (firebaseInitialized) return;
 
     try {
-        // Buscamos a chave da variável de ambiente primeiro
+        // PRIORIDADE: Variável de ambiente (Render)
+        // O .replace garante que os \n da variável de ambiente virem quebras de linha reais
         const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY;
         
         const serviceAccount = {
             "type": "service_account",
             "project_id": "autogiro-e48fa",
-            "private_key_id": "6503490a23db8dfb4f7f783eb39cee35ad619558",
-            // O .replace(/\\n/g, '\n') resolve o erro de "Invalid JWT Signature"
+            "private_key_id": "a9ff6706ea1d84c91e843462978c52d8cd1e65b5",
             "private_key": rawPrivateKey ? rawPrivateKey.replace(/\\n/g, '\n') : undefined,
             "client_email": "firebase-adminsdk-fbsvc@autogiro-e48fa.iam.gserviceaccount.com",
             "client_id": "117530557454487622495",
@@ -24,16 +24,11 @@ function initializeFirebase() {
             "universe_domain": "googleapis.com"
         };
 
-        // Validação básica para evitar erro de inicialização sem chave
-        if (!serviceAccount.private_key && !process.env.FIREBASE_PRIVATE_KEY) {
-            console.error('❌ ERRO: FIREBASE_PRIVATE_KEY não encontrada nas variáveis de ambiente!');
+        // Se não houver chave na env, o código vai falhar aqui antes de tentar o Firebase
+        if (!serviceAccount.private_key) {
+            console.error('❌ ERRO: FIREBASE_PRIVATE_KEY vazia ou inválida!');
             return;
         }
-
-        console.log('\n🔍 ===== FIREBASE INIT =====');
-        console.log('🔑 Key ID:', serviceAccount.private_key_id);
-        console.log('🔐 Private Key configurada corretamente via ENV');
-        console.log('============================\n');
 
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
@@ -43,16 +38,12 @@ function initializeFirebase() {
         console.log('✅ Firebase inicializado com sucesso!');
 
     } catch (error) {
-        console.error('❌ Erro ao inicializar Firebase:', error.message);
+        console.error('❌ Erro na inicialização:', error.message);
     }
 }
 
-// Inicializa imediatamente
 initializeFirebase();
 
-/**
- * Envia notificação para um único token
- */
 async function sendPushNotification(token, title, body, data = {}) {
     if (!firebaseInitialized) {
         throw new Error('Firebase não inicializado corretamente.');
@@ -67,15 +58,14 @@ async function sendPushNotification(token, title, body, data = {}) {
         }
 
         const message = {
-            token,
+            token: token,
             notification: { title, body },
             data: stringData,
-            // Configurações específicas para garantir entrega em background
             android: {
                 priority: 'high',
                 notification: {
                     sound: 'default',
-                    clickAction: 'FLUTTER_NOTIFICATION_CLICK' // Útil se estiver usando Flutter
+                    clickAction: 'FLUTTER_NOTIFICATION_CLICK'
                 }
             },
             apns: {
@@ -91,44 +81,13 @@ async function sendPushNotification(token, title, body, data = {}) {
         };
 
         const response = await admin.messaging().send(message);
-        console.log('✅ Push enviado com sucesso! ID:', response);
+        console.log('✅ Push enviado! ID:', response);
         return response;
     } catch (error) {
-        console.error('❌ Erro ao enviar Push:', error);
+        // Aqui pegamos o erro de "Invalid JWT Signature"
+        console.error('❌ Erro ao enviar Push:', error.message);
         throw error;
     }
 }
 
-/**
- * Envia notificação para múltiplos tokens (Multicast)
- */
-async function sendMulticastNotification(tokens, title, body, data = {}) {
-    if (!firebaseInitialized) {
-        throw new Error('Firebase não inicializado.');
-    }
-
-    try {
-        const stringData = {};
-        if (data) {
-            for (const [key, value] of Object.entries(data)) {
-                stringData[key] = String(value);
-            }
-        }
-
-        const message = {
-            tokens, // Array de strings
-            notification: { title, body },
-            data: stringData,
-            android: { priority: 'high' }
-        };
-
-        const response = await admin.messaging().sendEachForMulticast(message);
-        console.log(`✅ Resultado Multicast: ${response.successCount} enviadas, ${response.failureCount} falhas.`);
-        return response;
-    } catch (error) {
-        console.error('❌ Erro no envio Multicast:', error);
-        throw error;
-    }
-}
-
-module.exports = { sendPushNotification, sendMulticastNotification };
+module.exports = { sendPushNotification };
