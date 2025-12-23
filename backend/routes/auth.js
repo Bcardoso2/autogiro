@@ -65,7 +65,7 @@ router.post('/login', async (req, res) => {
         role: user.role,
         terms_accepted: user.terms_accepted || false,
         terms_accepted_at: user.terms_accepted_at || null,
-        approval_status: user.approval_status || 'approved'  // ✅ ADICIONADO
+        approval_status: user.approval_status || 'approved'
       }
     })
     
@@ -113,7 +113,7 @@ router.post('/register', async (req, res) => {
     
     const password_hash = await bcrypt.hash(password, 10)
     
-    // ✅ Criar usuário com approval_status = 'pending'
+    // Criar usuário com approval_status = 'pending'
     const result = await query(
       `INSERT INTO users (phone, name, email, password_hash, cpf, client_id, role, credits, is_active, terms_accepted, approval_status)
        VALUES ($1, $2, $3, $4, $5, 'client2', 'viewer', 0, true, false, 'pending')
@@ -123,7 +123,7 @@ router.post('/register', async (req, res) => {
     
     const user = result.rows[0]
     
-    // 🔥 GERAR JWT TOKEN (permite login, mas com acesso limitado)
+    // Gerar JWT token (permite login, mas com acesso limitado)
     const token = generateToken(user)
     
     console.log('📝 Novo usuário registrado (aguardando aprovação):', user.name, '-', user.phone)
@@ -141,7 +141,7 @@ router.post('/register', async (req, res) => {
         role: user.role,
         terms_accepted: user.terms_accepted || false,
         terms_accepted_at: user.terms_accepted_at || null,
-        approval_status: user.approval_status  // ✅ RETORNAR STATUS
+        approval_status: user.approval_status
       }
     })
     
@@ -162,7 +162,7 @@ router.get('/pending-users', requireJWT, async (req, res) => {
       })
     }
 
-    // ✅ Buscar em users ao invés de pending_users
+    // Buscar usuários pendentes
     const result = await query(
       `SELECT id, name, phone, email, cpf, created_at
        FROM users
@@ -194,7 +194,7 @@ router.post('/approve-user/:id', requireJWT, async (req, res) => {
 
     const { id } = req.params
 
-    // ✅ Apenas atualizar approval_status
+    // Atualizar approval_status
     const result = await query(
       `UPDATE users
        SET approval_status = 'approved', updated_at = NOW()
@@ -214,7 +214,7 @@ router.post('/approve-user/:id', requireJWT, async (req, res) => {
 
     console.log('✅ Usuário aprovado:', user.name)
 
-    // 🔔 ENVIAR PUSH NOTIFICATION
+    // Enviar push notification
     if (user.fcm_token) {
       try {
         await sendPushNotification(
@@ -293,37 +293,99 @@ router.post('/reject-user/:id', requireJWT, async (req, res) => {
 })
 
 // =====================================
-// FCM TOKEN
+// FCM TOKEN (ATUALIZADO - ACEITA JWT OU USERID)
 // =====================================
 
 // POST /api/auth/update-fcm-token
-router.post('/update-fcm-token', requireJWT, async (req, res) => {
+// Aceita 2 formas de autenticação:
+// 1. JWT Token (Authorization header) - usuário logado
+// 2. userId no body - usuário recém-registrado/pendente
+router.post('/update-fcm-token', async (req, res) => {
   try {
-    const { fcmToken } = req.body
-    const userId = req.userId
-
+    const { fcmToken, userId } = req.body
+    
+    console.log('📥 update-fcm-token recebido')
+    console.log('   - fcmToken:', fcmToken ? 'presente' : 'ausente')
+    console.log('   - userId:', userId || 'não fornecido')
+    console.log('   - Authorization:', req.headers.authorization ? 'presente' : 'ausente')
+    
+    // Validação: fcmToken é obrigatório
     if (!fcmToken) {
       return res.status(400).json({
         success: false,
         error: 'FCM Token é obrigatório'
       })
     }
-
+    
+    let userIdToUpdate = null
+    
+    // MÉTODO 1: Tentar via JWT Token (usuário logado)
+    if (req.headers.authorization) {
+      try {
+        const token = req.headers.authorization.replace('Bearer ', '')
+        const jwt = require('jsonwebtoken')
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        userIdToUpdate = decoded.userId || decoded.id
+        console.log('✅ JWT válido, userId:', userIdToUpdate)
+      } catch (error) {
+        console.log('⚠️ JWT inválido ou expirado, tentando userId do body...')
+      }
+    }
+    
+    // MÉTODO 2: Tentar via userId no body (usuário pendente)
+    if (!userIdToUpdate && userId) {
+      userIdToUpdate = userId
+      console.log('✅ Usando userId do body:', userIdToUpdate)
+    }
+    
+    // Se não tem nenhum dos dois
+    if (!userIdToUpdate) {
+      console.log('❌ Nem JWT nem userId fornecidos')
+      return res.status(401).json({
+        success: false,
+        error: 'Autenticação necessária (JWT ou userId)'
+      })
+    }
+    
+    // Verificar se usuário existe
+    const checkUser = await query(
+      'SELECT id, name, approval_status FROM users WHERE id = $1',
+      [userIdToUpdate]
+    )
+    
+    if (checkUser.rows.length === 0) {
+      console.log('❌ Usuário não encontrado:', userIdToUpdate)
+      return res.status(404).json({
+        success: false,
+        error: 'Usuário não encontrado'
+      })
+    }
+    
+    const user = checkUser.rows[0]
+    
+    // Atualizar FCM token
     await query(
       'UPDATE users SET fcm_token = $1, updated_at = NOW() WHERE id = $2',
-      [fcmToken, userId]
+      [fcmToken, userIdToUpdate]
     )
-
-    console.log(`✅ FCM Token atualizado para usuário ${userId}`)
-
+    
+    console.log(`✅ FCM Token atualizado:`)
+    console.log(`   - Usuário: ${user.name}`)
+    console.log(`   - Status: ${user.approval_status || 'N/A'}`)
+    console.log(`   - Token: ${fcmToken.substring(0, 20)}...`)
+    
     res.json({
       success: true,
-      message: 'Token atualizado com sucesso'
+      message: 'FCM Token atualizado com sucesso'
     })
-
+    
   } catch (error) {
-    console.error('Erro ao atualizar FCM Token:', error)
-    res.status(500).json({ success: false, error: 'Erro no servidor' })
+    console.error('❌ Erro ao atualizar FCM Token:', error)
+    res.status(500).json({ 
+      success: false, 
+      error: 'Erro no servidor',
+      details: error.message 
+    })
   }
 })
 
@@ -385,7 +447,7 @@ router.post('/logout', (req, res) => {
 // GET /api/auth/me
 router.get('/me', requireJWT, async (req, res) => {
   try {
-    // ✅ Buscar usuário completo com approval_status
+    // Buscar usuário completo com approval_status
     const result = await query(
       `SELECT id, phone, name, email, cpf, credits, role, terms_accepted, terms_accepted_at, approval_status
        FROM users
@@ -411,7 +473,7 @@ router.get('/me', requireJWT, async (req, res) => {
         role: user.role,
         terms_accepted: user.terms_accepted || false,
         terms_accepted_at: user.terms_accepted_at || null,
-        approval_status: user.approval_status || 'approved'  // ✅ ADICIONADO
+        approval_status: user.approval_status || 'approved'
       }
     })
   } catch (error) {
