@@ -1,242 +1,83 @@
 const admin = require('firebase-admin')
-const path = require('path')
 
-// Inicializar Firebase Admin (apenas uma vez)
 let firebaseInitialized = false
 
 function initializeFirebase() {
-    if (firebaseInitialized) {
-        console.log('⚠️ Firebase já foi inicializado')
-        return
-    }
+    if (firebaseInitialized) return
     
     try {
-        let serviceAccount = null
-        let method = ''
-        
-        // Opção 1: Variável de ambiente com JSON completo (PRODUÇÃO - Render)
-        if (process.env.FIREBASE_CREDENTIALS && process.env.FIREBASE_CREDENTIALS.startsWith('{')) {
-            console.log('🔑 Método 1: Carregando Firebase de FIREBASE_CREDENTIALS (JSON)')
-            serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS)
-            method = 'env-json'
-        }
-        // Opção 2: Variável de ambiente com caminho (PRODUÇÃO)
-        else if (process.env.FIREBASE_CREDENTIALS_PATH) {
-            console.log('🔑 Método 2: Carregando Firebase de FIREBASE_CREDENTIALS_PATH')
-            const filePath = path.join(__dirname, '..', process.env.FIREBASE_CREDENTIALS_PATH)
-            console.log('   Caminho:', filePath)
-            serviceAccount = require(filePath)
-            method = 'env-path'
-        }
-        // Opção 3: Tentar arquivo padrão (DESENVOLVIMENTO)
-        else {
-            console.log('🔑 Método 3: Tentando carregar de config/serviceAccountKey.json')
-            
-            // Tentar múltiplos caminhos
-            const possiblePaths = [
-                path.join(__dirname, '../config/serviceAccountKey.json'),
-                path.join(__dirname, '../config/firebase-credentials.json'),
-                path.join(process.cwd(), 'config/serviceAccountKey.json'),
-                path.join(process.cwd(), 'config/firebase-credentials.json')
-            ]
-            
-            let loaded = false
-            for (const filePath of possiblePaths) {
-                try {
-                    console.log('   Tentando:', filePath)
-                    serviceAccount = require(filePath)
-                    console.log('   ✅ Arquivo encontrado!')
-                    loaded = true
-                    method = 'file-' + path.basename(filePath)
-                    break
-                } catch (err) {
-                    console.log('   ❌ Não encontrado')
-                }
-            }
-            
-            if (!loaded) {
-                throw new Error(`Arquivo de credenciais não encontrado. Tentados:\n${possiblePaths.join('\n')}`)
-            }
+        // ✅ CREDENCIAIS HARDCODED
+        const serviceAccount = {
+            "type": "service_account",
+            "project_id": "autogiro-e48fa",
+            "private_key_id": "c9237d396f2d57f730e75c9aad74cd28634d10e9",
+            "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDF4c+HMghl7JOp\nFyBGTkwRYKcX+rCSc51cBRCOXhyD4Bf8AInvbc8Afp3i/+MWBBP2lBIT1zL8sYgF\nMUIr0Hqs8PZt0FEW8kiCiS0rVYWGXr1wOKj5EVr/WXJ6SLP3ZLSaAoUYHx2uBfK4\netHA8VfzWMcVwcyDwHY2ns75WEAZtlLK0hRIzQqLJd7/l2vOsROJ7YOsTNAQtlU7\nblOc6auBtykTUe10BrlveRqlLLxiwCgMOWmBKXQLwB04ivbKIOYKZ3Emtr8ge4et\nCvuq3O8k/PTYQLfZXM4zYREYe1Vpn6UhWBr7JU5rAWqiMjTemBpdP38Bk7/WSsag\nTwgbZzUNAgMBAAECggEAGsm+9mZnjKTCOJnQ3LOsyI11EWH2lVzhaJum6h8DbTbh\nCFRqV+ddpot9hEVv0IMs0Kyq5dS0KlE+QLWyZ4wJj2/vbF5PG/QgrMs1OjCRqucY\nbiC9fzpCP180iClfc5ZGfLLqoaFUu0JC4YZ+7se9SEw0Z1WdAhkD59EH4+l2hARV\nUDdUidYrs2Btdu+eYhVNEI5VBmkHY+c+qIG7vpgIdgcu3J4ZiNomdKsvTQuyakYq\npm30HQz235Wx8HZDJfIfvl454FfgXI91bx3zuBdfNUBlmfJwiWOnmfRtyYO9Tb+4\nY755tUd6+LtTdY769dWlXzXtK8xkM1HfZwFgJjLBAQKBgQD7hFyjTpuqiZmqTFDK\nkyq61rVTehTMMG0nhMW1xEVX3tJpvULN+pdyRTHs6xZe7nfsvK14fb9s7lzPSOd/\nwPjYey6u6jOCTsHjSHVfXFuHq13/vZO72nXeHheG/mnut/nT+lolCyh1EB1Ymtas\nlCcfM8lJvsAbB2ZXRlfhUu2I6QKBgQDJaLg/UDetwQZLklmizJ2vjqYjIeKrF37j\n2jJN93ccD2XgPIYO4lwja1PCnHQZ4IdW4PUhZxr3v4keNKdI+jsMZB0NEcHGRWFn\nfhwbjiCz+ublkgShoJlY8+4ig798z74b2BP2wKGpGok63JT/CKKE1RxJEDpd8vVw\nP9u0wtn0hQKBgDL+H+YAHvFRWnU7abnYYnZk53hYLPVE8Cxt78OtWj25cEF93Jh0\nMNY7DycwdmWixW+axTTDkdbc8LYZ2s186zbAqrNNykml/As/eoRt7iSwaqtZ3STd\n4r24rh5xYDrE1ALVJAeUnow1Sy3WnqV4mAHsdufbo4kXU/lnypNlQ8FZAoGAfXLQ\nb/8S7xKvTRrW4eP4w4RiTreoa1CzJFCfzJg6hCvDFKweA99R7G3JOgog9o03PxHX\nHPsPfQi76yh4mafiZ5Fj1uQcgdZtGP0fnLol/HRmpM8SO2nAmfs1dCIDf0YV71ni\n9Wp+RsnUd+k0lLVYJMxoVcnZ0PKnlUbxHeHPx9ECgYEAjGOwGvTPYK7o07REM9xr\nyo702M3xzjUdo4AzOb3xdWex7oOyh0j4PDoNxby8miB8U6gfFeC4nGSrnvYBn8Si\nTcha/ZPXq0EFE8f1a+Eq/h1Oe1rBHGE84+R0QTorOPFALEg2dQngrokXg4zcfPNB\nVG5tPCnnNxE9wtP1mMCN/UA=\n-----END PRIVATE KEY-----\n",
+            "client_email": "firebase-adminsdk-fbsvc@autogiro-e48fa.iam.gserviceaccount.com",
+            "client_id": "117530557454487622495",
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40autogiro-e48fa.iam.gserviceaccount.com",
+            "universe_domain": "googleapis.com"
         }
         
-        // Validar service account
-        if (!serviceAccount) {
-            throw new Error('Service Account não foi carregado')
-        }
-        
-        if (!serviceAccount.project_id || !serviceAccount.private_key || !serviceAccount.client_email) {
-            throw new Error('Service Account inválido - campos obrigatórios faltando')
-        }
-        
-        // Inicializar Firebase
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
         })
         
         firebaseInitialized = true
-        console.log('✅ Firebase Admin inicializado com sucesso!')
-        console.log('   Método:', method)
-        console.log('   Project ID:', serviceAccount.project_id)
-        console.log('   Client Email:', serviceAccount.client_email)
+        console.log('✅ Firebase inicializado! Project:', serviceAccount.project_id)
         
     } catch (error) {
-        console.error('\n❌ ========== ERRO CRÍTICO AO INICIALIZAR FIREBASE ==========')
-        console.error('Mensagem:', error.message)
-        console.error('Stack:', error.stack)
-        console.error('=============================================================\n')
-        firebaseInitialized = false
+        console.error('❌ Erro Firebase:', error.message)
     }
 }
 
-// Inicializar ao carregar o módulo
 initializeFirebase()
 
-/**
- * Enviar notificação push para um usuário
- */
 async function sendPushNotification(token, title, body, data = {}) {
-    console.log('\n📱 ========== ENVIANDO PUSH NOTIFICATION ==========')
-    console.log('Firebase inicializado?', firebaseInitialized)
-    console.log('Token:', token ? token.substring(0, 30) + '...' : 'VAZIO')
-    console.log('Título:', title)
-    console.log('Corpo:', body)
-    console.log('Data:', data)
-    
     if (!firebaseInitialized) {
-        const error = new Error('Firebase não foi inicializado. Verifique as credenciais.')
-        console.error('❌ ERRO:', error.message)
-        throw error
-    }
-    
-    if (!token) {
-        const error = new Error('Token FCM não fornecido')
-        console.error('❌ ERRO:', error.message)
-        throw error
-    }
-    
-    try {
-        // Converter data para strings
-        const stringData = {}
-        if (data && typeof data === 'object') {
-            for (const [key, value] of Object.entries(data)) {
-                stringData[key] = String(value)
-            }
-        }
-        
-        const message = {
-            token: token,
-            notification: {
-                title: title,
-                body: body
-            },
-            data: stringData,
-            apns: {
-                payload: {
-                    aps: {
-                        alert: {
-                            title: title,
-                            body: body
-                        },
-                        sound: 'default',
-                        badge: 1
-                    }
-                }
-            },
-            android: {
-                priority: 'high',
-                notification: {
-                    sound: 'default',
-                    channelId: 'high_importance_channel'
-                }
-            }
-        }
-        
-        console.log('📤 Enviando para Firebase Cloud Messaging...')
-        const response = await admin.messaging().send(message)
-        
-        console.log('✅ NOTIFICAÇÃO ENVIADA COM SUCESSO!')
-        console.log('   Message ID:', response)
-        console.log('==================================================\n')
-        
-        return response
-        
-    } catch (error) {
-        console.error('\n❌ ========== ERRO AO ENVIAR NOTIFICAÇÃO ==========')
-        console.error('Código:', error.code)
-        console.error('Mensagem:', error.message)
-        
-        // Erros comuns
-        if (error.code === 'messaging/invalid-registration-token') {
-            console.error('⚠️ Token FCM inválido ou mal formatado')
-        } else if (error.code === 'messaging/registration-token-not-registered') {
-            console.error('⚠️ Token não registrado (app desinstalado ou token expirado)')
-        } else if (error.code === 'messaging/invalid-argument') {
-            console.error('⚠️ Argumento inválido na mensagem')
-        }
-        
-        console.error('Stack:', error.stack)
-        console.error('===================================================\n')
-        
-        throw error
-    }
-}
-
-/**
- * Enviar notificação para múltiplos usuários
- */
-async function sendMulticastNotification(tokens, title, body, data = {}) {
-    if (!firebaseInitialized || !tokens || tokens.length === 0) {
-        throw new Error('Tokens inválidos ou Firebase não configurado')
+        throw new Error('Firebase não inicializado')
     }
     
     const stringData = {}
-    if (data && typeof data === 'object') {
+    if (data) {
         for (const [key, value] of Object.entries(data)) {
             stringData[key] = String(value)
         }
     }
     
     const message = {
-        tokens: tokens,
-        notification: {
-            title: title,
-            body: body
-        },
+        token,
+        notification: { title, body },
         data: stringData,
         apns: {
             payload: {
-                aps: {
-                    sound: 'default',
-                    badge: 1
-                }
-            }
-        },
-        android: {
-            priority: 'high',
-            notification: {
-                sound: 'default',
-                channelId: 'high_importance_channel'
+                aps: { alert: { title, body }, sound: 'default', badge: 1 }
             }
         }
     }
     
-    const response = await admin.messaging().sendEachForMulticast(message)
-    
-    console.log(`📱 ${response.successCount} notificações enviadas de ${tokens.length}`)
-    
-    if (response.failureCount > 0) {
-        console.warn(`⚠️ ${response.failureCount} notificações falharam`)
-        response.responses.forEach((resp, idx) => {
-            if (!resp.success) {
-                console.error(`❌ Token ${tokens[idx].substring(0, 20)}... falhou:`, resp.error?.message)
-            }
-        })
-    }
-    
+    const response = await admin.messaging().send(message)
+    console.log('✅ Push enviado:', response)
     return response
 }
 
-module.exports = {
-    sendPushNotification,
-    sendMulticastNotification
+async function sendMulticastNotification(tokens, title, body, data = {}) {
+    const stringData = {}
+    if (data) {
+        for (const [key, value] of Object.entries(data)) {
+            stringData[key] = String(value)
+        }
+    }
+    
+    const message = {
+        tokens,
+        notification: { title, body },
+        data: stringData
+    }
+    
+    return await admin.messaging().sendEachForMulticast(message)
 }
+
+module.exports = { sendPushNotification, sendMulticastNotification }
