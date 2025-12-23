@@ -1,16 +1,20 @@
-const admin = require('firebase-admin')
+const admin = require('firebase-admin');
 
-let firebaseInitialized = false
+let firebaseInitialized = false;
 
 function initializeFirebase() {
-    if (firebaseInitialized) return
-    
+    if (firebaseInitialized) return;
+
     try {
+        // Buscamos a chave da variável de ambiente primeiro
+        const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY;
+        
         const serviceAccount = {
             "type": "service_account",
             "project_id": "autogiro-e48fa",
             "private_key_id": "6503490a23db8dfb4f7f783eb39cee35ad619558",
-            "private_key": process.env.FIREBASE_PRIVATE_KEY || "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDNCEiIOPCh/4ft\nxHTENjVukz0kjxj7QYNJnpWvUJBgoZfCkk6tF/U+Wy/3Ugqvk0cPLP86G1Up0EiC\npNfOsqYLDaH5yA7h8Og4EYXqhmSfK6XoBdN6GLG6vK7SXwmRRiDfz+/nVPCf4gxa\nmvZkqwI7Gg1uOd9RAKL185AxwyEProSkjdWNy/O1506H6xKRhMRXYgXt/aAerwqn\nneXCJDyMlI4yUx7+qt9cBdETim8tJJNFxuvTsRr/93wX0UmYuvp+sIMnmtmah/rQ\npu6+ydmqWuxVStuzcluo60emAo3uEgFSTv1qekjDjbOpnr+YH3MRZNQ5jsXx2NA8\njFjjRixnAgMBAAECggEACQLYhTwov0Xxcxlo9F1ZjdQ6IgreqImhkTEUwmbCYazY\ndFG6ftBdvpwtXdZPkpXgz/bvT14iKRChZIna05fLGmiX+i1jvLm6IF9iHljtFTMg\nOzP+WRBlcfVBowylk//xXpokoMB9RC71fLSbfaMnxEc0gz1XO5fRPF60XgDbHsro\nSMAECUVvNzePyX2nqys2iEq2dzJiY/FG59R00o06OCvKPk9KoW4zSctcYAskVeWY\nAsqM72YF7MvXveSdwAf1spY4viWav09euEMNs4poC8UiaMaSoEBi6qpQny/qmSUD\nhj61PGKQUIY5cz39hazcHAwAcF9UKTZeVC9+IsRucQKBgQDrkKemBCpIAQ4ss+A6\ny9BjakKRW3U2Hoyj+/+zuSEFm2Br2nF2oWf0nTjgCyLEmyklwerh/4NR9srthAk6\nxNx55FVdFLZy7XuLM5k7O3b4LcywrQHfyG7jLubg5cVWZq3QVQhs0BbDMeZyE5HF\nQGefkLHxYURMlIsdx/oXpEB3vwKBgQDe0ZGuXxsQtBkBgF5JI0ZQcFhb9gfuqs+U\nZ1tM/ozRrI8UUjwNcajEaNOuZa54BkVxNrjle2SQpMMKM4YVHC7QP7UBXSJb3rim\ng5DFUyRYXF2SJOyS6KRxxsmoHvcrhlv8FWZ9IWIvhtJOKlmVI7/YKY7oBp4IJO/h\nztuzBG41WQKBgEQxUBcDRaoqhAv01oiuz9i3viWOMFRGa7hdDxzcDu8sl7EhP490\nEkAB86EIGDyKHlNL288oxL9Jjl1Lx9A3hQvUSdH0WQzUKtuVSFqZUEtwFr1emBhM\nUa16umOIoKPufYq90v6NDsna/Dcx6xULG/RZUunpmngA2HT6my+U4QTJAoGBAI9l\nrezbdi6kyScHNya4ler0sljUmLxHn3nxnneJppTWCerZFZ7NVAC7OegVtle2KYC3\n5/yAEfNopcDt8c+qKJKLPXEYQCGBz7ISH9xuKojXQLzqGHpfUF2MwoD5FLclLBOq\nrh+/mVHe4X++j5KExFVYQYkfoRq6ssrO9uNZ6ZdZAoGAXO7fgIh185HIDvMTzS4H\nKp6VVPrI8AcdzVpSa9tRlOozvnFUUw1G6TxVtTf4pj8JXRfcyB7rfuSbVvevbSJb\nijgrl4ptJVbnsBr4yyC8oJn+S3aVY2gb+oQqhHJVX83JnphL6ew9I6JlvHfdh+wK\n33gvRBQArwh7+zM1Fxg2GiI=\n-----END PRIVATE KEY-----\n",
+            // O .replace(/\\n/g, '\n') resolve o erro de "Invalid JWT Signature"
+            "private_key": rawPrivateKey ? rawPrivateKey.replace(/\\n/g, '\n') : undefined,
             "client_email": "firebase-adminsdk-fbsvc@autogiro-e48fa.iam.gserviceaccount.com",
             "client_id": "117530557454487622495",
             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -18,71 +22,113 @@ function initializeFirebase() {
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
             "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40autogiro-e48fa.iam.gserviceaccount.com",
             "universe_domain": "googleapis.com"
+        };
+
+        // Validação básica para evitar erro de inicialização sem chave
+        if (!serviceAccount.private_key && !process.env.FIREBASE_PRIVATE_KEY) {
+            console.error('❌ ERRO: FIREBASE_PRIVATE_KEY não encontrada nas variáveis de ambiente!');
+            return;
         }
-        
-        console.log('\n🔍 ===== FIREBASE INIT =====')
-        console.log('🔑 Key ID:', serviceAccount.private_key_id)
-        console.log('🔐 Private Key source:', process.env.FIREBASE_PRIVATE_KEY ? 'ENV VARIABLE' : 'HARDCODED')
-        console.log('🔐 Key length:', serviceAccount.private_key.length)
-        console.log('============================\n')
-        
+
+        console.log('\n🔍 ===== FIREBASE INIT =====');
+        console.log('🔑 Key ID:', serviceAccount.private_key_id);
+        console.log('🔐 Private Key configurada corretamente via ENV');
+        console.log('============================\n');
+
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
-        })
-        
-        firebaseInitialized = true
-        console.log('✅ Firebase inicializado!')
-        
+        });
+
+        firebaseInitialized = true;
+        console.log('✅ Firebase inicializado com sucesso!');
+
     } catch (error) {
-        console.error('❌ Erro Firebase:', error.message)
+        console.error('❌ Erro ao inicializar Firebase:', error.message);
     }
 }
 
-initializeFirebase()
+// Inicializa imediatamente
+initializeFirebase();
 
+/**
+ * Envia notificação para um único token
+ */
 async function sendPushNotification(token, title, body, data = {}) {
     if (!firebaseInitialized) {
-        throw new Error('Firebase não inicializado')
+        throw new Error('Firebase não inicializado corretamente.');
     }
-    
-    const stringData = {}
-    if (data) {
-        for (const [key, value] of Object.entries(data)) {
-            stringData[key] = String(value)
-        }
-    }
-    
-    const message = {
-        token,
-        notification: { title, body },
-        data: stringData,
-        apns: {
-            payload: {
-                aps: { alert: { title, body }, sound: 'default', badge: 1 }
+
+    try {
+        const stringData = {};
+        if (data) {
+            for (const [key, value] of Object.entries(data)) {
+                stringData[key] = String(value);
             }
         }
+
+        const message = {
+            token,
+            notification: { title, body },
+            data: stringData,
+            // Configurações específicas para garantir entrega em background
+            android: {
+                priority: 'high',
+                notification: {
+                    sound: 'default',
+                    clickAction: 'FLUTTER_NOTIFICATION_CLICK' // Útil se estiver usando Flutter
+                }
+            },
+            apns: {
+                payload: {
+                    aps: {
+                        alert: { title, body },
+                        sound: 'default',
+                        badge: 1,
+                        contentAvailable: true
+                    }
+                }
+            }
+        };
+
+        const response = await admin.messaging().send(message);
+        console.log('✅ Push enviado com sucesso! ID:', response);
+        return response;
+    } catch (error) {
+        console.error('❌ Erro ao enviar Push:', error);
+        throw error;
     }
-    
-    const response = await admin.messaging().send(message)
-    console.log('✅ Push enviado! ID:', response)
-    return response
 }
 
+/**
+ * Envia notificação para múltiplos tokens (Multicast)
+ */
 async function sendMulticastNotification(tokens, title, body, data = {}) {
-    const stringData = {}
-    if (data) {
-        for (const [key, value] of Object.entries(data)) {
-            stringData[key] = String(value)
+    if (!firebaseInitialized) {
+        throw new Error('Firebase não inicializado.');
+    }
+
+    try {
+        const stringData = {};
+        if (data) {
+            for (const [key, value] of Object.entries(data)) {
+                stringData[key] = String(value);
+            }
         }
+
+        const message = {
+            tokens, // Array de strings
+            notification: { title, body },
+            data: stringData,
+            android: { priority: 'high' }
+        };
+
+        const response = await admin.messaging().sendEachForMulticast(message);
+        console.log(`✅ Resultado Multicast: ${response.successCount} enviadas, ${response.failureCount} falhas.`);
+        return response;
+    } catch (error) {
+        console.error('❌ Erro no envio Multicast:', error);
+        throw error;
     }
-    
-    const message = {
-        tokens,
-        notification: { title, body },
-        data: stringData
-    }
-    
-    return await admin.messaging().sendEachForMulticast(message)
 }
 
-module.exports = { sendPushNotification, sendMulticastNotification }
+module.exports = { sendPushNotification, sendMulticastNotification };
