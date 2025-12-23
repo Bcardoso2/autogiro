@@ -24,7 +24,7 @@ router.post('/login', async (req, res) => {
     
     const result = await query(
       `SELECT id, phone, name, email, client_id, credits, role, is_active, password_hash, cpf,
-              terms_accepted, terms_accepted_at, fcm_token
+              terms_accepted, terms_accepted_at, fcm_token, approval_status
        FROM users
        WHERE phone = $1 AND is_active = true`,
       [phone]
@@ -64,7 +64,8 @@ router.post('/login', async (req, res) => {
         credits: parseFloat(user.credits),
         role: user.role,
         terms_accepted: user.terms_accepted || false,
-        terms_accepted_at: user.terms_accepted_at || null
+        terms_accepted_at: user.terms_accepted_at || null,
+        approval_status: user.approval_status || 'approved'  // ✅ ADICIONADO
       }
     })
     
@@ -75,11 +76,11 @@ router.post('/login', async (req, res) => {
 })
 
 // =====================================
-// CADASTRO PENDENTE (APROVAÇÃO)
+// CADASTRO COM APROVAÇÃO
 // =====================================
 
-// POST /api/auth/register-pending
-router.post('/register-pending', async (req, res) => {
+// POST /api/auth/register
+router.post('/register', async (req, res) => {
   try {
     const { name, phone, email, password, cpf } = req.body
     
@@ -109,49 +110,43 @@ router.post('/register-pending', async (req, res) => {
         error: 'Este telefone já está cadastrado' 
       })
     }
-
-    // Verificar se já tem solicitação pendente
-    const existingPending = await query(
-      'SELECT id FROM pending_users WHERE phone = $1 AND status = $2',
-      [phone, 'pending']
-    )
-
-    if (existingPending.rows.length > 0) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Já existe uma solicitação pendente para este telefone' 
-      })
-    }
     
     const password_hash = await bcrypt.hash(password, 10)
     
-    // Capturar IP e User Agent
-    const ipAddress = req.ip || req.connection.remoteAddress
-    const userAgent = req.headers['user-agent']
-
-    // Inserir em pending_users
+    // ✅ Criar usuário com approval_status = 'pending'
     const result = await query(
-      `INSERT INTO pending_users (name, phone, email, password_hash, cpf, ip_address, user_agent, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, 'pending')
-       RETURNING id, name, phone, email, created_at`,
-      [name, phone, email || null, password_hash, cpf || null, ipAddress, userAgent]
+      `INSERT INTO users (phone, name, email, password_hash, cpf, client_id, role, credits, is_active, terms_accepted, approval_status)
+       VALUES ($1, $2, $3, $4, $5, 'client2', 'viewer', 0, true, false, 'pending')
+       RETURNING id, phone, name, email, credits, role, cpf, terms_accepted, terms_accepted_at, approval_status`,
+      [phone, name, email || null, password_hash, cpf || null]
     )
     
-    const pendingUser = result.rows[0]
-
-    console.log('📬 Nova solicitação de cadastro:', pendingUser.name, '-', pendingUser.phone)
+    const user = result.rows[0]
+    
+    // 🔥 GERAR JWT TOKEN (permite login, mas com acesso limitado)
+    const token = generateToken(user)
+    
+    console.log('📝 Novo usuário registrado (aguardando aprovação):', user.name, '-', user.phone)
     
     res.json({ 
       success: true,
-      message: 'Cadastro enviado para aprovação! Você receberá uma notificação em breve.',
-      data: {
-        id: pendingUser.id,
-        name: pendingUser.name
+      token: token,
+      user: {
+        id: user.id,
+        phone: user.phone,
+        name: user.name,
+        email: user.email,
+        cpf: user.cpf,
+        credits: parseFloat(user.credits),
+        role: user.role,
+        terms_accepted: user.terms_accepted || false,
+        terms_accepted_at: user.terms_accepted_at || null,
+        approval_status: user.approval_status  // ✅ RETORNAR STATUS
       }
     })
     
   } catch (error) {
-    console.error('Erro ao criar registro pendente:', error)
+    console.error('Erro no registro:', error)
     res.status(500).json({ success: false, error: 'Erro no servidor' })
   }
 })
@@ -167,10 +162,11 @@ router.get('/pending-users', requireJWT, async (req, res) => {
       })
     }
 
+    // ✅ Buscar em users ao invés de pending_users
     const result = await query(
-      `SELECT id, name, phone, email, cpf, status, ip_address, created_at
-       FROM pending_users
-       WHERE status = 'pending'
+      `SELECT id, name, phone, email, cpf, created_at
+       FROM users
+       WHERE approval_status = 'pending'
        ORDER BY created_at DESC`
     )
 
@@ -197,51 +193,55 @@ router.post('/approve-user/:id', requireJWT, async (req, res) => {
     }
 
     const { id } = req.params
-    const adminId = req.userId
 
-    // Buscar usuário pendente
-    const pendingResult = await query(
-      'SELECT * FROM pending_users WHERE id = $1 AND status = $2',
-      [id, 'pending']
+    // ✅ Apenas atualizar approval_status
+    const result = await query(
+      `UPDATE users
+       SET approval_status = 'approved', updated_at = NOW()
+       WHERE id = $1 AND approval_status = 'pending'
+       RETURNING id, name, phone, fcm_token`,
+      [id]
     )
 
-    if (pendingResult.rows.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Solicitação não encontrada ou já processada'
+        error: 'Usuário não encontrado ou já processado'
       })
     }
 
-    const pending = pendingResult.rows[0]
+    const user = result.rows[0]
 
-    // Criar usuário definitivo
-    const userResult = await query(
-      `INSERT INTO users (phone, password_hash, name, email, cpf, client_id, role, credits, is_active, terms_accepted)
-       VALUES ($1, $2, $3, $4, $5, 'client2', 'viewer', 0, true, false)
-       RETURNING id, name, phone, email, credits, created_at`,
-      [pending.phone, pending.password_hash, pending.name, pending.email, pending.cpf]
-    )
+    console.log('✅ Usuário aprovado:', user.name)
 
-    const newUser = userResult.rows[0]
-
-    // Atualizar status do pending
-    await query(
-      `UPDATE pending_users
-       SET status = 'approved', reviewed_by = $1, reviewed_at = NOW()
-       WHERE id = $2`,
-      [adminId, id]
-    )
-
-    console.log('✅ Usuário aprovado:', newUser.name)
-
-    // 🔔 TENTAR ENVIAR PUSH NOTIFICATION (se tiver token)
-    // Como o usuário foi recém-criado, ele ainda não tem FCM token
-    // O push só será enviado quando ele fizer login e registrar o token
+    // 🔔 ENVIAR PUSH NOTIFICATION
+    if (user.fcm_token) {
+      try {
+        await sendPushNotification(
+          user.fcm_token,
+          '🎉 Cadastro Aprovado!',
+          'Seu cadastro foi aprovado! Você já pode acessar todas as funcionalidades do Autogiro.',
+          {
+            type: 'user_approved',
+            userId: user.id
+          }
+        )
+        console.log('📱 Push notification enviada para:', user.name)
+      } catch (pushError) {
+        console.error('❌ Erro ao enviar push:', pushError)
+        // Não falha a aprovação se o push falhar
+      }
+    } else {
+      console.log('⚠️ Usuário não tem FCM token registrado ainda')
+    }
 
     res.json({
       success: true,
       message: 'Usuário aprovado com sucesso!',
-      data: newUser
+      data: {
+        id: user.id,
+        name: user.name
+      }
     })
 
   } catch (error) {
@@ -263,28 +263,23 @@ router.post('/reject-user/:id', requireJWT, async (req, res) => {
 
     const { id } = req.params
     const { reason } = req.body
-    const adminId = req.userId
 
-    const pendingResult = await query(
-      'SELECT * FROM pending_users WHERE id = $1 AND status = $2',
-      [id, 'pending']
+    const result = await query(
+      `UPDATE users
+       SET approval_status = 'rejected', updated_at = NOW()
+       WHERE id = $1 AND approval_status = 'pending'
+       RETURNING id, name`,
+      [id]
     )
 
-    if (pendingResult.rows.length === 0) {
+    if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
-        error: 'Solicitação não encontrada ou já processada'
+        error: 'Usuário não encontrado ou já processado'
       })
     }
 
-    await query(
-      `UPDATE pending_users
-       SET status = 'rejected', reviewed_by = $1, reviewed_at = NOW(), rejection_reason = $2
-       WHERE id = $3`,
-      [adminId, reason || 'Não aprovado', id]
-    )
-
-    console.log('❌ Usuário reprovado:', pendingResult.rows[0].name)
+    console.log('❌ Usuário reprovado:', result.rows[0].name)
 
     res.json({
       success: true,
@@ -379,7 +374,7 @@ router.post('/test-push', requireJWT, async (req, res) => {
 })
 
 // =====================================
-// DEMAIS ROTAS (INALTERADAS)
+// DEMAIS ROTAS
 // =====================================
 
 // POST /api/auth/logout
@@ -390,18 +385,33 @@ router.post('/logout', (req, res) => {
 // GET /api/auth/me
 router.get('/me', requireJWT, async (req, res) => {
   try {
+    // ✅ Buscar usuário completo com approval_status
+    const result = await query(
+      `SELECT id, phone, name, email, cpf, credits, role, terms_accepted, terms_accepted_at, approval_status
+       FROM users
+       WHERE id = $1`,
+      [req.userId]
+    )
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Usuário não encontrado' })
+    }
+
+    const user = result.rows[0]
+
     res.json({ 
       success: true,
       user: {
-        id: req.user.id,
-        phone: req.user.phone,
-        name: req.user.name,
-        email: req.user.email,
-        cpf: req.user.cpf,
-        credits: parseFloat(req.user.credits),
-        role: req.user.role,
-        terms_accepted: req.user.terms_accepted || false,
-        terms_accepted_at: req.user.terms_accepted_at || null
+        id: user.id,
+        phone: user.phone,
+        name: user.name,
+        email: user.email,
+        cpf: user.cpf,
+        credits: parseFloat(user.credits),
+        role: user.role,
+        terms_accepted: user.terms_accepted || false,
+        terms_accepted_at: user.terms_accepted_at || null,
+        approval_status: user.approval_status || 'approved'  // ✅ ADICIONADO
       }
     })
   } catch (error) {
